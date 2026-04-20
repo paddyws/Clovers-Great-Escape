@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Falling Blocks</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+    }
+
+    p {
+      margin-top: 0;
+      opacity: 0.85;
+    }
+
+    canvas {
+      border: 2px solid #fff;
+      background: #1b1b1b;
+      display: block;
+    }
+
+    button {
+      margin-top: 12px;
+      padding: 10px 18px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Falling Blocks</h1>
+  <p>Move with ← → or A/D. Avoid the red blocks.</p>
+  <canvas id="game" width="400" height="600"></canvas>
+  <button id="restartBtn">Restart</button>
+
+  <script>
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+    const restartBtn = document.getElementById("restartBtn");
+
+    const player = {
+      x: 180,
+      y: 540,
+      width: 40,
+      height: 40,
+      speed: 6
+    };
+
+    let keys = {};
+    let obstacles = [];
+    let frame = 0;
+    let score = 0;
+    let gameOver = false;
+
+    function resetGame() {
+      player.x = 180;
+      obstacles = [];
+      frame = 0;
+      score = 0;
+      gameOver = false;
+      loop();
+    }
+
+    document.addEventListener("keydown", (e) => {
+      keys[e.key] = true;
+    });
+
+    document.addEventListener("keyup", (e) => {
+      keys[e.key] = false;
+    });
+
+    restartBtn.addEventListener("click", () => {
+      resetGame();
+    });
+
+    function spawnObstacle() {
+      const width = Math.random() * 60 + 20;
+      const x = Math.random() * (canvas.width - width);
+      const speed = Math.random() * 3 + 2 + score * 0.02;
+
+      obstacles.push({
+        x,
+        y: -30,
+        width,
+        height: 20,
+        speed
+      });
+    }
+
+    function update() {
+      if (gameOver) return;
+
+      frame++;
+      score++;
+
+      if (keys["ArrowLeft"] || keys["a"] || keys["A"]) {
+        player.x -= player.speed;
+      }
+      if (keys["ArrowRight"] || keys["d"] || keys["D"]) {
+        player.x += player.speed;
+      }
+
+      if (player.x < 0) player.x = 0;
+      if (player.x + player.width > canvas.width) {
+        player.x = canvas.width - player.width;
+      }
+
+      if (frame % 30 === 0) {
+        spawnObstacle();
+      }
+
+      for (let i = 0; i < obstacles.length; i++) {
+        obstacles[i].y += obstacles[i].speed;
+
+        const o = obstacles[i];
+        const hit =
+          player.x < o.x + o.width &&
+          player.x + player.width > o.x &&
+          player.y < o.y + o.height &&
+          player.y + player.height > o.y;
+
+        if (hit) {
+          gameOver = true;
+        }
+      }
+
+      obstacles = obstacles.filter((o) => o.y < canvas.height + 40);
+    }
+
+    function drawPlayer() {
+      ctx.fillStyle = "#4da6ff";
+      ctx.fillRect(player.x, player.y, player.width, player.height);
+    }
+
+    function drawObstacles() {
+      ctx.fillStyle = "#ff4d4d";
+      for (const o of obstacles) {
+        ctx.fillRect(o.x, o.y, o.width, o.height);
+      }
+    }
+
+    function drawScore() {
+      ctx.fillStyle = "#fff";
+      ctx.font = "20px Arial";
+      ctx.fillText(`Score: ${score}`, 12, 30);
+    }
+
+    function drawGameOver() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#fff";
+      ctx.font = "36px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2 - 20);
+
+      ctx.font = "24px Arial";
+      ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2 + 25);
+
+      ctx.textAlign = "left";
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawPlayer();
+      drawObstacles();
+      drawScore();
+
+      if (gameOver) {
+        drawGameOver();
+      }
+    }
+
+    function loop() {
+      update();
+      draw();
+
+      if (!gameOver) {
+        requestAnimationFrame(loop);
+      }
+    }
+
+    loop();
+  </script>
+</body>
+</html>

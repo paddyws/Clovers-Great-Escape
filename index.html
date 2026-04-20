@@ -29,8 +29,9 @@
       margin-top: 0;
       opacity: 0.85;
       text-align: center;
-      max-width: 500px;
+      max-width: 560px;
       padding: 0 12px;
+      line-height: 1.4;
     }
 
     canvas {
@@ -59,10 +60,10 @@
 <body>
   <h1>Falling Pictures</h1>
   <p>
-    Move with ← → or A/D. Avoid the bad falling images.<br>
-    Catch <strong>falling4.png</strong> for +200 points and
-    <strong>falling5.png</strong> for +1000 points.<br>
-    Every 2000 points gives you an extra life.
+    Move with ← → ↑ ↓ or W A S D.<br>
+    Avoid bad images. Catch <strong>falling4.png</strong> and <strong>falling5.png</strong> for bonus points.<br>
+    Every 2000 points gives you an extra life.<br>
+    At <strong>10,000</strong> score, bonus values double and the whole game speeds up.
   </p>
 
   <canvas id="game" width="400" height="600"></canvas>
@@ -85,12 +86,12 @@
     let gameOver = false;
     let frame = 0;
     let score = 0;
-    let animationId = null;
     let lives = 3;
     let awardedLifeThreshold = 0;
     let hitFlashTimer = 0;
     let bonusFlashTimer = 0;
     let bonusFlashText = "";
+    let speedModeActivated = false;
 
     const player = {
       x: 180,
@@ -129,6 +130,9 @@
     const hitSound = new Audio("hit.mp3");
     hitSound.volume = 0.8;
 
+    const bonusSound = new Audio("bonus.mp3");
+    bonusSound.volume = 0.8;
+
     let isMuted = false;
 
     document.addEventListener("keydown", (e) => {
@@ -141,7 +145,9 @@
 
     function resetGameState() {
       player.x = 180;
+      player.y = 520;
       player.invulnerableTimer = 0;
+
       fallingObjects = [];
       gameOver = false;
       frame = 0;
@@ -151,6 +157,23 @@
       hitFlashTimer = 0;
       bonusFlashTimer = 0;
       bonusFlashText = "";
+      speedModeActivated = false;
+    }
+
+    function getSpeedMultiplier() {
+      return score >= 10000 ? 2 : 1;
+    }
+
+    function getBonusMultiplier() {
+      return score >= 10000 ? 2 : 1;
+    }
+
+    function maybeShowSpeedModeBanner() {
+      if (score >= 10000 && !speedModeActivated) {
+        speedModeActivated = true;
+        bonusFlashTimer = 70;
+        bonusFlashText = "SPEED MODE!";
+      }
     }
 
     function maybeAwardExtraLife() {
@@ -168,21 +191,18 @@
       const roll = Math.random();
       let type = "bad";
       let image = badImages[Math.floor(Math.random() * badImages.length)];
-      let points = 0;
+      let basePoints = 0;
       let speedMultiplier = 1;
 
-      // Rare fast bonus
       if (roll < 0.15) {
         type = "bonus1000";
         image = bonus1000Img;
-        points = 1000;
+        basePoints = 1000;
         speedMultiplier = 2;
-      }
-      // Less rare regular bonus
-      else if (roll < 0.3) {
+      } else if (roll < 0.30) {
         type = "bonus200";
         image = bonus200Img;
-        points = 200;
+        basePoints = 200;
       }
 
       const size = type === "bonus1000"
@@ -191,7 +211,7 @@
 
       const x = Math.random() * (canvas.width - size);
       const baseSpeed = Math.random() * 2.5 + 2 + score * 0.002;
-      const speed = baseSpeed * speedMultiplier;
+      const speed = baseSpeed * speedMultiplier * getSpeedMultiplier();
 
       fallingObjects.push({
         x,
@@ -201,7 +221,7 @@
         speed,
         image,
         type,
-        points
+        basePoints
       });
     }
 
@@ -214,22 +234,40 @@
       );
     }
 
+    function playSound(sound) {
+      if (isMuted) return;
+      sound.currentTime = 0;
+      sound.play().catch(() => {});
+    }
+
     function update() {
       if (!gameStarted || gameOver) return;
 
       frame++;
       score++;
 
+      // Movement
       if (keys["ArrowLeft"] || keys["a"] || keys["A"]) {
         player.x -= player.speed;
       }
       if (keys["ArrowRight"] || keys["d"] || keys["D"]) {
         player.x += player.speed;
       }
+      if (keys["ArrowUp"] || keys["w"] || keys["W"]) {
+        player.y -= player.speed;
+      }
+      if (keys["ArrowDown"] || keys["s"] || keys["S"]) {
+        player.y += player.speed;
+      }
 
+      // Keep player inside canvas
       if (player.x < 0) player.x = 0;
       if (player.x + player.width > canvas.width) {
         player.x = canvas.width - player.width;
+      }
+      if (player.y < 0) player.y = 0;
+      if (player.y + player.height > canvas.height) {
+        player.y = canvas.height - player.height;
       }
 
       if (player.invulnerableTimer > 0) {
@@ -251,11 +289,15 @@
 
         if (hit) {
           if (obj.type === "bonus200" || obj.type === "bonus1000") {
-            score += obj.points;
+            const pointsEarned = obj.basePoints * getBonusMultiplier();
+            score += pointsEarned;
+            maybeShowSpeedModeBanner();
             maybeAwardExtraLife();
 
             bonusFlashTimer = 30;
-            bonusFlashText = `+${obj.points}`;
+            bonusFlashText = `+${pointsEarned}`;
+            playSound(bonusSound);
+
             fallingObjects.splice(i, 1);
             continue;
           }
@@ -266,10 +308,7 @@
             hitFlashTimer = 20;
             fallingObjects.splice(i, 1);
 
-            if (!isMuted) {
-              hitSound.currentTime = 0;
-              hitSound.play().catch(() => {});
-            }
+            playSound(hitSound);
 
             if (lives <= 0) {
               gameOver = true;
@@ -285,6 +324,7 @@
         }
       }
 
+      maybeShowSpeedModeBanner();
       maybeAwardExtraLife();
     }
 
@@ -323,7 +363,13 @@
       const nextLifeAt = (Math.floor(score / 2000) + 1) * 2000;
       const remaining = nextLifeAt - score;
       ctx.font = "16px Arial";
-      ctx.fillText(`Next life in: ${remaining}`, 12, 82);
+      ctx.fillText(`Next life in: ${remaining > 0 ? remaining : 0}`, 12, 82);
+
+      if (score >= 10000) {
+        ctx.fillStyle = "#ffd700";
+        ctx.font = "18px Arial";
+        ctx.fillText("2X SPEED / 2X BONUS", 12, 108);
+      }
     }
 
     function drawHitFlash() {
@@ -338,7 +384,7 @@
         ctx.fillStyle = "white";
         ctx.font = "28px Arial";
         ctx.textAlign = "center";
-        ctx.fillText(bonusFlashText, canvas.width / 2, 120);
+        ctx.fillText(bonusFlashText, canvas.width / 2, 140);
         ctx.textAlign = "left";
       }
     }
@@ -392,7 +438,7 @@
     function loop() {
       update();
       draw();
-      animationId = requestAnimationFrame(loop);
+      requestAnimationFrame(loop);
     }
 
     startBtn.addEventListener("click", async () => {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Falling Blocks</title>
+  <title>Falling Pictures Game</title>
   <style>
     * {
       box-sizing: border-box;
@@ -13,7 +13,7 @@
       margin: 0;
       font-family: Arial, sans-serif;
       background: #111;
-      color: #fff;
+      color: white;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -28,16 +28,25 @@
     p {
       margin-top: 0;
       opacity: 0.85;
+      text-align: center;
+      max-width: 500px;
     }
 
     canvas {
-      border: 2px solid #fff;
-      background: #1b1b1b;
+      border: 2px solid white;
+      background: #1a1a1a;
       display: block;
     }
 
-    button {
+    .controls {
       margin-top: 12px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    button {
       padding: 10px 18px;
       font-size: 16px;
       cursor: pointer;
@@ -47,38 +56,67 @@
   </style>
 </head>
 <body>
-  <h1>Falling Blocks</h1>
-  <p>Move with ← → or A/D. Avoid the red blocks.</p>
+  <h1>Falling Pictures</h1>
+  <p>
+    Move with ← → or A/D. Avoid the falling images.
+    Press Start to begin music.
+  </p>
+
   <canvas id="game" width="400" height="600"></canvas>
-  <button id="restartBtn">Restart</button>
+
+  <div class="controls">
+    <button id="startBtn">Start Game</button>
+    <button id="restartBtn">Restart</button>
+    <button id="muteBtn">Mute / Unmute</button>
+  </div>
 
   <script>
     const canvas = document.getElementById("game");
     const ctx = canvas.getContext("2d");
+
+    const startBtn = document.getElementById("startBtn");
     const restartBtn = document.getElementById("restartBtn");
+    const muteBtn = document.getElementById("muteBtn");
+
+    let gameStarted = false;
+    let gameOver = false;
+    let frame = 0;
+    let score = 0;
+    let animationId = null;
 
     const player = {
       x: 180,
-      y: 540,
-      width: 40,
-      height: 40,
+      y: 520,
+      width: 50,
+      height: 50,
       speed: 6
     };
 
     let keys = {};
-    let obstacles = [];
-    let frame = 0;
-    let score = 0;
-    let gameOver = false;
+    let fallingObjects = [];
 
-    function resetGame() {
-      player.x = 180;
-      obstacles = [];
-      frame = 0;
-      score = 0;
-      gameOver = false;
-      loop();
+    // Images
+    const playerImg = new Image();
+    playerImg.src = "player.png";
+
+    const fallingImages = [];
+    const fallingImageFiles = ["falling1.png", "falling2.png", "falling3.png"];
+
+    for (const file of fallingImageFiles) {
+      const img = new Image();
+      img.src = file;
+      fallingImages.push(img);
     }
+
+    // Audio
+    const music = new Audio("music.mp3");
+    music.loop = true;
+    music.volume = 0.5;
+
+    const hitSound = new Audio("hit.mp3");
+    hitSound.volume = 0.8;
+
+    let isMuted = false;
 
     document.addEventListener("keydown", (e) => {
       keys[e.key] = true;
@@ -88,26 +126,32 @@
       keys[e.key] = false;
     });
 
-    restartBtn.addEventListener("click", () => {
-      resetGame();
-    });
+    function resetGameState() {
+      player.x = 180;
+      fallingObjects = [];
+      gameOver = false;
+      frame = 0;
+      score = 0;
+    }
 
-    function spawnObstacle() {
-      const width = Math.random() * 60 + 20;
-      const x = Math.random() * (canvas.width - width);
-      const speed = Math.random() * 3 + 2 + score * 0.02;
+    function spawnObject() {
+      const size = Math.random() * 35 + 35;
+      const x = Math.random() * (canvas.width - size);
+      const speed = Math.random() * 2.5 + 2 + score * 0.01;
+      const image = fallingImages[Math.floor(Math.random() * fallingImages.length)];
 
-      obstacles.push({
+      fallingObjects.push({
         x,
-        y: -30,
-        width,
-        height: 20,
-        speed
+        y: -size,
+        width: size,
+        height: size,
+        speed,
+        image
       });
     }
 
     function update() {
-      if (gameOver) return;
+      if (!gameStarted || gameOver) return;
 
       frame++;
       score++;
@@ -125,65 +169,97 @@
       }
 
       if (frame % 30 === 0) {
-        spawnObstacle();
+        spawnObject();
       }
 
-      for (let i = 0; i < obstacles.length; i++) {
-        obstacles[i].y += obstacles[i].speed;
+      for (const obj of fallingObjects) {
+        obj.y += obj.speed;
 
-        const o = obstacles[i];
         const hit =
-          player.x < o.x + o.width &&
-          player.x + player.width > o.x &&
-          player.y < o.y + o.height &&
-          player.y + player.height > o.y;
+          player.x < obj.x + obj.width &&
+          player.x + player.width > obj.x &&
+          player.y < obj.y + obj.height &&
+          player.y + player.height > obj.y;
 
         if (hit) {
           gameOver = true;
+
+          if (!isMuted) {
+            hitSound.currentTime = 0;
+            hitSound.play().catch(() => {});
+          }
+
+          music.pause();
         }
       }
 
-      obstacles = obstacles.filter((o) => o.y < canvas.height + 40);
+      fallingObjects = fallingObjects.filter(obj => obj.y < canvas.height + 100);
     }
 
     function drawPlayer() {
-      ctx.fillStyle = "#4da6ff";
-      ctx.fillRect(player.x, player.y, player.width, player.height);
+      if (playerImg.complete) {
+        ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
+      } else {
+        ctx.fillStyle = "#4da6ff";
+        ctx.fillRect(player.x, player.y, player.width, player.height);
+      }
     }
 
-    function drawObstacles() {
-      ctx.fillStyle = "#ff4d4d";
-      for (const o of obstacles) {
-        ctx.fillRect(o.x, o.y, o.width, o.height);
+    function drawFallingObjects() {
+      for (const obj of fallingObjects) {
+        if (obj.image.complete) {
+          ctx.drawImage(obj.image, obj.x, obj.y, obj.width, obj.height);
+        } else {
+          ctx.fillStyle = "#ff4d4d";
+          ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
+        }
       }
     }
 
     function drawScore() {
-      ctx.fillStyle = "#fff";
+      ctx.fillStyle = "white";
       ctx.font = "20px Arial";
       ctx.fillText(`Score: ${score}`, 12, 30);
     }
 
-    function drawGameOver() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
+    function drawStartScreen() {
+      ctx.fillStyle = "rgba(0,0,0,0.7)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.fillStyle = "#fff";
-      ctx.font = "36px Arial";
+      ctx.fillStyle = "white";
       ctx.textAlign = "center";
+      ctx.font = "30px Arial";
+      ctx.fillText("Press Start", canvas.width / 2, canvas.height / 2 - 10);
+
+      ctx.font = "18px Arial";
+      ctx.fillText("Music begins after click", canvas.width / 2, canvas.height / 2 + 30);
+      ctx.textAlign = "left";
+    }
+
+    function drawGameOver() {
+      ctx.fillStyle = "rgba(0,0,0,0.7)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "white";
+      ctx.textAlign = "center";
+      ctx.font = "34px Arial";
       ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2 - 20);
 
-      ctx.font = "24px Arial";
-      ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2 + 25);
-
+      ctx.font = "22px Arial";
+      ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2 + 20);
       ctx.textAlign = "left";
     }
 
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
       drawPlayer();
-      drawObstacles();
+      drawFallingObjects();
       drawScore();
+
+      if (!gameStarted) {
+        drawStartScreen();
+      }
 
       if (gameOver) {
         drawGameOver();
@@ -193,12 +269,47 @@
     function loop() {
       update();
       draw();
-
-      if (!gameOver) {
-        requestAnimationFrame(loop);
-      }
+      animationId = requestAnimationFrame(loop);
     }
 
+    startBtn.addEventListener("click", async () => {
+      if (!gameStarted) {
+        gameStarted = true;
+        if (!isMuted) {
+          try {
+            await music.play();
+          } catch (err) {
+            console.log("Music could not start yet:", err);
+          }
+        }
+      }
+    });
+
+    restartBtn.addEventListener("click", async () => {
+      resetGameState();
+      gameStarted = true;
+
+      if (!isMuted) {
+        try {
+          music.currentTime = 0;
+          await music.play();
+        } catch (err) {
+          console.log("Music restart blocked:", err);
+        }
+      }
+    });
+
+    muteBtn.addEventListener("click", () => {
+      isMuted = !isMuted;
+
+      if (isMuted) {
+        music.pause();
+      } else if (gameStarted && !gameOver) {
+        music.play().catch(() => {});
+      }
+    });
+
+    resetGameState();
     loop();
   </script>
 </body>

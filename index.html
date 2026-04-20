@@ -30,6 +30,7 @@
       opacity: 0.85;
       text-align: center;
       max-width: 500px;
+      padding: 0 12px;
     }
 
     canvas {
@@ -58,8 +59,10 @@
 <body>
   <h1>Falling Pictures</h1>
   <p>
-    Move with ← → or A/D. Avoid the falling images.
-    Press Start to begin music.
+    Move with ← → or A/D. Avoid the bad falling images.<br>
+    Catch <strong>falling4.png</strong> for +200 points and
+    <strong>falling5.png</strong> for +1000 points.<br>
+    Every 2000 points gives you an extra life.
   </p>
 
   <canvas id="game" width="400" height="600"></canvas>
@@ -83,13 +86,19 @@
     let frame = 0;
     let score = 0;
     let animationId = null;
+    let lives = 3;
+    let awardedLifeThreshold = 0;
+    let hitFlashTimer = 0;
+    let bonusFlashTimer = 0;
+    let bonusFlashText = "";
 
     const player = {
       x: 180,
       y: 520,
       width: 50,
       height: 50,
-      speed: 6
+      speed: 6,
+      invulnerableTimer: 0
     };
 
     let keys = {};
@@ -99,14 +108,18 @@
     const playerImg = new Image();
     playerImg.src = "player.png";
 
-    const fallingImages = [];
-    const fallingImageFiles = ["falling1.png", "falling2.png", "falling3.png"];
-
-    for (const file of fallingImageFiles) {
+    const badImageFiles = ["falling1.png", "falling2.png", "falling3.png"];
+    const badImages = badImageFiles.map(file => {
       const img = new Image();
       img.src = file;
-      fallingImages.push(img);
-    }
+      return img;
+    });
+
+    const bonus200Img = new Image();
+    bonus200Img.src = "falling4.png";
+
+    const bonus1000Img = new Image();
+    bonus1000Img.src = "falling5.png";
 
     // Audio
     const music = new Audio("music.mp3");
@@ -128,17 +141,57 @@
 
     function resetGameState() {
       player.x = 180;
+      player.invulnerableTimer = 0;
       fallingObjects = [];
       gameOver = false;
       frame = 0;
       score = 0;
+      lives = 3;
+      awardedLifeThreshold = 0;
+      hitFlashTimer = 0;
+      bonusFlashTimer = 0;
+      bonusFlashText = "";
+    }
+
+    function maybeAwardExtraLife() {
+      const currentThreshold = Math.floor(score / 2000);
+      if (currentThreshold > awardedLifeThreshold) {
+        const gainedLives = currentThreshold - awardedLifeThreshold;
+        lives += gainedLives;
+        awardedLifeThreshold = currentThreshold;
+        bonusFlashTimer = 45;
+        bonusFlashText = `+${gainedLives} Life${gainedLives > 1 ? "s" : ""}!`;
+      }
     }
 
     function spawnObject() {
-      const size = Math.random() * 35 + 35;
+      const roll = Math.random();
+      let type = "bad";
+      let image = badImages[Math.floor(Math.random() * badImages.length)];
+      let points = 0;
+      let speedMultiplier = 1;
+
+      // Rare fast bonus
+      if (roll < 0.04) {
+        type = "bonus1000";
+        image = bonus1000Img;
+        points = 1000;
+        speedMultiplier = 2;
+      }
+      // Less rare regular bonus
+      else if (roll < 0.12) {
+        type = "bonus200";
+        image = bonus200Img;
+        points = 200;
+      }
+
+      const size = type === "bonus1000"
+        ? Math.random() * 20 + 35
+        : Math.random() * 25 + 40;
+
       const x = Math.random() * (canvas.width - size);
-      const speed = Math.random() * 2.5 + 2 + score * 0.01;
-      const image = fallingImages[Math.floor(Math.random() * fallingImages.length)];
+      const baseSpeed = Math.random() * 2.5 + 2 + score * 0.002;
+      const speed = baseSpeed * speedMultiplier;
 
       fallingObjects.push({
         x,
@@ -146,8 +199,19 @@
         width: size,
         height: size,
         speed,
-        image
+        image,
+        type,
+        points
       });
+    }
+
+    function rectsIntersect(a, b) {
+      return (
+        a.x < b.x + b.width &&
+        a.x + a.width > b.x &&
+        a.y < b.y + b.height &&
+        a.y + a.height > b.y
+      );
     }
 
     function update() {
@@ -168,36 +232,67 @@
         player.x = canvas.width - player.width;
       }
 
+      if (player.invulnerableTimer > 0) {
+        player.invulnerableTimer--;
+      }
+
+      if (hitFlashTimer > 0) hitFlashTimer--;
+      if (bonusFlashTimer > 0) bonusFlashTimer--;
+
       if (frame % 30 === 0) {
         spawnObject();
       }
 
-      for (const obj of fallingObjects) {
+      for (let i = fallingObjects.length - 1; i >= 0; i--) {
+        const obj = fallingObjects[i];
         obj.y += obj.speed;
 
-        const hit =
-          player.x < obj.x + obj.width &&
-          player.x + player.width > obj.x &&
-          player.y < obj.y + obj.height &&
-          player.y + player.height > obj.y;
+        const hit = rectsIntersect(player, obj);
 
         if (hit) {
-          gameOver = true;
+          if (obj.type === "bonus200" || obj.type === "bonus1000") {
+            score += obj.points;
+            maybeAwardExtraLife();
 
-          if (!isMuted) {
-            hitSound.currentTime = 0;
-            hitSound.play().catch(() => {});
+            bonusFlashTimer = 30;
+            bonusFlashText = `+${obj.points}`;
+            fallingObjects.splice(i, 1);
+            continue;
           }
 
-          music.pause();
+          if (obj.type === "bad" && player.invulnerableTimer <= 0) {
+            lives--;
+            player.invulnerableTimer = 60;
+            hitFlashTimer = 20;
+            fallingObjects.splice(i, 1);
+
+            if (!isMuted) {
+              hitSound.currentTime = 0;
+              hitSound.play().catch(() => {});
+            }
+
+            if (lives <= 0) {
+              gameOver = true;
+              music.pause();
+            }
+
+            continue;
+          }
+        }
+
+        if (obj.y > canvas.height + 100) {
+          fallingObjects.splice(i, 1);
         }
       }
 
-      fallingObjects = fallingObjects.filter(obj => obj.y < canvas.height + 100);
+      maybeAwardExtraLife();
     }
 
     function drawPlayer() {
-      if (playerImg.complete) {
+      const blinking = player.invulnerableTimer > 0 && Math.floor(player.invulnerableTimer / 5) % 2 === 0;
+      if (blinking) return;
+
+      if (playerImg.complete && playerImg.naturalWidth > 0) {
         ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
       } else {
         ctx.fillStyle = "#4da6ff";
@@ -207,19 +302,45 @@
 
     function drawFallingObjects() {
       for (const obj of fallingObjects) {
-        if (obj.image.complete) {
+        if (obj.image.complete && obj.image.naturalWidth > 0) {
           ctx.drawImage(obj.image, obj.x, obj.y, obj.width, obj.height);
         } else {
-          ctx.fillStyle = "#ff4d4d";
+          if (obj.type === "bonus200") ctx.fillStyle = "#66ff99";
+          else if (obj.type === "bonus1000") ctx.fillStyle = "#ffd700";
+          else ctx.fillStyle = "#ff4d4d";
+
           ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
         }
       }
     }
 
-    function drawScore() {
+    function drawHUD() {
       ctx.fillStyle = "white";
       ctx.font = "20px Arial";
       ctx.fillText(`Score: ${score}`, 12, 30);
+      ctx.fillText(`Lives: ${lives}`, 12, 58);
+
+      const nextLifeAt = (Math.floor(score / 2000) + 1) * 2000;
+      const remaining = nextLifeAt - score;
+      ctx.font = "16px Arial";
+      ctx.fillText(`Next life in: ${remaining}`, 12, 82);
+    }
+
+    function drawHitFlash() {
+      if (hitFlashTimer > 0) {
+        ctx.fillStyle = "rgba(255, 0, 0, 0.18)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function drawBonusFlash() {
+      if (bonusFlashTimer > 0 && bonusFlashText) {
+        ctx.fillStyle = "white";
+        ctx.font = "28px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(bonusFlashText, canvas.width / 2, 120);
+        ctx.textAlign = "left";
+      }
     }
 
     function drawStartScreen() {
@@ -255,7 +376,9 @@
 
       drawPlayer();
       drawFallingObjects();
-      drawScore();
+      drawHUD();
+      drawHitFlash();
+      drawBonusFlash();
 
       if (!gameStarted) {
         drawStartScreen();
@@ -275,12 +398,13 @@
     startBtn.addEventListener("click", async () => {
       if (!gameStarted) {
         gameStarted = true;
-        if (!isMuted) {
-          try {
-            await music.play();
-          } catch (err) {
-            console.log("Music could not start yet:", err);
-          }
+      }
+
+      if (!isMuted && !gameOver) {
+        try {
+          await music.play();
+        } catch (err) {
+          console.log("Music could not start yet:", err);
         }
       }
     });

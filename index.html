@@ -38,6 +38,7 @@
       border: 2px solid white;
       background: #1a1a1a;
       display: block;
+      touch-action: none;
     }
 
     .controls {
@@ -105,6 +106,10 @@
     let keys = {};
     let fallingObjects = [];
 
+    let touchActive = false;
+    let touchTargetX = null;
+    let touchTargetY = null;
+
     // Images
     const playerImg = new Image();
     playerImg.src = "player.png";
@@ -143,6 +148,38 @@
       keys[e.key] = false;
     });
 
+    function getTouchPosition(e) {
+      const rect = canvas.getBoundingClientRect();
+      const touch = e.touches[0];
+
+      return {
+        x: touch.clientX - rect.left,
+        y: touch.clientY - rect.top
+      };
+    }
+
+    canvas.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      const pos = getTouchPosition(e);
+      touchActive = true;
+      touchTargetX = pos.x - player.width / 2;
+      touchTargetY = pos.y - player.height / 2;
+    });
+
+    canvas.addEventListener("touchmove", (e) => {
+      e.preventDefault();
+      const pos = getTouchPosition(e);
+      touchTargetX = pos.x - player.width / 2;
+      touchTargetY = pos.y - player.height / 2;
+    });
+
+    canvas.addEventListener("touchend", (e) => {
+      e.preventDefault();
+      touchActive = false;
+      touchTargetX = null;
+      touchTargetY = null;
+    });
+
     function resetGameState() {
       player.x = 180;
       player.y = 520;
@@ -158,6 +195,9 @@
       bonusFlashTimer = 0;
       bonusFlashText = "";
       speedModeActivated = false;
+      touchActive = false;
+      touchTargetX = null;
+      touchTargetY = null;
     }
 
     function getSpeedMultiplier() {
@@ -246,7 +286,6 @@
       frame++;
       score++;
 
-      // Movement
       if (keys["ArrowLeft"] || keys["a"] || keys["A"]) {
         player.x -= player.speed;
       }
@@ -260,7 +299,23 @@
         player.y += player.speed;
       }
 
-      // Keep player inside canvas
+      if (touchActive && touchTargetX !== null && touchTargetY !== null) {
+        const dx = touchTargetX - player.x;
+        const dy = touchTargetY - player.y;
+
+        if (Math.abs(dx) > player.speed) {
+          player.x += Math.sign(dx) * player.speed;
+        } else {
+          player.x = touchTargetX;
+        }
+
+        if (Math.abs(dy) > player.speed) {
+          player.y += Math.sign(dy) * player.speed;
+        } else {
+          player.y = touchTargetY;
+        }
+      }
+
       if (player.x < 0) player.x = 0;
       if (player.x + player.width > canvas.width) {
         player.x = canvas.width - player.width;

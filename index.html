@@ -9,28 +9,20 @@
       box-sizing: border-box;
     }
 
-    html, body {
-      margin: 0;
-      padding: 0;
-      min-height: 100%;
-    }
-
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
       background: #111;
       color: white;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      min-height: 100dvh;
-      padding: 12px 12px 28px;
-      overflow-y: auto;
+      justify-content: center;
+      min-height: 100vh;
     }
 
     h1 {
-      margin: 6px 0 8px;
-      text-align: center;
+      margin-bottom: 8px;
     }
 
     p {
@@ -47,9 +39,6 @@
       background: #1a1a1a;
       display: block;
       touch-action: none;
-      width: min(100%, 400px);
-      height: auto;
-      max-height: 65dvh;
     }
 
     .controls {
@@ -58,12 +47,6 @@
       gap: 10px;
       flex-wrap: wrap;
       justify-content: center;
-      width: 100%;
-      max-width: 420px;
-      position: sticky;
-      bottom: 8px;
-      padding-top: 6px;
-      background: linear-gradient(to top, rgba(17,17,17,0.98), rgba(17,17,17,0.8), rgba(17,17,17,0));
     }
 
     button {
@@ -72,17 +55,6 @@
       cursor: pointer;
       border: none;
       border-radius: 8px;
-      flex: 1 1 120px;
-    }
-
-    @media (max-width: 480px) {
-      h1 {
-        font-size: 1.5rem;
-      }
-
-      p {
-        font-size: 0.95rem;
-      }
     }
   </style>
 </head>
@@ -136,6 +108,7 @@
     let touchTargetX = null;
     let touchTargetY = null;
 
+    // Images
     const playerImg = new Image();
     playerImg.src = "player.png";
 
@@ -152,6 +125,7 @@
     const bonus1000Img = new Image();
     bonus1000Img.src = "falling5.png";
 
+    // Audio
     const music = new Audio("music.mp3");
     music.loop = true;
     music.volume = 0.5;
@@ -182,48 +156,27 @@
       };
     }
 
-    async function startGameIfNeeded() {
-      if (!gameStarted) {
-        gameStarted = true;
-      }
-
-      if (!isMuted && !gameOver) {
-        try {
-          await music.play();
-        } catch (err) {
-          console.log("Music could not start yet:", err);
-        }
-      }
-    }
-
-    canvas.addEventListener("touchstart", async (e) => {
-      if (!gameStarted) {
-        await startGameIfNeeded();
-        return;
-      }
-
+    canvas.addEventListener("touchstart", (e) => {
       e.preventDefault();
       const pos = getTouchPosition(e);
       touchActive = true;
       touchTargetX = pos.x - player.width / 2;
       touchTargetY = pos.y - player.height / 2;
-    }, { passive: false });
+    });
 
     canvas.addEventListener("touchmove", (e) => {
-      if (!gameStarted) return;
       e.preventDefault();
       const pos = getTouchPosition(e);
       touchTargetX = pos.x - player.width / 2;
       touchTargetY = pos.y - player.height / 2;
-    }, { passive: false });
+    });
 
     canvas.addEventListener("touchend", (e) => {
-      if (!gameStarted) return;
       e.preventDefault();
       touchActive = false;
       touchTargetX = null;
       touchTargetY = null;
-    }, { passive: false });
+    });
 
     function resetGameState() {
       player.x = 180;
@@ -496,10 +449,10 @@
       ctx.fillStyle = "white";
       ctx.textAlign = "center";
       ctx.font = "30px Arial";
-      ctx.fillText("Tap or Press Start", canvas.width / 2, canvas.height / 2 - 10);
+      ctx.fillText("Press Start", canvas.width / 2, canvas.height / 2 - 10);
 
       ctx.font = "18px Arial";
-      ctx.fillText("Music begins after tap", canvas.width / 2, canvas.height / 2 + 30);
+      ctx.fillText("Music begins after click", canvas.width / 2, canvas.height / 2 + 30);
       ctx.textAlign = "left";
     }
 
@@ -542,7 +495,17 @@
     }
 
     startBtn.addEventListener("click", async () => {
-      await startGameIfNeeded();
+      if (!gameStarted) {
+        gameStarted = true;
+      }
+
+      if (!isMuted && !gameOver) {
+        try {
+          await music.play();
+        } catch (err) {
+          console.log("Music could not start yet:", err);
+        }
+      }
     });
 
     restartBtn.addEventListener("click", async () => {

@@ -314,7 +314,7 @@
     hitSound.preload = "auto";
 
     const bonusSound = new Audio("bonus.mp3");
-    bonusSound.volume = 0.8;
+    bonusSound.volume = 1.0;
     bonusSound.preload = "auto";
 
     const mooSound = new Audio("moo.m4a");
@@ -905,7 +905,8 @@
     }
 
     function spawnObject() {
-      const roll = Math.random();
+      const postCowbell = score >= 10000;
+
       let type = "bad";
       let image = badImages[Math.floor(Math.random() * badImages.length)];
       let basePoints = 0;
@@ -917,16 +918,7 @@
       let frameDuration = 1;
       let canHome = false;
 
-      if (roll < 0.15) {
-        type = "bonus1000";
-        image = bonus1000Img;
-        basePoints = 1000;
-        speedMultiplier = 2;
-      } else if (roll < 0.30) {
-        type = "bonus200";
-        image = bonus200Img;
-        basePoints = 200;
-      } else if (roll < 0.50) {
+      if (postCowbell) {
         type = "butcher";
         image = butcherSpriteSheet;
         usesSpriteSheet = true;
@@ -935,6 +927,29 @@
         totalFrames = BUTCHER_TOTAL_FRAMES;
         frameDuration = BUTCHER_FRAME_DURATION;
         canHome = true;
+      } else {
+        const roll = Math.random();
+
+        if (roll < 0.15) {
+          type = "bonus1000";
+          image = bonus1000Img;
+          basePoints = 1000;
+          speedMultiplier = 0.8;
+        } else if (roll < 0.30) {
+          type = "bonus200";
+          image = bonus200Img;
+          basePoints = 200;
+          speedMultiplier = 0.8;
+        } else if (roll < 0.50) {
+          type = "butcher";
+          image = butcherSpriteSheet;
+          usesSpriteSheet = true;
+          spriteCols = BUTCHER_SPRITE_COLS;
+          spriteRows = BUTCHER_SPRITE_ROWS;
+          totalFrames = BUTCHER_TOTAL_FRAMES;
+          frameDuration = BUTCHER_FRAME_DURATION;
+          canHome = true;
+        }
       }
 
       const size =
@@ -1134,7 +1149,7 @@
         const obj = fallingObjects[i];
         obj.y += obj.speed;
 
-        if ((obj.canHome || obj.type === "bad" || score >= 10000) && !freedomSequenceActive && !heartsCelebrationActive) {
+        if (obj.canHome && !freedomSequenceActive && !heartsCelebrationActive) {
           const playerCenterX = player.x + player.width / 2;
           const playerCenterY = player.y + player.height / 2;
           const objCenterX = obj.x + obj.width / 2;

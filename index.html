@@ -42,15 +42,24 @@
       line-height: 1.4;
     }
 
-canvas {
-  border: 2px solid white;
-  background: transparent;
-  display: block;
-  touch-action: none;
+    .game-wrap {
+      width: min(100%, 400px);
+      aspect-ratio: 2 / 3;
+      border: 2px solid white;
+      background-image: url("road.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      overflow: hidden;
+    }
 
-  width: min(100%, 400px);
-  height: min(calc(min(100vw, 400px) * 1.5), 65dvh);
-}
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+      background: transparent;
+    }
 
     .controls {
       margin-top: 12px;
@@ -93,7 +102,9 @@ canvas {
     <br>
   </p>
 
-  <canvas id="game" width="400" height="600"></canvas>
+  <div class="game-wrap">
+    <canvas id="game" width="400" height="600"></canvas>
+  </div>
 
   <div class="controls">
     <button id="startBtn">Start Game</button>
@@ -119,6 +130,9 @@ canvas {
     let bonusFlashTimer = 0;
     let bonusFlashText = "";
     let speedModeActivated = false;
+
+    const BASE_WIDTH = 400;
+    const BASE_HEIGHT = 600;
 
     const player = {
       x: 180,
@@ -163,6 +177,35 @@ canvas {
     bonusSound.volume = 0.8;
 
     let isMuted = false;
+
+    function scaleX(value) {
+      return value * (canvas.width / BASE_WIDTH);
+    }
+
+    function scaleY(value) {
+      return value * (canvas.height / BASE_HEIGHT);
+    }
+
+    function resizeCanvasToDisplaySize() {
+      const displayWidth = Math.round(canvas.clientWidth);
+      const displayHeight = Math.round(canvas.clientHeight);
+
+      if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+        const oldWidth = canvas.width || BASE_WIDTH;
+        const oldHeight = canvas.height || BASE_HEIGHT;
+
+        const playerXRatio = player.x / oldWidth;
+        const playerYRatio = player.y / oldHeight;
+
+        canvas.width = displayWidth;
+        canvas.height = displayHeight;
+
+        player.x = playerXRatio * canvas.width;
+        player.y = playerYRatio * canvas.height;
+      }
+    }
+
+    window.addEventListener("resize", resizeCanvasToDisplaySize);
 
     document.addEventListener("keydown", (e) => {
       keys[e.key] = true;
@@ -226,8 +269,13 @@ canvas {
     }, { passive: false });
 
     function resetGameState() {
-      player.x = 180;
-      player.y = 520;
+      resizeCanvasToDisplaySize();
+
+      player.width = scaleX(50);
+      player.height = scaleY(50);
+      player.speed = Math.max(scaleX(11), 4);
+      player.x = scaleX(180);
+      player.y = scaleY(520);
       player.invulnerableTimer = 0;
 
       fallingObjects = [];
@@ -291,11 +339,11 @@ canvas {
       }
 
       const size = type === "bonus1000"
-        ? Math.random() * 20 + 35
-        : Math.random() * 25 + 40;
+        ? scaleX(Math.random() * 20 + 35)
+        : scaleX(Math.random() * 25 + 40);
 
       const x = Math.random() * (canvas.width - size);
-      const baseSpeed = Math.random() * 2.5 + 2 + score * 0.0015;
+      const baseSpeed = scaleY(Math.random() * 2.5 + 2 + score * 0.0015);
       const speed = baseSpeed * speedMultiplier * getSpeedMultiplier();
 
       fallingObjects.push({
@@ -330,6 +378,10 @@ canvas {
 
       frame++;
       score++;
+
+      player.width = scaleX(50);
+      player.height = scaleY(50);
+      player.speed = Math.max(scaleX(11), 4);
 
       if (keys["ArrowLeft"] || keys["a"] || keys["A"]) {
         player.x -= player.speed;
@@ -419,7 +471,7 @@ canvas {
           }
         }
 
-        if (obj.y > canvas.height + 100) {
+        if (obj.y > canvas.height + scaleY(100)) {
           fallingObjects.splice(i, 1);
         }
       }
@@ -456,19 +508,19 @@ canvas {
 
     function drawHUD() {
       ctx.fillStyle = "white";
-      ctx.font = "20px Arial";
-      ctx.fillText(`Score: ${score}`, 12, 30);
-      ctx.fillText(`Lives: ${lives}`, 12, 58);
+      ctx.font = `${Math.max(scaleY(20), 14)}px Arial`;
+      ctx.fillText(`Score: ${score}`, scaleX(12), scaleY(30));
+      ctx.fillText(`Lives: ${lives}`, scaleX(12), scaleY(58));
 
       const nextLifeAt = (Math.floor(score / 2000) + 1) * 2000;
       const remaining = nextLifeAt - score;
-      ctx.font = "16px Arial";
-      ctx.fillText(`Next life in: ${remaining > 0 ? remaining : 0}`, 12, 82);
+      ctx.font = `${Math.max(scaleY(16), 12)}px Arial`;
+      ctx.fillText(`Next life in: ${remaining > 0 ? remaining : 0}`, scaleX(12), scaleY(82));
 
       if (score >= 10000) {
         ctx.fillStyle = "#ffd700";
-        ctx.font = "18px Arial";
-        ctx.fillText("2X SPEED / 2X BONUS", 12, 108);
+        ctx.font = `${Math.max(scaleY(18), 13)}px Arial`;
+        ctx.fillText("2X SPEED / 2X BONUS", scaleX(12), scaleY(108));
       }
     }
 
@@ -482,9 +534,9 @@ canvas {
     function drawBonusFlash() {
       if (bonusFlashTimer > 0 && bonusFlashText) {
         ctx.fillStyle = "white";
-        ctx.font = "28px Arial";
+        ctx.font = `${Math.max(scaleY(28), 18)}px Arial`;
         ctx.textAlign = "center";
-        ctx.fillText(bonusFlashText, canvas.width / 2, 140);
+        ctx.fillText(bonusFlashText, canvas.width / 2, scaleY(140));
         ctx.textAlign = "left";
       }
     }
@@ -495,11 +547,11 @@ canvas {
 
       ctx.fillStyle = "white";
       ctx.textAlign = "center";
-      ctx.font = "30px Arial";
-      ctx.fillText("Tap or Press Start", canvas.width / 2, canvas.height / 2 - 10);
+      ctx.font = `${Math.max(scaleY(30), 20)}px Arial`;
+      ctx.fillText("Tap or Press Start", canvas.width / 2, canvas.height / 2 - scaleY(10));
 
-      ctx.font = "18px Arial";
-      ctx.fillText("Music begins after tap", canvas.width / 2, canvas.height / 2 + 30);
+      ctx.font = `${Math.max(scaleY(18), 14)}px Arial`;
+      ctx.fillText("Music begins after tap", canvas.width / 2, canvas.height / 2 + scaleY(30));
       ctx.textAlign = "left";
     }
 
@@ -509,11 +561,11 @@ canvas {
 
       ctx.fillStyle = "white";
       ctx.textAlign = "center";
-      ctx.font = "34px Arial";
-      ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2 - 20);
+      ctx.font = `${Math.max(scaleY(34), 22)}px Arial`;
+      ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2 - scaleY(20));
 
-      ctx.font = "22px Arial";
-      ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2 + 20);
+      ctx.font = `${Math.max(scaleY(22), 16)}px Arial`;
+      ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2 + scaleY(20));
       ctx.textAlign = "left";
     }
 
@@ -536,6 +588,7 @@ canvas {
     }
 
     function loop() {
+      resizeCanvasToDisplaySize();
       update();
       draw();
       requestAnimationFrame(loop);

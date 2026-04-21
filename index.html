@@ -42,15 +42,18 @@
       line-height: 1.4;
     }
 
-    canvas {
-      border: 2px solid white;
-      background: #1a1a1a;
-      display: block;
-      touch-action: none;
-      width: min(100%, 400px);
-      height: auto;
-      max-height: 65dvh;
-    }
+canvas {
+  border: 2px solid white;
+  background: #1a1a1a;
+  display: block;
+  touch-action: none;
+
+  width: min(100%, 400px);
+  aspect-ratio: 2 / 3;   /* 🔥 locks correct proportions */
+  height: auto;
+
+  max-height: 65dvh;
+}
 
     .controls {
       margin-top: 12px;
@@ -89,7 +92,7 @@
 <body>
   <h1>Clover's Great Escape!</h1>
   <p>
-    Escape the butchers! And eat your veggies!
+    Escape the butchers! Eat your veggies!
     <br>
   </p>
 

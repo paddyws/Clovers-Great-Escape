@@ -235,7 +235,7 @@
 
     let checkpoint18000Shown = false;
     let checkpoint10000Shown = false;
-    let checkpoint20000Shown = false;
+    let checkpoint22000Shown = false;
     let freedomSequenceActive = false;
     let heartsCelebrationActive = false;
     let finalOverlayShown = false;
@@ -666,9 +666,9 @@
       );
     }
 
-    function showCheckpoint20000() {
-      if (checkpoint20000Shown) return;
-      checkpoint20000Shown = true;
+    function showCheckpoint22000() {
+      if (checkpoint22000Shown) return;
+      checkpoint22000Shown = true;
       gameWon = true;
       gamePaused = true;
       music.pause();
@@ -885,7 +885,7 @@
 
       checkpoint18000Shown = false;
       checkpoint10000Shown = false;
-      checkpoint20000Shown = false;
+      checkpoint22000Shown = false;
       freedomSequenceActive = false;
       heartsCelebrationActive = false;
       finalOverlayShown = false;
@@ -1001,7 +1001,7 @@
           : scaleX(Math.random() * 25 + 40) * 1.25;
 
       const x = Math.random() * (canvas.width - size);
-      const scoreSpeedRamp = Math.min(score * 0.0007, 2.2);
+      const scoreSpeedRamp = Math.min(score * 0.001, 2.2);
       const baseSpeed = scaleY(Math.random() * 2.0 + 2 + scoreSpeedRamp);
       const speed = baseSpeed * speedMultiplier * getSpeedMultiplier();
 
@@ -1184,7 +1184,7 @@
         let spawnInterval = Math.max(16, 30 - Math.floor(score / 1800));
 
         if (cowbellModeActive) {
-          spawnInterval = Math.max(4, Math.floor(spawnInterval / 2));
+          spawnInterval = Math.max(4, Math.floor(spawnInterval / 3));
         }
 
         if (frame % spawnInterval === 0) {
@@ -1299,8 +1299,8 @@
           showCheckpoint10000();
         }
 
-        if (score >= 20000) {
-          showCheckpoint20000();
+        if (score >= 22000) {
+          showCheckpoint22000();
         }
       }
     }

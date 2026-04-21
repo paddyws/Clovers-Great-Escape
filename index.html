@@ -383,7 +383,9 @@
     }
 
     function getHomingStrength() {
-      return 0.012 + Math.min(score / 40000, 0.02);
+      const base = score >= 10000 ? 0.02 : 0.012;
+      const extra = score >= 10000 ? 0.03 : 0.02;
+      return base + Math.min(score / 40000, extra);
     }
 
     function unlockSounds() {
@@ -876,7 +878,7 @@
     }
 
     function getSpeedMultiplier() {
-      return score >= 10000 ? 1.5 : 1;
+      return 1;
     }
 
     function getBonusMultiplier() {
@@ -887,7 +889,7 @@
       if (score >= 10000 && !speedModeActivated) {
         speedModeActivated = true;
         bonusFlashTimer = 70;
-        bonusFlashText = "SPEED MODE!";
+        bonusFlashText = "NEEDS MORE COWBELL";
       }
     }
 
@@ -1118,7 +1120,11 @@
       }
 
       if (!freedomSequenceActive && !heartsCelebrationActive) {
-        const spawnInterval = Math.max(14, 30 - Math.floor(score / 1500));
+        const baseSpawnInterval = Math.max(14, 30 - Math.floor(score / 1500));
+        const spawnInterval = score >= 10000
+          ? Math.max(8, Math.round(baseSpawnInterval / 1.5))
+          : baseSpawnInterval;
+
         if (frame % spawnInterval === 0) {
           spawnObject();
         }
@@ -1128,7 +1134,7 @@
         const obj = fallingObjects[i];
         obj.y += obj.speed;
 
-        if ((obj.canHome || obj.type === "bad") && !freedomSequenceActive && !heartsCelebrationActive) {
+        if ((obj.canHome || obj.type === "bad" || score >= 10000) && !freedomSequenceActive && !heartsCelebrationActive) {
           const playerCenterX = player.x + player.width / 2;
           const playerCenterY = player.y + player.height / 2;
           const objCenterX = obj.x + obj.width / 2;
@@ -1143,9 +1149,10 @@
 
             obj.x += pushX;
             obj.y += pushY;
-          } else if (obj.canHome) {
-            const homing = dx * getHomingStrength() * 1.2;
-            const maxSideSpeed = scaleX(1.4 * 1.2);
+          } else {
+            const homingMultiplier = score >= 10000 ? 1.5 : 1.2;
+            const homing = dx * getHomingStrength() * homingMultiplier;
+            const maxSideSpeed = scaleX(score >= 10000 ? 2.4 : 1.4 * 1.2);
 
             obj.x += Math.max(-maxSideSpeed, Math.min(maxSideSpeed, homing));
           }
@@ -1345,12 +1352,6 @@
       ctx.font = `${Math.max(scaleY(16), 12)}px Arial`;
       ctx.fillText(`Next life in: ${remaining > 0 ? remaining : 0}`, scaleX(12), scaleY(82));
 
-      if (score >= 10000 && score < 20000) {
-        ctx.fillStyle = "#ffd700";
-        ctx.font = `${Math.max(scaleY(18), 13)}px Arial`;
-        ctx.fillText("2X SPEED / 2X BONUS", scaleX(12), scaleY(108));
-      }
-
       const mooReady = mooCooldownTimer <= 0;
       const mooSeconds = (mooCooldownTimer / 60).toFixed(1);
 
@@ -1359,7 +1360,7 @@
       ctx.fillText(
         mooReady ? "Moo ready: SPACE / double tap" : `Moo cooldown: ${mooSeconds}s`,
         scaleX(12),
-        scaleY(130)
+        scaleY(108)
       );
     }
 

@@ -307,14 +307,22 @@
     const music = new Audio("music.mp3");
     music.loop = true;
     music.volume = 0.5;
+    music.preload = "auto";
 
     const hitSound = new Audio("hit.mp3");
     hitSound.volume = 0.8;
+    hitSound.preload = "auto";
 
     const bonusSound = new Audio("bonus.mp3");
     bonusSound.volume = 0.8;
+    bonusSound.preload = "auto";
+
+    const mooSound = new Audio("moo.mp3");
+    mooSound.volume = 0.9;
+    mooSound.preload = "auto";
 
     let isMuted = false;
+    let soundsUnlocked = false;
 
     function scaleX(value) {
       return value * (canvas.width / BASE_WIDTH);
@@ -378,10 +386,38 @@
       return 0.012 + Math.min(score / 40000, 0.02);
     }
 
+    function unlockSounds() {
+      if (soundsUnlocked) return;
+      soundsUnlocked = true;
+
+      const sounds = [music, hitSound, bonusSound, mooSound];
+
+      sounds.forEach((sound) => {
+        try {
+          sound.load();
+          const playAttempt = sound.play();
+
+          if (playAttempt && typeof playAttempt.then === "function") {
+            playAttempt
+              .then(() => {
+                sound.pause();
+                sound.currentTime = 0;
+              })
+              .catch(() => {});
+          } else {
+            sound.pause();
+            sound.currentTime = 0;
+          }
+        } catch (err) {}
+      });
+    }
+
     function activateMooPulse() {
       if (!gameStarted || gamePaused || gameOver) return;
       if (mooCooldownTimer > 0) return;
       if (freedomSequenceActive || heartsCelebrationActive) return;
+
+      unlockSounds();
 
       mooPulseActive = true;
       mooPulseTimer = 120;
@@ -389,6 +425,8 @@
       mooFlashTimer = 18;
       bonusFlashTimer = 40;
       bonusFlashText = "MOO!";
+
+      playSound(mooSound);
     }
 
     function escapeHtml(text) {
@@ -530,6 +568,7 @@
           {
             label: "Moo.",
             onClick: async () => {
+              unlockSounds();
               gameStarted = true;
               hideOverlay();
 
@@ -555,7 +594,7 @@
       checkpoint10000Shown = true;
 
       showOverlay(
-        `The people want grass fed, and your belly is full of grass.\n\nDo you wish to continue?`,
+        `The people want grass fed beef, and your stomachs are full of grass.\n\n Do you go on ?`,
         [
           {
             label: "Mooooo",
@@ -665,7 +704,7 @@
       gamePaused = true;
 
       showOverlay(
-        `You feel warm and fuzzy inside.\n\nYOU WIN THE GAME CLOVER\n\nDo you wish to enter mortality?`,
+        `You feel warm and fuzzy inside.\n\nYOU ESCAPED CLOVER\n\nDo you wish to enter mortality?`,
         [
           {
             label: "Mooooo.",
@@ -709,8 +748,17 @@
 
     function playSound(sound) {
       if (isMuted) return;
-      sound.currentTime = 0;
-      sound.play().catch(() => {});
+
+      try {
+        const s = sound.cloneNode();
+        s.volume = sound.volume;
+        s.play().catch(() => {});
+      } catch (err) {
+        try {
+          sound.currentTime = 0;
+          sound.play().catch(() => {});
+        } catch (err2) {}
+      }
     }
 
     window.addEventListener("resize", resizeCanvasToDisplaySize);
@@ -744,6 +792,7 @@
 
     canvas.addEventListener("touchstart", (e) => {
       e.preventDefault();
+      unlockSounds();
 
       const now = Date.now();
       if (now - lastTapTime < 300) {

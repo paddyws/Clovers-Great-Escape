@@ -90,12 +90,42 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.06);
       text-align: center;
       backdrop-filter: blur(5px);
+      min-height: 150px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     .overlay-text {
       font-size: 17px;
       line-height: 1.45;
       white-space: pre-line;
+      min-height: 78px;
+    }
+
+    .dialogue-cursor {
+      display: inline-block;
+      width: 0.6ch;
+      animation: blinkCursor 0.9s steps(1) infinite;
+      opacity: 0.8;
+    }
+
+    @keyframes blinkCursor {
+      50% {
+        opacity: 0;
+      }
+    }
+
+    .overlay-continue {
+      margin-top: 10px;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.75;
+    }
+
+    .overlay-continue.hidden {
+      visibility: hidden;
     }
 
     .overlay-buttons {
@@ -172,6 +202,7 @@
     <div id="overlay" class="overlay">
       <div class="overlay-box">
         <div id="overlayText" class="overlay-text"></div>
+        <div id="overlayContinue" class="overlay-continue hidden">tap to continue</div>
         <div id="overlayButtons" class="overlay-buttons"></div>
       </div>
     </div>
@@ -186,6 +217,7 @@
     const overlay = document.getElementById("overlay");
     const overlayText = document.getElementById("overlayText");
     const overlayButtons = document.getElementById("overlayButtons");
+    const overlayContinue = document.getElementById("overlayContinue");
     const endBanner = document.getElementById("endBanner");
 
     let gameStarted = false;
@@ -207,6 +239,10 @@
     let heartsCelebrationActive = false;
     let finalOverlayShown = false;
     let exitingMortality = false;
+
+    let activeDialogue = null;
+    let dialogueTimeout = null;
+    let overlayTapHandler = null;
 
     const BASE_WIDTH = 400;
     const BASE_HEIGHT = 600;
@@ -334,9 +370,83 @@
       return 0.012 + Math.min(score / 40000, 0.02);
     }
 
-    function showOverlay(text, buttons = []) {
-      gamePaused = true;
-      overlayText.innerHTML = text.replace(/\n/g, "<br>");
+    function escapeHtml(text) {
+      return text
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+    }
+
+    function renderDialogueText(text, typedLength, done = false) {
+      const visible = escapeHtml(text.slice(0, typedLength)).replace(/\n/g, "<br>");
+      overlayText.innerHTML = visible + (done ? "" : `<span class="dialogue-cursor">|</span>`);
+    }
+
+    function clearDialogueHandlers() {
+      if (dialogueTimeout) {
+        clearTimeout(dialogueTimeout);
+        dialogueTimeout = null;
+      }
+
+      if (overlayTapHandler) {
+        overlay.removeEventListener("click", overlayTapHandler);
+        overlayTapHandler = null;
+      }
+
+      activeDialogue = null;
+    }
+
+    function finalizeDialogue() {
+      if (!activeDialogue) return;
+
+      activeDialogue.index = activeDialogue.text.length;
+      renderDialogueText(activeDialogue.text, activeDialogue.index, true);
+
+      if (activeDialogue.requireContinueBeforeButtons && activeDialogue.buttons.length > 0) {
+        overlayContinue.classList.remove("hidden");
+
+        overlayTapHandler = (e) => {
+          if (e.target.closest("button")) return;
+          overlay.removeEventListener("click", overlayTapHandler);
+          overlayTapHandler = null;
+          overlayContinue.classList.add("hidden");
+          showDialogueButtons(activeDialogue.buttons);
+        };
+
+        overlay.addEventListener("click", overlayTapHandler);
+      } else {
+        showDialogueButtons(activeDialogue.buttons);
+      }
+    }
+
+    function typeNextCharacter() {
+      if (!activeDialogue) return;
+
+      if (activeDialogue.index >= activeDialogue.text.length) {
+        finalizeDialogue();
+        return;
+      }
+
+      activeDialogue.index++;
+      renderDialogueText(activeDialogue.text, activeDialogue.index, false);
+
+      const currentChar = activeDialogue.text[activeDialogue.index - 1];
+      let delay = activeDialogue.speed;
+
+      if (currentChar === "." || currentChar === "?" || currentChar === "!") {
+        delay += 120;
+      } else if (currentChar === ",") {
+        delay += 70;
+      } else if (currentChar === "\n") {
+        delay += 120;
+      } else if (currentChar === " ") {
+        delay -= 5;
+      }
+
+      dialogueTimeout = setTimeout(typeNextCharacter, Math.max(15, delay));
+    }
+
+    function showDialogueButtons(buttons = []) {
       overlayButtons.innerHTML = "";
 
       buttons.forEach((btn) => {
@@ -346,12 +456,47 @@
         button.addEventListener("click", btn.onClick);
         overlayButtons.appendChild(button);
       });
+    }
 
+    function showOverlay(text, buttons = [], options = {}) {
+      clearDialogueHandlers();
+
+      gamePaused = true;
       overlay.classList.remove("hidden");
+      overlayButtons.innerHTML = "";
+      overlayContinue.classList.add("hidden");
+
+      const speed = options.speed ?? 28;
+      const requireContinueBeforeButtons = options.requireContinueBeforeButtons ?? false;
+
+      activeDialogue = {
+        text,
+        buttons,
+        index: 0,
+        speed,
+        requireContinueBeforeButtons
+      };
+
+      renderDialogueText(text, 0, false);
+
+      overlayTapHandler = (e) => {
+        if (e.target.closest("button")) return;
+        if (!activeDialogue) return;
+
+        if (activeDialogue.index < activeDialogue.text.length) {
+          finalizeDialogue();
+        }
+      };
+
+      overlay.addEventListener("click", overlayTapHandler);
+      typeNextCharacter();
     }
 
     function hideOverlay() {
+      clearDialogueHandlers();
       overlay.classList.add("hidden");
+      overlayContinue.classList.add("hidden");
+
       if (!gameOver && !gameWon && !exitingMortality) {
         gamePaused = false;
       }
@@ -359,7 +504,7 @@
 
     function showStartOverlay() {
       showOverlay(
-        `Moo. Moo mooo mooo moo.\n\nUnderstood?`,
+        `Moo.\n\nMoo mooo mooo moo.\n\nUnderstood?`,
         [
           {
             label: "Moo.",
@@ -376,7 +521,11 @@
               }
             }
           }
-        ]
+        ],
+        {
+          speed: 34,
+          requireContinueBeforeButtons: true
+        }
       );
     }
 
@@ -385,7 +534,7 @@
       checkpoint10000Shown = true;
 
       showOverlay(
-        `The people want grass fed, and your belly is full of grass. Do you wish to continue?`,
+        `The people want grass fed, and your belly is full of grass.\n\nDo you wish to continue?`,
         [
           {
             label: "Mooooo",
@@ -400,8 +549,9 @@
               gameOver = true;
               gamePaused = true;
               music.pause();
+
               showOverlay(
-                `Clover lowers her head.\nShe will not go on.`,
+                `Clover lowers her head.\n\nShe will not go on.`,
                 [
                   {
                     label: "Again",
@@ -409,11 +559,19 @@
                       restartGame();
                     }
                   }
-                ]
+                ],
+                {
+                  speed: 28,
+                  requireContinueBeforeButtons: true
+                }
               );
             }
           }
-        ]
+        ],
+        {
+          speed: 28,
+          requireContinueBeforeButtons: true
+        }
       );
     }
 
@@ -425,7 +583,7 @@
       music.pause();
 
       showOverlay(
-        `Whew. That was close.\n\nWould you like to be milked?`,
+        `Whew.\n\nThat was close.\n\nWould you like to be milked?`,
         [
           {
             label: "Mooooo",
@@ -440,7 +598,11 @@
               startFreedomEnding();
             }
           }
-        ]
+        ],
+        {
+          speed: 30,
+          requireContinueBeforeButtons: true
+        }
       );
     }
 
@@ -495,14 +657,21 @@
               exitToMortality();
             }
           }
-        ]
+        ],
+        {
+          speed: 26,
+          requireContinueBeforeButtons: true
+        }
       );
     }
 
     function exitToMortality() {
       exitingMortality = true;
-      overlayText.innerHTML = `Entering mortality...`;
+      clearDialogueHandlers();
+      overlayText.innerHTML = `Entering mortality<span class="dialogue-cursor">|</span>`;
       overlayButtons.innerHTML = "";
+      overlayContinue.classList.add("hidden");
+
       setTimeout(() => {
         window.location.reload();
       }, 900);
@@ -607,6 +776,7 @@
       touchTargetX = null;
       touchTargetY = null;
 
+      clearDialogueHandlers();
       endBanner.classList.add("hidden");
     }
 
@@ -756,6 +926,7 @@
           gamePaused = true;
           freedomSequenceActive = false;
           endBanner.classList.remove("hidden");
+
           showOverlay(
             `FREEDOM`,
             [
@@ -765,7 +936,11 @@
                   exitToMortality();
                 }
               }
-            ]
+            ],
+            {
+              speed: 44,
+              requireContinueBeforeButtons: true
+            }
           );
         }
       } else {
@@ -897,7 +1072,7 @@
               music.pause();
 
               showOverlay(
-                `You became a steak\n\nFinal Score: ${score}`,
+                `You became a steak.\n\nFinal Score: ${score}`,
                 [
                   {
                     label: "Again",
@@ -905,7 +1080,11 @@
                       restartGame();
                     }
                   }
-                ]
+                ],
+                {
+                  speed: 28,
+                  requireContinueBeforeButtons: true
+                }
               );
             }
 

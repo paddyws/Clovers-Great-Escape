@@ -934,12 +934,12 @@
           type = "bonus1000";
           image = bonus1000Img;
           basePoints = 1000;
-          speedMultiplier = 1.3;
+          speedMultiplier = 1.8;
         } else if (roll < 0.95) {
           type = "bonus200";
           image = bonus200Img;
           basePoints = 200;
-          speedMultiplier = .9;
+          speedMultiplier = 1.0;
         } else {
           type = "bad";
           image = badImages[Math.floor(Math.random() * badImages.length)];
@@ -949,7 +949,7 @@
           type = "bonus1000";
           image = bonus1000Img;
           basePoints = 1000;
-          speedMultiplier = 1.3;
+          speedMultiplier = 1.8;
         } else if (roll < 0.30) {
           type = "bonus200";
           image = bonus200Img;
@@ -1183,7 +1183,7 @@
           } else {
             const homingMultiplier = score >= 10000 ? 1.18 : 1.08;
             const homing = dx * getHomingStrength() * homingMultiplier;
-            const maxSideSpeed = scaleX(score >= 10000 ? 1.65 : 1.35);
+            const maxSideSpeed = scaleX(score >= 10000 ? 1.5 : 1.35);
 
             obj.x += Math.max(-maxSideSpeed, Math.min(maxSideSpeed, homing));
           }
@@ -1197,7 +1197,7 @@
         const playerHitbox = getHitbox(player, 0.12);
         const objectHitbox =
           obj.type === "bad" || obj.type === "butcher"
-            ? getHitbox(obj, 0.22)
+            ? getHitbox(obj, 0.10)
             : getHitbox(obj, 0.12);
 
         const hit = rectsIntersect(playerHitbox, objectHitbox);

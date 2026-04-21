@@ -457,7 +457,8 @@
       if (hitFlashTimer > 0) hitFlashTimer--;
       if (bonusFlashTimer > 0) bonusFlashTimer--;
 
-      if (frame % 30 === 0) {
+      const spawnInterval = Math.max(14, 30 - Math.floor(score / 1500));
+      if (frame % spawnInterval === 0) {
         spawnObject();
       }
 

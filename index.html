@@ -962,6 +962,9 @@
           totalFrames = BUTCHER_TOTAL_FRAMES;
           frameDuration = BUTCHER_FRAME_DURATION;
           canHome = true;
+
+  // 👇 ONLY faster after 18000
+        speedMultiplier = cowbellModeActive ? 1.3 : 1.0;
         } else if (roll < 0.50) {
           type = "bonus1000";
           image = bonus1000Img;
@@ -1229,7 +1232,7 @@
         const objectHitbox =
           obj.type === "bad" || obj.type === "butcher"
             ? getHitbox(obj, 0.3)
-            : getHitbox(obj, 0.2);
+            : getHitbox(obj, 0.25);
 
         const hit = rectsIntersect(playerHitbox, objectHitbox);
 

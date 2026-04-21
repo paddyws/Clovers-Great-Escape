@@ -44,15 +44,12 @@
 
 canvas {
   border: 2px solid white;
-  background: #1a1a1a;
+  background: transparent;
   display: block;
   touch-action: none;
 
   width: min(100%, 400px);
-  aspect-ratio: 2 / 3;   /* 🔥 locks correct proportions */
-  height: auto;
-
-  max-height: 65dvh;
+  height: min(calc(min(100vw, 400px) * 1.5), 65dvh);
 }
 
     .controls {

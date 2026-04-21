@@ -239,6 +239,8 @@
     let heartsCelebrationActive = false;
     let finalOverlayShown = false;
     let exitingMortality = false;
+    let heartExplosionCount = 0;
+    const MAX_HEART_EXPLOSIONS = 3;
 
     let activeDialogue = null;
     let dialogueTimeout = null;
@@ -617,8 +619,10 @@
     function startWarmAndFuzzyEnding() {
       heartsCelebrationActive = true;
       finalOverlayShown = false;
+      heartExplosionCount = 0;
       hideOverlay();
       makeHeartsExplode();
+      heartExplosionCount++;
     }
 
     function makeHeartsExplode() {
@@ -771,6 +775,7 @@
       heartsCelebrationActive = false;
       finalOverlayShown = false;
       exitingMortality = false;
+      heartExplosionCount = 0;
 
       touchActive = false;
       touchTargetX = null;
@@ -893,11 +898,13 @@
       }
 
       if (heartsCelebrationActive && heartBursts.length === 0) {
-        makeHeartsExplode();
-      }
-
-      if (heartsCelebrationActive && score >= 20000 && !finalOverlayShown && frame % 50 === 0) {
-        showFinalWarmOverlay();
+        if (heartExplosionCount < MAX_HEART_EXPLOSIONS) {
+          makeHeartsExplode();
+          heartExplosionCount++;
+        } else if (!finalOverlayShown) {
+          heartsCelebrationActive = false;
+          showFinalWarmOverlay();
+        }
       }
     }
 

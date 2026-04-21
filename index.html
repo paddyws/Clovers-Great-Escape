@@ -242,6 +242,12 @@
     let heartExplosionCount = 0;
     const MAX_HEART_EXPLOSIONS = 3;
 
+    let mooPulseActive = false;
+    let mooPulseTimer = 0;
+    let mooCooldownTimer = 0;
+    let lastTapTime = 0;
+    let mooFlashTimer = 0;
+
     let activeDialogue = null;
     let dialogueTimeout = null;
     let overlayTapHandler = null;
@@ -370,6 +376,19 @@
 
     function getHomingStrength() {
       return 0.012 + Math.min(score / 40000, 0.02);
+    }
+
+    function activateMooPulse() {
+      if (!gameStarted || gamePaused || gameOver) return;
+      if (mooCooldownTimer > 0) return;
+      if (freedomSequenceActive || heartsCelebrationActive) return;
+
+      mooPulseActive = true;
+      mooPulseTimer = 120;
+      mooCooldownTimer = 600;
+      mooFlashTimer = 18;
+      bonusFlashTimer = 40;
+      bonusFlashText = "MOO!";
     }
 
     function escapeHtml(text) {
@@ -697,11 +716,20 @@
     window.addEventListener("resize", resizeCanvasToDisplaySize);
 
     document.addEventListener("keydown", (e) => {
+      if (e.code === "Space") {
+        e.preventDefault();
+        if (!keys[e.code]) {
+          activateMooPulse();
+        }
+      }
+
       keys[e.key] = true;
+      keys[e.code] = true;
     });
 
     document.addEventListener("keyup", (e) => {
       keys[e.key] = false;
+      keys[e.code] = false;
     });
 
     function getTouchPosition(e) {
@@ -716,6 +744,12 @@
 
     canvas.addEventListener("touchstart", (e) => {
       e.preventDefault();
+
+      const now = Date.now();
+      if (now - lastTapTime < 300) {
+        activateMooPulse();
+      }
+      lastTapTime = now;
 
       if (!gameStarted || gamePaused || gameOver) return;
 
@@ -776,6 +810,12 @@
       finalOverlayShown = false;
       exitingMortality = false;
       heartExplosionCount = 0;
+
+      mooPulseActive = false;
+      mooPulseTimer = 0;
+      mooCooldownTimer = 0;
+      lastTapTime = 0;
+      mooFlashTimer = 0;
 
       touchActive = false;
       touchTargetX = null;
@@ -1015,6 +1055,17 @@
 
       if (hitFlashTimer > 0) hitFlashTimer--;
       if (bonusFlashTimer > 0) bonusFlashTimer--;
+      if (mooFlashTimer > 0) mooFlashTimer--;
+
+      if (mooPulseTimer > 0) {
+        mooPulseTimer--;
+      } else {
+        mooPulseActive = false;
+      }
+
+      if (mooCooldownTimer > 0) {
+        mooCooldownTimer--;
+      }
 
       if (!freedomSequenceActive && !heartsCelebrationActive) {
         const spawnInterval = Math.max(14, 30 - Math.floor(score / 1500));
@@ -1027,14 +1078,27 @@
         const obj = fallingObjects[i];
         obj.y += obj.speed;
 
-        if (obj.canHome && !freedomSequenceActive && !heartsCelebrationActive) {
+        if ((obj.canHome || obj.type === "bad") && !freedomSequenceActive && !heartsCelebrationActive) {
           const playerCenterX = player.x + player.width / 2;
+          const playerCenterY = player.y + player.height / 2;
           const objCenterX = obj.x + obj.width / 2;
-          const dx = playerCenterX - objCenterX;
-          const homing = dx * getHomingStrength() * 1.2;
-          const maxSideSpeed = scaleX(1.4 * 1.2);
+          const objCenterY = obj.y + obj.height / 2;
 
-          obj.x += Math.max(-maxSideSpeed, Math.min(maxSideSpeed, homing));
+          const dx = playerCenterX - objCenterX;
+          const dy = playerCenterY - objCenterY;
+
+          if (mooPulseActive) {
+            const pushX = -Math.sign(dx || 1) * scaleX(2.8);
+            const pushY = -Math.sign(dy || 1) * scaleY(1.6);
+
+            obj.x += pushX;
+            obj.y += pushY;
+          } else if (obj.canHome) {
+            const homing = dx * getHomingStrength() * 1.2;
+            const maxSideSpeed = scaleX(1.4 * 1.2);
+
+            obj.x += Math.max(-maxSideSpeed, Math.min(maxSideSpeed, homing));
+          }
         }
 
         if (obj.x < -obj.width * 0.25) obj.x = -obj.width * 0.25;
@@ -1162,6 +1226,23 @@
       }
     }
 
+    function drawMooFlash() {
+      if (mooFlashTimer > 0) {
+        ctx.save();
+        ctx.fillStyle = "rgba(255,255,255,0.10)";
+        ctx.beginPath();
+        ctx.arc(
+          player.x + player.width / 2,
+          player.y + player.height / 2,
+          scaleX(90 - mooFlashTimer * 2),
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
     function drawFallingObjects() {
       for (const obj of fallingObjects) {
         if (obj.usesSpriteSheet && obj.image.complete && obj.image.naturalWidth > 0) {
@@ -1219,6 +1300,17 @@
         ctx.font = `${Math.max(scaleY(18), 13)}px Arial`;
         ctx.fillText("2X SPEED / 2X BONUS", scaleX(12), scaleY(108));
       }
+
+      const mooReady = mooCooldownTimer <= 0;
+      const mooSeconds = (mooCooldownTimer / 60).toFixed(1);
+
+      ctx.fillStyle = mooReady ? "#9cffb0" : "#ffffff";
+      ctx.font = `${Math.max(scaleY(15), 11)}px Arial`;
+      ctx.fillText(
+        mooReady ? "Moo ready: SPACE / double tap" : `Moo cooldown: ${mooSeconds}s`,
+        scaleX(12),
+        scaleY(130)
+      );
     }
 
     function drawHitFlash() {
@@ -1242,6 +1334,7 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       drawPlayer();
+      drawMooFlash();
       drawFallingObjects();
       drawHearts();
       drawHUD();

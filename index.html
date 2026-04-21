@@ -150,8 +150,10 @@
     let touchTargetX = null;
     let touchTargetY = null;
 
+    let playerFacingLeft = false;
+
     const playerSpriteSheet = new Image();
-    playerSpriteSheet.src = "cow2-idle.png";
+    playerSpriteSheet.src = "cow2-walk-v1.png";
 
     const PLAYER_SPRITE_COLS = 5;
     const PLAYER_SPRITE_ROWS = 5;
@@ -230,6 +232,18 @@
       );
     }
 
+    function getHitbox(obj, insetPercent = 0.18) {
+      const insetX = obj.width * insetPercent;
+      const insetY = obj.height * insetPercent;
+
+      return {
+        x: obj.x + insetX,
+        y: obj.y + insetY,
+        width: obj.width - insetX * 2,
+        height: obj.height - insetY * 2
+      };
+    }
+
     window.addEventListener("resize", resizeCanvasToDisplaySize);
 
     document.addEventListener("keydown", (e) => {
@@ -296,13 +310,14 @@
     function resetGameState() {
       resizeCanvasToDisplaySize();
 
-      player.width = scaleX(72*1.5);
-      player.height = scaleY(72*1.5);
+      player.width = scaleX(72 * 1.5);
+      player.height = scaleY(72 * 1.5);
       player.speed = Math.max(scaleX(11), 4);
       player.x = scaleX(164);
       player.y = canvas.height - player.height - scaleY(28);
       player.invulnerableTimer = 0;
       playerAnimationFrame = 0;
+      playerFacingLeft = false;
 
       fallingObjects = [];
       gameOver = false;
@@ -365,8 +380,8 @@
       }
 
       const size = type === "bonus1000"
-        ? scaleX(Math.random() * 20 + 35)*1.25
-        : scaleX(Math.random() * 25 + 40)*1.25;
+        ? scaleX(Math.random() * 20 + 35) * 1.25
+        : scaleX(Math.random() * 25 + 40) * 1.25;
 
       const x = Math.random() * (canvas.width - size);
       const baseSpeed = scaleY(Math.random() * 2.5 + 2 + score * 0.001);
@@ -405,21 +420,29 @@
       frame++;
       score++;
 
-      player.width = scaleX(72*1.5);
-      player.height = scaleY(72*1.5);
+      player.width = scaleX(72 * 1.5);
+      player.height = scaleY(72 * 1.5);
       player.speed = Math.max(scaleX(11), 4);
+
+      let isMoving = false;
 
       if (keys["ArrowLeft"] || keys["a"] || keys["A"]) {
         player.x -= player.speed;
+        playerFacingLeft = true;
+        isMoving = true;
       }
       if (keys["ArrowRight"] || keys["d"] || keys["D"]) {
         player.x += player.speed;
+        playerFacingLeft = false;
+        isMoving = true;
       }
       if (keys["ArrowUp"] || keys["w"] || keys["W"]) {
         player.y -= player.speed;
+        isMoving = true;
       }
       if (keys["ArrowDown"] || keys["s"] || keys["S"]) {
         player.y += player.speed;
+        isMoving = true;
       }
 
       if (touchActive && touchTargetX !== null && touchTargetY !== null) {
@@ -428,18 +451,28 @@
 
         if (Math.abs(dx) > player.speed) {
           player.x += Math.sign(dx) * player.speed;
-        } else {
+          playerFacingLeft = dx < 0;
+          isMoving = true;
+        } else if (Math.abs(dx) > 1) {
           player.x = touchTargetX;
+          playerFacingLeft = dx < 0;
+          isMoving = true;
         }
 
         if (Math.abs(dy) > player.speed) {
           player.y += Math.sign(dy) * player.speed;
-        } else {
+          isMoving = true;
+        } else if (Math.abs(dy) > 1) {
           player.y = touchTargetY;
+          isMoving = true;
         }
       }
 
-      playerAnimationFrame = Math.floor(frame / PLAYER_FRAME_DURATION) % PLAYER_TOTAL_FRAMES;
+      if (isMoving) {
+        playerAnimationFrame = Math.floor(frame / PLAYER_FRAME_DURATION) % PLAYER_TOTAL_FRAMES;
+      } else {
+        playerAnimationFrame = 0;
+      }
 
       if (player.x < 0) player.x = 0;
       if (player.x + player.width > canvas.width) {
@@ -466,7 +499,13 @@
         const obj = fallingObjects[i];
         obj.y += obj.speed;
 
-        const hit = rectsIntersect(player, obj);
+        const playerHitbox = getHitbox(player, 0.12);
+        const objectHitbox =
+          obj.type === "bad"
+            ? getHitbox(obj, 0.22)
+            : getHitbox(obj, 0.12);
+
+        const hit = rectsIntersect(playerHitbox, objectHitbox);
 
         if (hit) {
           if (obj.type === "bonus200" || obj.type === "bonus1000") {
@@ -517,16 +556,36 @@
       if (blinking) return;
 
       if (playerSpriteSheet.complete && playerSpriteSheet.naturalWidth > 0) {
-        drawSpriteFrame(
-          playerSpriteSheet,
-          playerAnimationFrame,
-          PLAYER_SPRITE_COLS,
-          PLAYER_SPRITE_ROWS,
-          player.x,
-          player.y,
-          player.width,
-          player.height
-        );
+        ctx.save();
+
+        if (playerFacingLeft) {
+          ctx.translate(player.x + player.width, player.y);
+          ctx.scale(-1, 1);
+
+          drawSpriteFrame(
+            playerSpriteSheet,
+            playerAnimationFrame,
+            PLAYER_SPRITE_COLS,
+            PLAYER_SPRITE_ROWS,
+            0,
+            0,
+            player.width,
+            player.height
+          );
+        } else {
+          drawSpriteFrame(
+            playerSpriteSheet,
+            playerAnimationFrame,
+            PLAYER_SPRITE_COLS,
+            PLAYER_SPRITE_ROWS,
+            player.x,
+            player.y,
+            player.width,
+            player.height
+          );
+        }
+
+        ctx.restore();
       } else {
         ctx.fillStyle = "#4da6ff";
         ctx.fillRect(player.x, player.y, player.width, player.height);

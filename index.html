@@ -317,7 +317,7 @@
     bonusSound.volume = 0.8;
     bonusSound.preload = "auto";
 
-    const mooSound = new Audio("moo.mp3");
+    const mooSound = new Audio("moo.m4a");
     mooSound.volume = 0.9;
     mooSound.preload = "auto";
 
@@ -390,7 +390,7 @@
       if (soundsUnlocked) return;
       soundsUnlocked = true;
 
-      const sounds = [music, hitSound, bonusSound, mooSound];
+      const sounds = [hitSound, bonusSound, mooSound];
 
       sounds.forEach((sound) => {
         try {
@@ -574,6 +574,7 @@
 
               if (!isMuted && !gameOver) {
                 try {
+                  music.currentTime = 0;
                   await music.play();
                 } catch (err) {
                   console.log("Music could not start yet:", err);

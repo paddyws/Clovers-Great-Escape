@@ -136,9 +136,9 @@
 
     const player = {
       x: 180,
-      y: 520,
-      width: 50,
-      height: 50,
+      y: 500,
+      width: 72,
+      height: 72,
       speed: 11,
       invulnerableTimer: 0
     };
@@ -150,8 +150,14 @@
     let touchTargetX = null;
     let touchTargetY = null;
 
-    const playerImg = new Image();
-    playerImg.src = "player.png";
+    const playerSpriteSheet = new Image();
+    playerSpriteSheet.src = "cow2-idle.png";
+
+    const PLAYER_SPRITE_COLS = 5;
+    const PLAYER_SPRITE_ROWS = 5;
+    const PLAYER_TOTAL_FRAMES = 25;
+    const PLAYER_FRAME_DURATION = 6;
+    let playerAnimationFrame = 0;
 
     const badImageFiles = ["falling1.png", "falling2.png", "falling3.png"];
     const badImages = badImageFiles.map(file => {
@@ -203,6 +209,25 @@
         player.x = playerXRatio * canvas.width;
         player.y = playerYRatio * canvas.height;
       }
+    }
+
+    function drawSpriteFrame(img, frameIndex, cols, rows, dx, dy, dWidth, dHeight) {
+      if (!img.complete || img.naturalWidth === 0) return;
+
+      const frameWidth = img.width / cols;
+      const frameHeight = img.height / rows;
+
+      const col = frameIndex % cols;
+      const row = Math.floor(frameIndex / cols);
+
+      const sx = col * frameWidth;
+      const sy = row * frameHeight;
+
+      ctx.drawImage(
+        img,
+        sx, sy, frameWidth, frameHeight,
+        dx, dy, dWidth, dHeight
+      );
     }
 
     window.addEventListener("resize", resizeCanvasToDisplaySize);
@@ -271,12 +296,13 @@
     function resetGameState() {
       resizeCanvasToDisplaySize();
 
-      player.width = scaleX(50);
-      player.height = scaleY(50);
+      player.width = scaleX(72);
+      player.height = scaleY(72);
       player.speed = Math.max(scaleX(11), 4);
-      player.x = scaleX(180);
-      player.y = scaleY(520);
+      player.x = scaleX(164);
+      player.y = canvas.height - player.height - scaleY(28);
       player.invulnerableTimer = 0;
+      playerAnimationFrame = 0;
 
       fallingObjects = [];
       gameOver = false;
@@ -379,8 +405,8 @@
       frame++;
       score++;
 
-      player.width = scaleX(50);
-      player.height = scaleY(50);
+      player.width = scaleX(72);
+      player.height = scaleY(72);
       player.speed = Math.max(scaleX(11), 4);
 
       if (keys["ArrowLeft"] || keys["a"] || keys["A"]) {
@@ -412,6 +438,8 @@
           player.y = touchTargetY;
         }
       }
+
+      playerAnimationFrame = Math.floor(frame / PLAYER_FRAME_DURATION) % PLAYER_TOTAL_FRAMES;
 
       if (player.x < 0) player.x = 0;
       if (player.x + player.width > canvas.width) {
@@ -481,11 +509,23 @@
     }
 
     function drawPlayer() {
-      const blinking = player.invulnerableTimer > 0 && Math.floor(player.invulnerableTimer / 5) % 2 === 0;
+      const blinking =
+        player.invulnerableTimer > 0 &&
+        Math.floor(player.invulnerableTimer / 5) % 2 === 0;
+
       if (blinking) return;
 
-      if (playerImg.complete && playerImg.naturalWidth > 0) {
-        ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
+      if (playerSpriteSheet.complete && playerSpriteSheet.naturalWidth > 0) {
+        drawSpriteFrame(
+          playerSpriteSheet,
+          playerAnimationFrame,
+          PLAYER_SPRITE_COLS,
+          PLAYER_SPRITE_ROWS,
+          player.x,
+          player.y,
+          player.width,
+          player.height
+        );
       } else {
         ctx.fillStyle = "#4da6ff";
         ctx.fillRect(player.x, player.y, player.width, player.height);

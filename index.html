@@ -383,8 +383,8 @@
     }
 
     function getHomingStrength() {
-      const base = score >= 10000 ? 0.016 : 0.010;
-      const extra = score >= 10000 ? 0.018 : 0.012;
+      const base = score >= 10000 ? 0.015 : 0.010;
+      const extra = score >= 10000 ? 0.015 : 0.012;
       return base + Math.min(score / 60000, extra);
     }
 
@@ -707,10 +707,10 @@
       gamePaused = true;
 
       showOverlay(
-        `You feel warm and fuzzy inside.\n\nYOU ESCAPED CLOVER\n\nDo you wish to enter mortality?`,
+        `You feel warm and fuzzy inside.\n\nYOU ESCAPED CLOVER CONGRATULATIONS\n\nDo you wish to enter mortality?`,
         [
           {
-            label: "Mooooo.",
+            label: "Mooooo Again.",
             onClick: () => {
               exitToMortality();
             }
@@ -934,7 +934,7 @@
           type = "bonus1000";
           image = bonus1000Img;
           basePoints = 1000;
-          speedMultiplier = 1.8;
+          speedMultiplier = 2.2;
         } else if (roll < 0.95) {
           type = "bonus200";
           image = bonus200Img;
@@ -1197,8 +1197,8 @@
         const playerHitbox = getHitbox(player, 0.12);
         const objectHitbox =
           obj.type === "bad" || obj.type === "butcher"
-            ? getHitbox(obj, 0.10)
-            : getHitbox(obj, 0.12);
+            ? getHitbox(obj, 0.3)
+            : getHitbox(obj, 0.2);
 
         const hit = rectsIntersect(playerHitbox, objectHitbox);
 

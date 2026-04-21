@@ -38,6 +38,9 @@
       border: 2px solid white;
       background: #1a1a1a;
       display: block;
+      width: min(100%, 400px);
+      height: auto;
+      max-height: 65dvh;
       touch-action: none;
     }
 
@@ -248,7 +251,7 @@
         : Math.random() * 25 + 40;
 
       const x = Math.random() * (canvas.width - size);
-      const baseSpeed = Math.random() * 2.5 + 2 + score * 0.002;
+      const baseSpeed = Math.random() * 2.5 + 2 + score * 0.0015;
       const speed = baseSpeed * speedMultiplier * getSpeedMultiplier();
 
       fallingObjects.push({

@@ -934,7 +934,7 @@
           type = "bonus1000";
           image = bonus1000Img;
           basePoints = 1000;
-          speedMultiplier = 2.2;
+          speedMultiplier = 2.4;
         } else if (roll < 0.65) {
           type = "bonus200";
           image = bonus200Img;
@@ -969,7 +969,7 @@
           : scaleX(Math.random() * 25 + 40) * 1.25;
 
       const x = Math.random() * (canvas.width - size);
-      const scoreSpeedRamp = Math.min(score * 0.0007, 2.2);
+      const scoreSpeedRamp = Math.min(score * 0.012, 2.2);
       const baseSpeed = scaleY(Math.random() * 2.0 + 2 + scoreSpeedRamp);
       const speed = baseSpeed * speedMultiplier * getSpeedMultiplier();
 
@@ -1172,7 +1172,7 @@
             obj.x += pushX;
             obj.y += pushY;
           } else {
-            const homingMultiplier = score >= 10000 ? 1.18 : 1.08;
+            const homingMultiplier = score >= 10000 ? 1.25 : 1.08;
             const homing = dx * getHomingStrength() * homingMultiplier;
             const maxSideSpeed = scaleX(score >= 10000 ? 1.5 : 1.35);
 

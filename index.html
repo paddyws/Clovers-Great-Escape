@@ -1165,9 +1165,9 @@
             obj.x += pushX;
             obj.y += pushY;
           } else {
-            const homingMultiplier = score >= 10000 ? 1.5 : 1.2;
+            const homingMultiplier = score >= 10000 ? 1.3 : 1.2;
             const homing = dx * getHomingStrength() * homingMultiplier;
-            const maxSideSpeed = scaleX(score >= 10000 ? 2.4 : 1.4 * 1.2);
+            const maxSideSpeed = scaleX(score >= 10000 ? 2.0 : 1.4 * 1.2);
 
             obj.x += Math.max(-maxSideSpeed, Math.min(maxSideSpeed, homing));
           }

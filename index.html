@@ -244,6 +244,10 @@
       };
     }
 
+    function getHomingStrength() {
+      return 0.01 + Math.min(score / 40000, 0.02);
+    }
+
     window.addEventListener("resize", resizeCanvasToDisplaySize);
 
     document.addEventListener("keydown", (e) => {
@@ -498,6 +502,21 @@
       for (let i = fallingObjects.length - 1; i >= 0; i--) {
         const obj = fallingObjects[i];
         obj.y += obj.speed;
+
+        if (obj.type === "bad") {
+          const playerCenterX = player.x + player.width / 2;
+          const objCenterX = obj.x + obj.width / 2;
+          const dx = playerCenterX - objCenterX;
+          const homing = dx * getHomingStrength();
+          const maxSideSpeed = scaleX(1.4);
+
+          obj.x += Math.max(-maxSideSpeed, Math.min(maxSideSpeed, homing));
+
+          if (obj.x < -obj.width * 0.25) obj.x = -obj.width * 0.25;
+          if (obj.x + obj.width > canvas.width + obj.width * 0.25) {
+            obj.x = canvas.width - obj.width * 0.75;
+          }
+        }
 
         const playerHitbox = getHitbox(player, 0.12);
         const objectHitbox =

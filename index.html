@@ -540,8 +540,8 @@
           const playerCenterX = player.x + player.width / 2;
           const objCenterX = obj.x + obj.width / 2;
           const dx = playerCenterX - objCenterX;
-          const homing = dx * getHomingStrength();
-          const maxSideSpeed = scaleX(1.4);
+          const homing = dx * getHomingStrength()*1.2;
+          const maxSideSpeed = scaleX(1.4*1.2);
 
           obj.x += Math.max(-maxSideSpeed, Math.min(maxSideSpeed, homing));
         }

@@ -43,6 +43,7 @@
     }
 
     .game-wrap {
+      position: relative;
       width: min(100%, 400px);
       aspect-ratio: 2 / 3;
       border: 2px solid white;
@@ -51,6 +52,7 @@
       background-position: center;
       background-repeat: no-repeat;
       overflow: hidden;
+      border-radius: 12px;
     }
 
     canvas {
@@ -61,27 +63,85 @@
       background: transparent;
     }
 
-    .controls {
-      margin-top: 12px;
+    .overlay {
+      position: absolute;
+      inset: 0;
       display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
+      align-items: center;
       justify-content: center;
-      width: 100%;
-      max-width: 420px;
-      position: sticky;
-      bottom: 8px;
-      padding-top: 6px;
-      background: linear-gradient(to top, rgba(17,17,17,0.98), rgba(17,17,17,0.8), rgba(17,17,17,0));
+      padding: 18px;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 20;
     }
 
-    button {
-      padding: 5px 9px;
-      font-size: 14px;
+    .overlay.hidden {
+      display: none;
+    }
+
+    .overlay-box {
+      width: min(100%, 320px);
+      background: rgba(23, 20, 18, 0.94);
+      color: #f6f0e8;
+      border: 1px solid rgba(255, 240, 220, 0.18);
+      border-radius: 18px;
+      padding: 18px 18px 16px;
+      box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      text-align: center;
+      backdrop-filter: blur(5px);
+    }
+
+    .overlay-text {
+      font-size: 17px;
+      line-height: 1.45;
+      white-space: pre-line;
+    }
+
+    .overlay-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .overlay-btn {
+      padding: 10px 16px;
+      font-size: 15px;
       cursor: pointer;
       border: none;
-      border-radius: 4px;
-      flex: 1 1 120px;
+      border-radius: 999px;
+      min-width: 110px;
+      background: linear-gradient(180deg, #f6e7d4, #dcc1a0);
+      color: #2a1d14;
+      font-weight: 600;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    .overlay-btn.secondary {
+      background: linear-gradient(180deg, #d9d2ca, #b9aea4);
+    }
+
+    .end-banner {
+      position: absolute;
+      inset: 0;
+      z-index: 15;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(30px, 8vw, 52px);
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: #fff7d6;
+      text-shadow:
+        0 0 12px rgba(255, 230, 150, 0.55),
+        0 6px 20px rgba(0, 0, 0, 0.55);
+      pointer-events: none;
+    }
+
+    .end-banner.hidden {
+      display: none;
     }
 
     @media (max-width: 480px) {
@@ -91,6 +151,10 @@
 
       p {
         font-size: 0.95rem;
+      }
+
+      .overlay-text {
+        font-size: 16px;
       }
     }
   </style>
@@ -104,24 +168,30 @@
 
   <div class="game-wrap">
     <canvas id="game" width="400" height="600"></canvas>
-  </div>
 
-  <div class="controls">
-    <button id="startBtn">Start Game</button>
-    <button id="restartBtn">Restart</button>
-    <button id="muteBtn">Mute / Unmute</button>
+    <div id="overlay" class="overlay">
+      <div class="overlay-box">
+        <div id="overlayText" class="overlay-text"></div>
+        <div id="overlayButtons" class="overlay-buttons"></div>
+      </div>
+    </div>
+
+    <div id="endBanner" class="end-banner hidden">FREEDOM</div>
   </div>
 
   <script>
     const canvas = document.getElementById("game");
     const ctx = canvas.getContext("2d");
 
-    const startBtn = document.getElementById("startBtn");
-    const restartBtn = document.getElementById("restartBtn");
-    const muteBtn = document.getElementById("muteBtn");
+    const overlay = document.getElementById("overlay");
+    const overlayText = document.getElementById("overlayText");
+    const overlayButtons = document.getElementById("overlayButtons");
+    const endBanner = document.getElementById("endBanner");
 
     let gameStarted = false;
     let gameOver = false;
+    let gamePaused = true;
+    let gameWon = false;
     let frame = 0;
     let score = 0;
     let lives = 3;
@@ -130,6 +200,13 @@
     let bonusFlashTimer = 0;
     let bonusFlashText = "";
     let speedModeActivated = false;
+
+    let checkpoint10000Shown = false;
+    let checkpoint20000Shown = false;
+    let freedomSequenceActive = false;
+    let heartsCelebrationActive = false;
+    let finalOverlayShown = false;
+    let exitingMortality = false;
 
     const BASE_WIDTH = 400;
     const BASE_HEIGHT = 600;
@@ -145,6 +222,7 @@
 
     let keys = {};
     let fallingObjects = [];
+    let heartBursts = [];
 
     let touchActive = false;
     let touchTargetX = null;
@@ -256,6 +334,193 @@
       return 0.012 + Math.min(score / 40000, 0.02);
     }
 
+    function showOverlay(text, buttons = []) {
+      gamePaused = true;
+      overlayText.innerHTML = text.replace(/\n/g, "<br>");
+      overlayButtons.innerHTML = "";
+
+      buttons.forEach((btn) => {
+        const button = document.createElement("button");
+        button.className = `overlay-btn${btn.secondary ? " secondary" : ""}`;
+        button.textContent = btn.label;
+        button.addEventListener("click", btn.onClick);
+        overlayButtons.appendChild(button);
+      });
+
+      overlay.classList.remove("hidden");
+    }
+
+    function hideOverlay() {
+      overlay.classList.add("hidden");
+      if (!gameOver && !gameWon && !exitingMortality) {
+        gamePaused = false;
+      }
+    }
+
+    function showStartOverlay() {
+      showOverlay(
+        `Moo. Moo mooo mooo moo.\n\nUnderstood?`,
+        [
+          {
+            label: "Moo.",
+            onClick: async () => {
+              gameStarted = true;
+              hideOverlay();
+
+              if (!isMuted && !gameOver) {
+                try {
+                  await music.play();
+                } catch (err) {
+                  console.log("Music could not start yet:", err);
+                }
+              }
+            }
+          }
+        ]
+      );
+    }
+
+    function showCheckpoint10000() {
+      if (checkpoint10000Shown) return;
+      checkpoint10000Shown = true;
+
+      showOverlay(
+        `The people want grass fed, and your belly is full of grass. Do you wish to continue?`,
+        [
+          {
+            label: "Mooooo",
+            onClick: () => {
+              hideOverlay();
+            }
+          },
+          {
+            label: "Noooo",
+            secondary: true,
+            onClick: () => {
+              gameOver = true;
+              gamePaused = true;
+              music.pause();
+              showOverlay(
+                `Clover lowers her head.\nShe will not go on.`,
+                [
+                  {
+                    label: "Again",
+                    onClick: () => {
+                      restartGame();
+                    }
+                  }
+                ]
+              );
+            }
+          }
+        ]
+      );
+    }
+
+    function showCheckpoint20000() {
+      if (checkpoint20000Shown) return;
+      checkpoint20000Shown = true;
+      gameWon = true;
+      gamePaused = true;
+      music.pause();
+
+      showOverlay(
+        `Whew. That was close.\n\nWould you like to be milked?`,
+        [
+          {
+            label: "Mooooo",
+            onClick: () => {
+              startWarmAndFuzzyEnding();
+            }
+          },
+          {
+            label: "Noooooo",
+            secondary: true,
+            onClick: () => {
+              startFreedomEnding();
+            }
+          }
+        ]
+      );
+    }
+
+    function startFreedomEnding() {
+      hideOverlay();
+      freedomSequenceActive = true;
+      gamePaused = false;
+      playerFacingLeft = false;
+      endBanner.classList.add("hidden");
+    }
+
+    function startWarmAndFuzzyEnding() {
+      heartsCelebrationActive = true;
+      finalOverlayShown = false;
+      hideOverlay();
+      makeHeartsExplode();
+    }
+
+    function makeHeartsExplode() {
+      heartBursts = [];
+
+      for (let i = 0; i < 44; i++) {
+        heartBursts.push({
+          x: player.x + player.width / 2,
+          y: player.y + player.height / 2,
+          vx: (Math.random() - 0.5) * scaleX(5.5),
+          vy: (Math.random() - 0.5) * scaleY(5.5) - scaleY(1.5),
+          size: Math.random() * scaleX(14) + scaleX(14),
+          life: Math.random() * 80 + 90
+        });
+      }
+    }
+
+    function showFinalWarmOverlay() {
+      if (finalOverlayShown) return;
+      finalOverlayShown = true;
+      gamePaused = true;
+
+      showOverlay(
+        `You feel warm and fuzzy inside.\n\nYOU WIN THE GAME CLOVER\n\nDo you wish to enter mortality?`,
+        [
+          {
+            label: "Mooooo.",
+            onClick: () => {
+              exitToMortality();
+            }
+          },
+          {
+            label: "Noooooo.",
+            secondary: true,
+            onClick: () => {
+              exitToMortality();
+            }
+          }
+        ]
+      );
+    }
+
+    function exitToMortality() {
+      exitingMortality = true;
+      overlayText.innerHTML = `Entering mortality...`;
+      overlayButtons.innerHTML = "";
+      setTimeout(() => {
+        window.location.reload();
+      }, 900);
+    }
+
+    function restartGame() {
+      resetGameState();
+      gameStarted = true;
+      hideOverlay();
+      showStartOverlay();
+    }
+
+    function playSound(sound) {
+      if (isMuted) return;
+      sound.currentTime = 0;
+      sound.play().catch(() => {});
+    }
+
     window.addEventListener("resize", resizeCanvasToDisplaySize);
 
     document.addEventListener("keydown", (e) => {
@@ -276,27 +541,11 @@
       };
     }
 
-    async function startGameIfNeeded() {
-      if (!gameStarted) {
-        gameStarted = true;
-      }
-
-      if (!isMuted && !gameOver) {
-        try {
-          await music.play();
-        } catch (err) {
-          console.log("Music could not start yet:", err);
-        }
-      }
-    }
-
-    canvas.addEventListener("touchstart", async (e) => {
-      if (!gameStarted) {
-        await startGameIfNeeded();
-        return;
-      }
-
+    canvas.addEventListener("touchstart", (e) => {
       e.preventDefault();
+
+      if (!gameStarted || gamePaused || gameOver) return;
+
       const pos = getTouchPosition(e);
       touchActive = true;
       touchTargetX = pos.x - player.width / 2;
@@ -304,8 +553,9 @@
     }, { passive: false });
 
     canvas.addEventListener("touchmove", (e) => {
-      if (!gameStarted) return;
+      if (!gameStarted || gamePaused || gameOver) return;
       e.preventDefault();
+
       const pos = getTouchPosition(e);
       touchTargetX = pos.x - player.width / 2;
       touchTargetY = pos.y - player.height / 2;
@@ -314,6 +564,7 @@
     canvas.addEventListener("touchend", (e) => {
       if (!gameStarted) return;
       e.preventDefault();
+
       touchActive = false;
       touchTargetX = null;
       touchTargetY = null;
@@ -332,7 +583,10 @@
       playerFacingLeft = false;
 
       fallingObjects = [];
+      heartBursts = [];
       gameOver = false;
+      gamePaused = true;
+      gameWon = false;
       frame = 0;
       score = 0;
       lives = 3;
@@ -341,9 +595,19 @@
       bonusFlashTimer = 0;
       bonusFlashText = "";
       speedModeActivated = false;
+
+      checkpoint10000Shown = false;
+      checkpoint20000Shown = false;
+      freedomSequenceActive = false;
+      heartsCelebrationActive = false;
+      finalOverlayShown = false;
+      exitingMortality = false;
+
       touchActive = false;
       touchTargetX = null;
       touchTargetY = null;
+
+      endBanner.classList.add("hidden");
     }
 
     function getSpeedMultiplier() {
@@ -445,17 +709,38 @@
       );
     }
 
-    function playSound(sound) {
-      if (isMuted) return;
-      sound.currentTime = 0;
-      sound.play().catch(() => {});
+    function updateHearts() {
+      for (let i = heartBursts.length - 1; i >= 0; i--) {
+        const heart = heartBursts[i];
+        heart.x += heart.vx;
+        heart.y += heart.vy;
+        heart.vy += scaleY(0.04);
+        heart.life--;
+
+        if (heart.life <= 0) {
+          heartBursts.splice(i, 1);
+        }
+      }
+
+      if (heartsCelebrationActive && heartBursts.length === 0) {
+        makeHeartsExplode();
+      }
+
+      if (heartsCelebrationActive && score >= 20000 && !finalOverlayShown && frame % 50 === 0) {
+        showFinalWarmOverlay();
+      }
     }
 
     function update() {
-      if (!gameStarted || gameOver) return;
+      updateHearts();
+
+      if (!gameStarted || gameOver || gamePaused) return;
 
       frame++;
-      score++;
+
+      if (!freedomSequenceActive && !heartsCelebrationActive) {
+        score++;
+      }
 
       player.width = scaleX(72 * 1.5);
       player.height = scaleY(72 * 1.5);
@@ -463,56 +748,78 @@
 
       let isMoving = false;
 
-      if (keys["ArrowLeft"] || keys["a"] || keys["A"]) {
-        player.x -= player.speed;
-        playerFacingLeft = true;
-        isMoving = true;
-      }
-      if (keys["ArrowRight"] || keys["d"] || keys["D"]) {
-        player.x += player.speed;
+      if (freedomSequenceActive) {
+        player.x += scaleX(2.6);
         playerFacingLeft = false;
-        isMoving = true;
-      }
-      if (keys["ArrowUp"] || keys["w"] || keys["W"]) {
-        player.y -= player.speed;
-        isMoving = true;
-      }
-      if (keys["ArrowDown"] || keys["s"] || keys["S"]) {
-        player.y += player.speed;
-        isMoving = true;
-      }
 
-      if (touchActive && touchTargetX !== null && touchTargetY !== null) {
-        const dx = touchTargetX - player.x;
-        const dy = touchTargetY - player.y;
-
-        if (Math.abs(dx) > player.speed) {
-          player.x += Math.sign(dx) * player.speed;
-          playerFacingLeft = dx < 0;
+        if (player.x > canvas.width + player.width) {
+          gamePaused = true;
+          freedomSequenceActive = false;
+          endBanner.classList.remove("hidden");
+          showOverlay(
+            `FREEDOM`,
+            [
+              {
+                label: "Mooooo.",
+                onClick: () => {
+                  exitToMortality();
+                }
+              }
+            ]
+          );
+        }
+      } else {
+        if (keys["ArrowLeft"] || keys["a"] || keys["A"]) {
+          player.x -= player.speed;
+          playerFacingLeft = true;
           isMoving = true;
-        } else if (Math.abs(dx) > 1) {
-          player.x = touchTargetX;
-          playerFacingLeft = dx < 0;
+        }
+        if (keys["ArrowRight"] || keys["d"] || keys["D"]) {
+          player.x += player.speed;
+          playerFacingLeft = false;
+          isMoving = true;
+        }
+        if (keys["ArrowUp"] || keys["w"] || keys["W"]) {
+          player.y -= player.speed;
+          isMoving = true;
+        }
+        if (keys["ArrowDown"] || keys["s"] || keys["S"]) {
+          player.y += player.speed;
           isMoving = true;
         }
 
-        if (Math.abs(dy) > player.speed) {
-          player.y += Math.sign(dy) * player.speed;
-          isMoving = true;
-        } else if (Math.abs(dy) > 1) {
-          player.y = touchTargetY;
-          isMoving = true;
+        if (touchActive && touchTargetX !== null && touchTargetY !== null) {
+          const dx = touchTargetX - player.x;
+          const dy = touchTargetY - player.y;
+
+          if (Math.abs(dx) > player.speed) {
+            player.x += Math.sign(dx) * player.speed;
+            playerFacingLeft = dx < 0;
+            isMoving = true;
+          } else if (Math.abs(dx) > 1) {
+            player.x = touchTargetX;
+            playerFacingLeft = dx < 0;
+            isMoving = true;
+          }
+
+          if (Math.abs(dy) > player.speed) {
+            player.y += Math.sign(dy) * player.speed;
+            isMoving = true;
+          } else if (Math.abs(dy) > 1) {
+            player.y = touchTargetY;
+            isMoving = true;
+          }
         }
       }
 
-      if (isMoving) {
+      if (isMoving || freedomSequenceActive) {
         playerAnimationFrame = Math.floor(frame / PLAYER_FRAME_DURATION) % PLAYER_TOTAL_FRAMES;
       } else {
         playerAnimationFrame = 0;
       }
 
       if (player.x < 0) player.x = 0;
-      if (player.x + player.width > canvas.width) {
+      if (!freedomSequenceActive && player.x + player.width > canvas.width) {
         player.x = canvas.width - player.width;
       }
       if (player.y < 0) player.y = 0;
@@ -527,21 +834,23 @@
       if (hitFlashTimer > 0) hitFlashTimer--;
       if (bonusFlashTimer > 0) bonusFlashTimer--;
 
-      const spawnInterval = Math.max(14, 30 - Math.floor(score / 1500));
-      if (frame % spawnInterval === 0) {
-        spawnObject();
+      if (!freedomSequenceActive && !heartsCelebrationActive) {
+        const spawnInterval = Math.max(14, 30 - Math.floor(score / 1500));
+        if (frame % spawnInterval === 0) {
+          spawnObject();
+        }
       }
 
       for (let i = fallingObjects.length - 1; i >= 0; i--) {
         const obj = fallingObjects[i];
         obj.y += obj.speed;
 
-        if (obj.canHome) {
+        if (obj.canHome && !freedomSequenceActive && !heartsCelebrationActive) {
           const playerCenterX = player.x + player.width / 2;
           const objCenterX = obj.x + obj.width / 2;
           const dx = playerCenterX - objCenterX;
-          const homing = dx * getHomingStrength()*1.2;
-          const maxSideSpeed = scaleX(1.4*1.2);
+          const homing = dx * getHomingStrength() * 1.2;
+          const maxSideSpeed = scaleX(1.4 * 1.2);
 
           obj.x += Math.max(-maxSideSpeed, Math.min(maxSideSpeed, homing));
         }
@@ -584,7 +893,20 @@
 
             if (lives <= 0) {
               gameOver = true;
+              gamePaused = true;
               music.pause();
+
+              showOverlay(
+                `Game Over\n\nFinal Score: ${score}`,
+                [
+                  {
+                    label: "Again",
+                    onClick: () => {
+                      restartGame();
+                    }
+                  }
+                ]
+              );
             }
 
             continue;
@@ -596,8 +918,18 @@
         }
       }
 
-      maybeShowSpeedModeBanner();
-      maybeAwardExtraLife();
+      if (!freedomSequenceActive && !heartsCelebrationActive) {
+        maybeShowSpeedModeBanner();
+        maybeAwardExtraLife();
+
+        if (score >= 10000) {
+          showCheckpoint10000();
+        }
+
+        if (score >= 20000) {
+          showCheckpoint20000();
+        }
+      }
     }
 
     function drawPlayer() {
@@ -660,7 +992,7 @@
             obj.width,
             obj.height
           );
-        } else if (obj.image.complete && obj.image.naturalWidth > 0) {
+        } else if (obj.image && obj.image.complete && obj.image.naturalWidth > 0) {
           ctx.drawImage(obj.image, obj.x, obj.y, obj.width, obj.height);
         } else {
           if (obj.type === "bonus200") ctx.fillStyle = "#66ff99";
@@ -670,6 +1002,19 @@
           ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
         }
       }
+    }
+
+    function drawHearts() {
+      ctx.save();
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      for (const heart of heartBursts) {
+        ctx.font = `${Math.max(heart.size, 12)}px Arial`;
+        ctx.fillText("💖", heart.x, heart.y);
+      }
+
+      ctx.restore();
     }
 
     function drawHUD() {
@@ -683,7 +1028,7 @@
       ctx.font = `${Math.max(scaleY(16), 12)}px Arial`;
       ctx.fillText(`Next life in: ${remaining > 0 ? remaining : 0}`, scaleX(12), scaleY(82));
 
-      if (score >= 10000) {
+      if (score >= 10000 && score < 20000) {
         ctx.fillStyle = "#ffd700";
         ctx.font = `${Math.max(scaleY(18), 13)}px Arial`;
         ctx.fillText("2X SPEED / 2X BONUS", scaleX(12), scaleY(108));
@@ -707,50 +1052,15 @@
       }
     }
 
-    function drawStartScreen() {
-      ctx.fillStyle = "rgba(0,0,0,0.7)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.fillStyle = "white";
-      ctx.textAlign = "center";
-      ctx.font = `${Math.max(scaleY(30), 20)}px Arial`;
-      ctx.fillText("Tap or Press Start", canvas.width / 2, canvas.height / 2 - scaleY(10));
-
-      ctx.font = `${Math.max(scaleY(18), 14)}px Arial`;
-      ctx.fillText("Music begins after tap", canvas.width / 2, canvas.height / 2 + scaleY(30));
-      ctx.textAlign = "left";
-    }
-
-    function drawGameOver() {
-      ctx.fillStyle = "rgba(0,0,0,0.7)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.fillStyle = "white";
-      ctx.textAlign = "center";
-      ctx.font = `${Math.max(scaleY(34), 22)}px Arial`;
-      ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2 - scaleY(20));
-
-      ctx.font = `${Math.max(scaleY(22), 16)}px Arial`;
-      ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2 + scaleY(20));
-      ctx.textAlign = "left";
-    }
-
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       drawPlayer();
       drawFallingObjects();
+      drawHearts();
       drawHUD();
       drawHitFlash();
       drawBonusFlash();
-
-      if (!gameStarted) {
-        drawStartScreen();
-      }
-
-      if (gameOver) {
-        drawGameOver();
-      }
     }
 
     function loop() {
@@ -760,35 +1070,8 @@
       requestAnimationFrame(loop);
     }
 
-    startBtn.addEventListener("click", async () => {
-      await startGameIfNeeded();
-    });
-
-    restartBtn.addEventListener("click", async () => {
-      resetGameState();
-      gameStarted = true;
-
-      if (!isMuted) {
-        try {
-          music.currentTime = 0;
-          await music.play();
-        } catch (err) {
-          console.log("Music restart blocked:", err);
-        }
-      }
-    });
-
-    muteBtn.addEventListener("click", () => {
-      isMuted = !isMuted;
-
-      if (isMuted) {
-        music.pause();
-      } else if (gameStarted && !gameOver) {
-        music.play().catch(() => {});
-      }
-    });
-
     resetGameState();
+    showStartOverlay();
     loop();
   </script>
 </body>

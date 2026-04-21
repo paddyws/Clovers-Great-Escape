@@ -168,6 +168,14 @@
       return img;
     });
 
+    const butcherSpriteSheet = new Image();
+    butcherSpriteSheet.src = "butcher-walk.png";
+
+    const BUTCHER_SPRITE_COLS = 5;
+    const BUTCHER_SPRITE_ROWS = 5;
+    const BUTCHER_TOTAL_FRAMES = 25;
+    const BUTCHER_FRAME_DURATION = 6;
+
     const bonus200Img = new Image();
     bonus200Img.src = "falling4.png";
 
@@ -245,7 +253,7 @@
     }
 
     function getHomingStrength() {
-      return 0.01 + Math.min(score / 40000, 0.02);
+      return 0.012 + Math.min(score / 40000, 0.02);
     }
 
     window.addEventListener("resize", resizeCanvasToDisplaySize);
@@ -371,6 +379,12 @@
       let image = badImages[Math.floor(Math.random() * badImages.length)];
       let basePoints = 0;
       let speedMultiplier = 1;
+      let usesSpriteSheet = false;
+      let spriteCols = 1;
+      let spriteRows = 1;
+      let totalFrames = 1;
+      let frameDuration = 1;
+      let canHome = false;
 
       if (roll < 0.15) {
         type = "bonus1000";
@@ -381,11 +395,23 @@
         type = "bonus200";
         image = bonus200Img;
         basePoints = 200;
+      } else if (roll < 0.50) {
+        type = "butcher";
+        image = butcherSpriteSheet;
+        usesSpriteSheet = true;
+        spriteCols = BUTCHER_SPRITE_COLS;
+        spriteRows = BUTCHER_SPRITE_ROWS;
+        totalFrames = BUTCHER_TOTAL_FRAMES;
+        frameDuration = BUTCHER_FRAME_DURATION;
+        canHome = true;
       }
 
-      const size = type === "bonus1000"
-        ? scaleX(Math.random() * 20 + 35) * 1.25
-        : scaleX(Math.random() * 25 + 40) * 1.25;
+      const size =
+        type === "bonus1000"
+          ? scaleX(Math.random() * 20 + 35) * 1.25
+          : type === "butcher"
+          ? scaleX(Math.random() * 28 + 52) * 1.15
+          : scaleX(Math.random() * 25 + 40) * 1.25;
 
       const x = Math.random() * (canvas.width - size);
       const baseSpeed = scaleY(Math.random() * 2.5 + 2 + score * 0.001);
@@ -399,7 +425,14 @@
         speed,
         image,
         type,
-        basePoints
+        basePoints,
+        usesSpriteSheet,
+        spriteCols,
+        spriteRows,
+        totalFrames,
+        frameDuration,
+        canHome,
+        animationOffset: Math.floor(Math.random() * 1000)
       });
     }
 
@@ -503,7 +536,7 @@
         const obj = fallingObjects[i];
         obj.y += obj.speed;
 
-        if (obj.type === "bad") {
+        if (obj.canHome) {
           const playerCenterX = player.x + player.width / 2;
           const objCenterX = obj.x + obj.width / 2;
           const dx = playerCenterX - objCenterX;
@@ -511,16 +544,16 @@
           const maxSideSpeed = scaleX(1.4);
 
           obj.x += Math.max(-maxSideSpeed, Math.min(maxSideSpeed, homing));
+        }
 
-          if (obj.x < -obj.width * 0.25) obj.x = -obj.width * 0.25;
-          if (obj.x + obj.width > canvas.width + obj.width * 0.25) {
-            obj.x = canvas.width - obj.width * 0.75;
-          }
+        if (obj.x < -obj.width * 0.25) obj.x = -obj.width * 0.25;
+        if (obj.x + obj.width > canvas.width + obj.width * 0.25) {
+          obj.x = canvas.width - obj.width * 0.75;
         }
 
         const playerHitbox = getHitbox(player, 0.12);
         const objectHitbox =
-          obj.type === "bad"
+          obj.type === "bad" || obj.type === "butcher"
             ? getHitbox(obj, 0.22)
             : getHitbox(obj, 0.12);
 
@@ -541,7 +574,7 @@
             continue;
           }
 
-          if (obj.type === "bad" && player.invulnerableTimer <= 0) {
+          if ((obj.type === "bad" || obj.type === "butcher") && player.invulnerableTimer <= 0) {
             lives--;
             player.invulnerableTimer = 60;
             hitFlashTimer = 20;
@@ -613,7 +646,21 @@
 
     function drawFallingObjects() {
       for (const obj of fallingObjects) {
-        if (obj.image.complete && obj.image.naturalWidth > 0) {
+        if (obj.usesSpriteSheet && obj.image.complete && obj.image.naturalWidth > 0) {
+          const animFrame =
+            Math.floor((frame + obj.animationOffset) / obj.frameDuration) % obj.totalFrames;
+
+          drawSpriteFrame(
+            obj.image,
+            animFrame,
+            obj.spriteCols,
+            obj.spriteRows,
+            obj.x,
+            obj.y,
+            obj.width,
+            obj.height
+          );
+        } else if (obj.image.complete && obj.image.naturalWidth > 0) {
           ctx.drawImage(obj.image, obj.x, obj.y, obj.width, obj.height);
         } else {
           if (obj.type === "bonus200") ctx.fillStyle = "#66ff99";

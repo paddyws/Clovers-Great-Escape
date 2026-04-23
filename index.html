@@ -355,7 +355,7 @@
     const cowgirl = {
       unlocked: false,
       visible: false,
-      state: "hidden", // hidden, idle, running, swiping, fleeing
+      state: "hidden", // hidden, entering, idle, running, fleeing // hidden, idle, running, swiping, fleeing
       x: 0,
       y: 0,
       width: 0,
@@ -511,7 +511,7 @@
       cowgirl.visible = true;
       cowgirl.width = scaleX(76 * 1.2);
       cowgirl.height = scaleY(76 * 1.2);
-      cowgirl.speed = Math.max(scaleX(3.8), 2.4);
+      cowgirl.speed = Math.max(scaleX(3.4), 2.2);
       cowgirl.moveTimer = COWGIRL_MOVE_INTERVAL;
       cowgirl.swipeTimer = 0;
       cowgirl.respawnTimer = 0;
@@ -524,25 +524,27 @@
 
       const corners = getCowgirlCorners();
       const target = corners[entryCorner];
-      const offX = scaleX(95);
-      const offY = scaleY(95);
+      const offY = scaleY(140);
 
-      if (entryCorner === 0) {
-        cowgirl.x = -cowgirl.width - offX;
-        cowgirl.y = -cowgirl.height - offY;
-      } else if (entryCorner === 1) {
-        cowgirl.x = canvas.width + offX;
-        cowgirl.y = -cowgirl.height - offY;
-      } else if (entryCorner === 2) {
-        cowgirl.x = canvas.width + offX;
-        cowgirl.y = canvas.height + offY;
-      } else {
-        cowgirl.x = -cowgirl.width - offX;
-        cowgirl.y = canvas.height + offY;
-      }
+      // She now drops in from just outside the chosen corner instead of popping into place.
+      cowgirl.x = target.x;
+      cowgirl.y = entryCorner === 0 || entryCorner === 1
+        ? -cowgirl.height - offY
+        : canvas.height + offY;
 
-      cowgirl.state = "running";
-      cowgirl.facingLeft = target.x - cowgirl.x < 0;
+      cowgirl.state = "entering";
+      cowgirl.facingLeft = entryCorner === 1 || entryCorner === 2;
+    }
+
+    function awardCowgirlPointsAndFlee() {
+      if (!cowgirl.visible || cowgirl.state === "fleeing") return;
+
+      score += 400;
+      maybeAwardExtraLife();
+      bonusFlashTimer = 36;
+      bonusFlashText = "+400";
+      playSound(bonusSound);
+      sendCowgirlOffscreen();
     }
 
     function sendCowgirlOffscreen() {
@@ -577,36 +579,64 @@
       cowgirl.targetCorner = (cowgirl.currentCorner + 1) % 4;
     }
 
-    function startCowgirlSwipe() {
-      cowgirl.state = "swiping";
-      cowgirl.swipeTimer = COWGIRL_SWIPE_DURATION;
+    function settleCowgirlInCorner() {
+      cowgirl.state = "idle";
+      cowgirl.moveTimer = COWGIRL_MOVE_INTERVAL;
       cowgirl.facingLeft = cowgirl.currentCorner === 1 || cowgirl.currentCorner === 2;
     }
 
     function getCowgirlTouchHitbox() {
-      return getHitbox(cowgirl, 0.24);
+      return getHitbox(cowgirl, 0.18);
     }
 
-    function getCowgirlSwipeHitbox() {
-      const reach = scaleX(95);
-      const verticalPad = scaleY(4);
-      const attackWidth = cowgirl.width * 0.9 + reach;
-      const attackHeight = cowgirl.height * 0.95;
+    function isCowgirlNearPlayer() {
+      if (!cowgirl.visible || cowgirl.state === "fleeing") return false;
 
-      return {
-        x: cowgirl.facingLeft
-          ? cowgirl.x - reach
-          : cowgirl.x + cowgirl.width * 0.10,
-        y: cowgirl.y + verticalPad,
-        width: attackWidth,
-        height: attackHeight
-      };
+      const cowgirlCenterX = cowgirl.x + cowgirl.width / 2;
+      const cowgirlCenterY = cowgirl.y + cowgirl.height / 2;
+      const playerCenterX = player.x + player.width / 2;
+      const playerCenterY = player.y + player.height / 2;
+      const distance = Math.hypot(playerCenterX - cowgirlCenterX, playerCenterY - cowgirlCenterY);
+
+      return distance <= scaleX(135);
+    }
+
+    function damagePlayerFromCowgirl() {
+      if (player.invulnerableTimer > 0 || cowgirl.damageCooldown > 0) return;
+
+      lives--;
+      player.invulnerableTimer = 60;
+      cowgirl.damageCooldown = 45;
+      hitFlashTimer = 20;
+      playSound(hitSound);
+
+      if (lives <= 0) {
+        gameOver = true;
+        gamePaused = true;
+        music.pause();
+
+        showOverlay(
+          `You became a steak.\n\nFinal Score: ${score}`,
+          [
+            {
+              label: "Again",
+              onClick: () => {
+                restartGame();
+              }
+            }
+          ],
+          {
+            speed: 28,
+            requireContinueBeforeButtons: true
+          }
+        );
+      }
     }
 
     function updateCowgirl() {
       cowgirl.width = scaleX(76 * 1.2);
       cowgirl.height = scaleY(76 * 1.2);
-      cowgirl.speed = Math.max(scaleX(3.8), 2.4);
+      cowgirl.speed = Math.max(scaleX(3.4), 2.2);
 
       if (!cowgirl.unlocked && score >= COWGIRL_TRIGGER_SCORE) {
         spawnCowgirl();
@@ -633,7 +663,7 @@
         if (cowgirl.moveTimer <= 0) {
           startCowgirlRunToNextCorner();
         }
-      } else if (cowgirl.state === "running") {
+      } else if (cowgirl.state === "entering" || cowgirl.state === "running") {
         const corners = getCowgirlCorners();
         const target = corners[cowgirl.targetCorner];
 
@@ -641,23 +671,16 @@
         const dy = target.y - cowgirl.y;
         const distance = Math.hypot(dx, dy) || 1;
 
-        cowgirl.facingLeft = dx < 0;
+        cowgirl.facingLeft = dx < 0 || cowgirl.currentCorner === 1 || cowgirl.currentCorner === 2;
 
         if (distance <= cowgirl.speed + 1) {
           cowgirl.x = target.x;
           cowgirl.y = target.y;
           cowgirl.currentCorner = cowgirl.targetCorner;
-          startCowgirlSwipe();
+          settleCowgirlInCorner();
         } else {
           cowgirl.x += (dx / distance) * cowgirl.speed;
           cowgirl.y += (dy / distance) * cowgirl.speed;
-        }
-      } else if (cowgirl.state === "swiping") {
-        cowgirl.swipeTimer--;
-
-        if (cowgirl.swipeTimer <= 0) {
-          cowgirl.state = "idle";
-          cowgirl.moveTimer = COWGIRL_MOVE_INTERVAL;
         }
       } else if (cowgirl.state === "fleeing") {
         cowgirl.x += cowgirl.fleeVX;
@@ -675,45 +698,13 @@
 
       if (!freedomSequenceActive && !heartsCelebrationActive && cowgirl.visible) {
         const playerHitbox = getHitbox(player, 0.12);
+        const cowgirlHitbox = getCowgirlTouchHitbox();
 
-        if (cowgirl.state === "swiping") {
-          if (player.invulnerableTimer <= 0 && cowgirl.damageCooldown <= 0) {
-            const swipeHitbox = getCowgirlSwipeHitbox();
-
-            if (rectsIntersect(playerHitbox, swipeHitbox)) {
-              lives--;
-              player.invulnerableTimer = 60;
-              cowgirl.damageCooldown = 24;
-              hitFlashTimer = 20;
-              playSound(hitSound);
-
-              if (lives <= 0) {
-                gameOver = true;
-                gamePaused = true;
-                music.pause();
-
-                showOverlay(
-                  `You became a steak.\n\nFinal Score: ${score}`,
-                  [
-                    {
-                      label: "Again",
-                      onClick: () => {
-                        restartGame();
-                      }
-                    }
-                  ],
-                  {
-                    speed: 28,
-                    requireContinueBeforeButtons: true
-                  }
-                );
-              }
-            }
-          }
-        } else if (cowgirl.state === "running") {
-          const cowgirlHitbox = getCowgirlTouchHitbox();
-          if (rectsIntersect(playerHitbox, cowgirlHitbox)) {
-            sendCowgirlOffscreen();
+        if (rectsIntersect(playerHitbox, cowgirlHitbox)) {
+          if (cowgirl.state === "running" || cowgirl.state === "entering") {
+            damagePlayerFromCowgirl();
+          } else if (cowgirl.state === "idle") {
+            awardCowgirlPointsAndFlee();
           }
         }
       }
@@ -759,8 +750,8 @@
       bonusFlashTimer = 40;
       bonusFlashText = "MOO!";
 
-      if (cowgirl.visible && cowgirl.state === "running") {
-        sendCowgirlOffscreen();
+      if (isCowgirlNearPlayer()) {
+        awardCowgirlPointsAndFlee();
       }
 
       playSound(mooSound);
@@ -1942,29 +1933,22 @@ Final Score: ${score}`,
     function drawCowgirl() {
       if (!cowgirl.visible) return;
 
-      let sprite = cowgirlIdleSpriteSheet;
-      let frameDuration = COWGIRL_IDLE_FRAME_DURATION;
+      let sprite = cowgirlWalkSpriteSheet;
+      let animFrame = 0;
 
-      if (cowgirl.state === "running") {
+      if (cowgirl.state === "running" || cowgirl.state === "entering") {
         sprite = cowgirlRunSpriteSheet;
-        frameDuration = COWGIRL_RUN_FRAME_DURATION;
-      } else if (cowgirl.state === "swiping") {
-        sprite = cowgirlAttackSpriteSheet;
-        frameDuration = COWGIRL_ATTACK_FRAME_DURATION;
+        animFrame = Math.floor((frame + cowgirl.animationOffset) / COWGIRL_RUN_FRAME_DURATION) % COWGIRL_TOTAL_FRAMES;
       } else if (cowgirl.state === "fleeing") {
         sprite = cowgirlJumpSpriteSheet;
-        frameDuration = COWGIRL_JUMP_FRAME_DURATION;
+        animFrame = Math.floor((frame + cowgirl.animationOffset) / COWGIRL_JUMP_FRAME_DURATION) % COWGIRL_TOTAL_FRAMES;
       } else if (cowgirl.state === "idle") {
-        sprite = cowgirlWalkSpriteSheet.complete && cowgirlWalkSpriteSheet.naturalWidth > 0
-          ? cowgirlWalkSpriteSheet
-          : cowgirlIdleSpriteSheet;
-        frameDuration = COWGIRL_WALK_FRAME_DURATION;
+        // Stand completely still in the corner; do not use the idle animation sprite.
+        sprite = cowgirlWalkSpriteSheet;
+        animFrame = 0;
       }
 
       if (sprite.complete && sprite.naturalWidth > 0) {
-        const animFrame =
-          Math.floor((frame + cowgirl.animationOffset) / frameDuration) % COWGIRL_TOTAL_FRAMES;
-
         ctx.save();
 
         if (cowgirl.facingLeft) {

@@ -1109,7 +1109,7 @@
       const roll = Math.random();
 
       if (postCowbell) {
-        if (roll < 0.30) {
+        if (roll < 0.4) {
           type = "butcher";
           image = butcherSpriteSheet;
           usesSpriteSheet = true;
@@ -1118,8 +1118,7 @@
           totalFrames = BUTCHER_TOTAL_FRAMES;
           frameDuration = BUTCHER_FRAME_DURATION;
           canHome = true;
-
-          speedMultiplier = cowbellModeActive ? 1.2 : 1.0;
+          speedMultiplier = cowbellModeActive ? .8 : 1.2;
         } else if (roll < 0.50) {
           type = "bonus1000";
           image = bonus1000Img;
@@ -1139,7 +1138,7 @@
           type = "bonus1000";
           image = bonus1000Img;
           basePoints = 1000;
-          speedMultiplier = 1.8;
+          speedMultiplier = 1.9;
         } else if (roll < 0.40) {
           type = "bonus200";
           image = bonus200Img;

@@ -401,7 +401,7 @@
       if (soundsUnlocked) return;
       soundsUnlocked = true;
 
-      const sounds = [hitSound, bonusSound, mooSound, dialogueSound];
+      const sounds = [hitSound, bonusSound, mooSound];
 
       sounds.forEach((sound) => {
         try {
@@ -602,20 +602,17 @@
 
     function showStartOverlay() {
       showOverlay(
-        `Click here to become a cow`,
+        `So I hear you like to chew your cud...?`,
         [
           {
-            label: "Become a cow",
+            label: "Become a cow.",
             onClick: () => {
               unlockSounds();
 
               if (!introDialoguePlayed) {
                 introDialoguePlayed = true;
 
-                try {
-                  dialogueSound.currentTime = 0;
-                  dialogueSound.play().catch(() => {});
-                } catch (e) {}
+                playDialogueSound();
               }
 
               showCowDialogueOverlay();
@@ -821,6 +818,24 @@
           sound.currentTime = 0;
           sound.play().catch(() => {});
         } catch (err2) {}
+      }
+    }
+
+    function playDialogueSound() {
+      if (isMuted) return;
+
+      try {
+        dialogueSound.pause();
+        dialogueSound.currentTime = 0;
+        const playAttempt = dialogueSound.play();
+
+        if (playAttempt && typeof playAttempt.catch === "function") {
+          playAttempt.catch((err) => {
+            console.log("Dialogue sound could not play:", err);
+          });
+        }
+      } catch (err) {
+        console.log("Dialogue sound error:", err);
       }
     }
 

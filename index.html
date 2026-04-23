@@ -421,8 +421,8 @@
     }
 
     function resetStalkerButcherPosition() {
-      stalkerButcher.width = scaleX(70 * 1.15);
-      stalkerButcher.height = scaleY(70 * 1.15);
+      stalkerButcher.width = scaleX(70 * 1.2);
+      stalkerButcher.height = scaleY(70 * 1.2);
       stalkerButcher.speed = getStalkerButcherSpeed();
       stalkerButcher.x = scaleX(12);
       stalkerButcher.y = scaleY(16);
@@ -1161,8 +1161,8 @@
       player.height = scaleY(72 * 1.5);
       player.speed = Math.max(scaleX(11), 4);
 
-      stalkerButcher.width = scaleX(70 * 1.15);
-      stalkerButcher.height = scaleY(70 * 1.15);
+      stalkerButcher.width = scaleX(70 * 1.2);
+      stalkerButcher.height = scaleY(70 * 1.2);
       stalkerButcher.speed = getStalkerButcherSpeed();
 
       let isMoving = false;
@@ -1319,7 +1319,7 @@
         const stalkerHitbox = getHitbox(stalkerButcher, 0.28);
 
         if (rectsIntersect(playerHitbox, stalkerHitbox)) {
-          lives -= 3;
+          lives -= 2;
           player.invulnerableTimer = 90;
           stalkerButcher.hitCooldown = 150;
           hitFlashTimer = 28;

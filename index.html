@@ -322,6 +322,56 @@
       animationOffset: 0
     };
 
+    const cowgirlIdleSpriteSheet = new Image();
+    cowgirlIdleSpriteSheet.src = "Crazed Cowgirl w. pitchfork_)-idle-v1.png";
+
+    const cowgirlAttackSpriteSheet = new Image();
+    cowgirlAttackSpriteSheet.src = "Crazed Cowgirl w. pitchfork_)-attack-v1.png";
+
+    const cowgirlJumpSpriteSheet = new Image();
+    cowgirlJumpSpriteSheet.src = "Crazed Cowgirl w. pitchfork_)-jump-v1.png";
+
+    const cowgirlRunSpriteSheet = new Image();
+    cowgirlRunSpriteSheet.src = "Crazed Cowgirl w. pitchfork_)-run-v1.png";
+
+    const cowgirlWalkSpriteSheet = new Image();
+    cowgirlWalkSpriteSheet.src = "Crazed Cowgirl w. pitchfork_)-walk-v1.png";
+
+    const COWGIRL_SPRITE_COLS = 5;
+    const COWGIRL_SPRITE_ROWS = 5;
+    const COWGIRL_TOTAL_FRAMES = 25;
+    const COWGIRL_IDLE_FRAME_DURATION = 8;
+    const COWGIRL_RUN_FRAME_DURATION = 5;
+    const COWGIRL_ATTACK_FRAME_DURATION = 4;
+    const COWGIRL_JUMP_FRAME_DURATION = 4;
+    const COWGIRL_WALK_FRAME_DURATION = 7;
+
+    const COWGIRL_MOVE_INTERVAL = 600;
+    const COWGIRL_SWIPE_DURATION = 42;
+    const COWGIRL_RESPAWN_TIME = 600;
+    const COWGIRL_TRIGGER_SCORE = 5000;
+
+    const cowgirl = {
+      unlocked: false,
+      visible: false,
+      state: "hidden",
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      speed: 0,
+      facingLeft: false,
+      currentCorner: 0,
+      targetCorner: 1,
+      moveTimer: COWGIRL_MOVE_INTERVAL,
+      swipeTimer: 0,
+      respawnTimer: 0,
+      damageCooldown: 0,
+      fleeVX: 0,
+      fleeVY: 0,
+      animationOffset: 0
+    };
+
     const bonus200Img = new Image();
     bonus200Img.src = "falling4.png";
 
@@ -431,6 +481,218 @@
       stalkerButcher.animationOffset = Math.floor(Math.random() * 1000);
     }
 
+    function getCowgirlCorners() {
+      const padX = scaleX(18);
+      const padY = scaleY(18);
+      const usableWidth = canvas.width - cowgirl.width - padX;
+      const usableHeight = canvas.height - cowgirl.height - padY;
+
+      return [
+        { x: padX, y: padY },
+        { x: usableWidth, y: padY },
+        { x: usableWidth, y: usableHeight },
+        { x: padX, y: usableHeight }
+      ];
+    }
+
+    function placeCowgirlAtCorner(cornerIndex) {
+      const corners = getCowgirlCorners();
+      const corner = corners[cornerIndex];
+      cowgirl.x = corner.x;
+      cowgirl.y = corner.y;
+      cowgirl.currentCorner = cornerIndex;
+      cowgirl.facingLeft = cornerIndex === 1 || cornerIndex === 2;
+    }
+
+    function spawnCowgirl() {
+      cowgirl.unlocked = true;
+      cowgirl.visible = true;
+      cowgirl.state = "idle";
+      cowgirl.width = scaleX(76 * 1.2);
+      cowgirl.height = scaleY(76 * 1.2);
+      cowgirl.speed = Math.max(scaleX(3.8), 2.4);
+      cowgirl.moveTimer = COWGIRL_MOVE_INTERVAL;
+      cowgirl.swipeTimer = 0;
+      cowgirl.respawnTimer = 0;
+      cowgirl.damageCooldown = 0;
+      cowgirl.animationOffset = Math.floor(Math.random() * 1000);
+
+      const startCorner = Math.floor(Math.random() * 4);
+      placeCowgirlAtCorner(startCorner);
+    }
+
+    function sendCowgirlOffscreen() {
+      if (!cowgirl.visible) return;
+
+      cowgirl.state = "fleeing";
+      cowgirl.swipeTimer = 0;
+      cowgirl.moveTimer = 0;
+
+      const centerX = cowgirl.x + cowgirl.width / 2;
+      const centerY = cowgirl.y + cowgirl.height / 2;
+
+      const dirX = centerX < canvas.width / 2 ? -1 : 1;
+      const dirY = centerY < canvas.height / 2 ? -1 : 1;
+
+      cowgirl.fleeVX = dirX * Math.max(scaleX(6.5), 4.2);
+      cowgirl.fleeVY = dirY * Math.max(scaleY(5.8), 3.8);
+      cowgirl.facingLeft = cowgirl.fleeVX < 0;
+    }
+
+    function hideCowgirlAndStartRespawn() {
+      cowgirl.visible = false;
+      cowgirl.state = "hidden";
+      cowgirl.respawnTimer = COWGIRL_RESPAWN_TIME;
+      cowgirl.swipeTimer = 0;
+      cowgirl.moveTimer = 0;
+      cowgirl.damageCooldown = 0;
+    }
+
+    function startCowgirlRunToNextCorner() {
+      cowgirl.state = "running";
+      cowgirl.targetCorner = (cowgirl.currentCorner + 1) % 4;
+    }
+
+    function startCowgirlSwipe() {
+      cowgirl.state = "swiping";
+      cowgirl.swipeTimer = COWGIRL_SWIPE_DURATION;
+      cowgirl.facingLeft = cowgirl.currentCorner === 1 || cowgirl.currentCorner === 2;
+    }
+
+    function getCowgirlTouchHitbox() {
+      return getHitbox(cowgirl, 0.24);
+    }
+
+    function getCowgirlSwipeHitbox() {
+      const reach = scaleX(54);
+      const verticalPad = scaleY(10);
+      const attackWidth = cowgirl.width * 0.58 + reach;
+      const attackHeight = cowgirl.height * 0.68;
+
+      return {
+        x: cowgirl.facingLeft
+          ? cowgirl.x - reach
+          : cowgirl.x + cowgirl.width * 0.42,
+        y: cowgirl.y + verticalPad,
+        width: attackWidth,
+        height: attackHeight
+      };
+    }
+
+    function updateCowgirl() {
+      cowgirl.width = scaleX(76 * 1.2);
+      cowgirl.height = scaleY(76 * 1.2);
+      cowgirl.speed = Math.max(scaleX(3.8), 2.4);
+
+      if (!cowgirl.unlocked && score >= COWGIRL_TRIGGER_SCORE) {
+        spawnCowgirl();
+      }
+
+      if (!cowgirl.unlocked) return;
+
+      if (!cowgirl.visible) {
+        if (cowgirl.respawnTimer > 0) {
+          cowgirl.respawnTimer--;
+        } else {
+          spawnCowgirl();
+        }
+        return;
+      }
+
+      if (cowgirl.damageCooldown > 0) {
+        cowgirl.damageCooldown--;
+      }
+
+      if (cowgirl.state === "idle") {
+        cowgirl.moveTimer--;
+        if (cowgirl.moveTimer <= 0) {
+          startCowgirlRunToNextCorner();
+        }
+      } else if (cowgirl.state === "running") {
+        const corners = getCowgirlCorners();
+        const target = corners[cowgirl.targetCorner];
+
+        const dx = target.x - cowgirl.x;
+        const dy = target.y - cowgirl.y;
+        const distance = Math.hypot(dx, dy) || 1;
+
+        cowgirl.facingLeft = dx < 0;
+
+        if (distance <= cowgirl.speed + 1) {
+          cowgirl.x = target.x;
+          cowgirl.y = target.y;
+          cowgirl.currentCorner = cowgirl.targetCorner;
+          startCowgirlSwipe();
+        } else {
+          cowgirl.x += (dx / distance) * cowgirl.speed;
+          cowgirl.y += (dy / distance) * cowgirl.speed;
+        }
+      } else if (cowgirl.state === "swiping") {
+        cowgirl.swipeTimer--;
+        if (cowgirl.swipeTimer <= 0) {
+          cowgirl.state = "idle";
+          cowgirl.moveTimer = COWGIRL_MOVE_INTERVAL;
+        }
+      } else if (cowgirl.state === "fleeing") {
+        cowgirl.x += cowgirl.fleeVX;
+        cowgirl.y += cowgirl.fleeVY;
+
+        if (
+          cowgirl.x + cowgirl.width < -scaleX(80) ||
+          cowgirl.x > canvas.width + scaleX(80) ||
+          cowgirl.y + cowgirl.height < -scaleY(80) ||
+          cowgirl.y > canvas.height + scaleY(80)
+        ) {
+          hideCowgirlAndStartRespawn();
+        }
+      }
+
+      if (!freedomSequenceActive && !heartsCelebrationActive && cowgirl.visible) {
+        const playerHitbox = getHitbox(player, 0.12);
+
+        if (cowgirl.state === "swiping") {
+          if (player.invulnerableTimer <= 0 && cowgirl.damageCooldown <= 0) {
+            const swipeHitbox = getCowgirlSwipeHitbox();
+
+            if (rectsIntersect(playerHitbox, swipeHitbox)) {
+              lives--;
+              player.invulnerableTimer = 60;
+              cowgirl.damageCooldown = 24;
+              hitFlashTimer = 20;
+              playSound(hitSound);
+
+              if (lives <= 0) {
+                gameOver = true;
+                gamePaused = true;
+                music.pause();
+
+                showOverlay(
+                  `You became a steak.\n\nFinal Score: ${score}`,
+                  [
+                    {
+                      label: "Again",
+                      onClick: () => {
+                        restartGame();
+                      }
+                    }
+                  ],
+                  {
+                    speed: 28,
+                    requireContinueBeforeButtons: true
+                  }
+                );
+              }
+            }
+          }
+        } else if (cowgirl.state === "idle" || cowgirl.state === "running") {
+          const cowgirlHitbox = getCowgirlTouchHitbox();
+          if (rectsIntersect(playerHitbox, cowgirlHitbox)) {
+            sendCowgirlOffscreen();
+          }
+        }
+      }
+    }
+
     function unlockSounds() {
       if (soundsUnlocked) return;
       soundsUnlocked = true;
@@ -470,6 +732,10 @@
       mooFlashTimer = 18;
       bonusFlashTimer = 40;
       bonusFlashText = "MOO!";
+
+      if (cowgirl.visible) {
+        sendCowgirlOffscreen();
+      }
 
       playSound(mooSound);
     }
@@ -645,7 +911,6 @@
 
               if (!introDialoguePlayed) {
                 introDialoguePlayed = true;
-
                 playDialogueSound();
               }
 
@@ -821,7 +1086,6 @@
         }
       );
     }
-
 
     function triggerCosmicCowEnding() {
       gamePaused = true;
@@ -1061,6 +1325,25 @@
 
       resetStalkerButcherPosition();
 
+      cowgirl.unlocked = false;
+      cowgirl.visible = false;
+      cowgirl.state = "hidden";
+      cowgirl.x = 0;
+      cowgirl.y = 0;
+      cowgirl.width = scaleX(76 * 1.2);
+      cowgirl.height = scaleY(76 * 1.2);
+      cowgirl.speed = Math.max(scaleX(3.8), 2.4);
+      cowgirl.facingLeft = false;
+      cowgirl.currentCorner = 0;
+      cowgirl.targetCorner = 1;
+      cowgirl.moveTimer = COWGIRL_MOVE_INTERVAL;
+      cowgirl.swipeTimer = 0;
+      cowgirl.respawnTimer = 0;
+      cowgirl.damageCooldown = 0;
+      cowgirl.fleeVX = 0;
+      cowgirl.fleeVY = 0;
+      cowgirl.animationOffset = 0;
+
       clearDialogueHandlers();
       endBanner.classList.add("hidden");
     }
@@ -1118,7 +1401,7 @@
           totalFrames = BUTCHER_TOTAL_FRAMES;
           frameDuration = BUTCHER_FRAME_DURATION;
           canHome = true;
-          speedMultiplier = cowbellModeActive ? .8 : 1.2;
+          speedMultiplier = cowbellModeActive ? 0.8 : 1.2;
         } else if (roll < 0.50) {
           type = "bonus1000";
           image = bonus1000Img;
@@ -1355,6 +1638,8 @@
       if (stalkerButcher.hitCooldown > 0) {
         stalkerButcher.hitCooldown--;
       }
+
+      updateCowgirl();
 
       if (player.invulnerableTimer > 0) {
         player.invulnerableTimer--;
@@ -1624,6 +1909,68 @@ Final Score: ${score}`,
       }
     }
 
+    function drawCowgirl() {
+      if (!cowgirl.visible) return;
+
+      let sprite = cowgirlIdleSpriteSheet;
+      let frameDuration = COWGIRL_IDLE_FRAME_DURATION;
+
+      if (cowgirl.state === "running") {
+        sprite = cowgirlRunSpriteSheet;
+        frameDuration = COWGIRL_RUN_FRAME_DURATION;
+      } else if (cowgirl.state === "swiping") {
+        sprite = cowgirlAttackSpriteSheet;
+        frameDuration = COWGIRL_ATTACK_FRAME_DURATION;
+      } else if (cowgirl.state === "fleeing") {
+        sprite = cowgirlJumpSpriteSheet;
+        frameDuration = COWGIRL_JUMP_FRAME_DURATION;
+      } else if (cowgirl.state === "idle") {
+        sprite = cowgirlWalkSpriteSheet.complete && cowgirlWalkSpriteSheet.naturalWidth > 0
+          ? cowgirlWalkSpriteSheet
+          : cowgirlIdleSpriteSheet;
+        frameDuration = COWGIRL_WALK_FRAME_DURATION;
+      }
+
+      if (sprite.complete && sprite.naturalWidth > 0) {
+        const animFrame =
+          Math.floor((frame + cowgirl.animationOffset) / frameDuration) % COWGIRL_TOTAL_FRAMES;
+
+        ctx.save();
+
+        if (cowgirl.facingLeft) {
+          ctx.translate(cowgirl.x + cowgirl.width, cowgirl.y);
+          ctx.scale(-1, 1);
+
+          drawSpriteFrame(
+            sprite,
+            animFrame,
+            COWGIRL_SPRITE_COLS,
+            COWGIRL_SPRITE_ROWS,
+            0,
+            0,
+            cowgirl.width,
+            cowgirl.height
+          );
+        } else {
+          drawSpriteFrame(
+            sprite,
+            animFrame,
+            COWGIRL_SPRITE_COLS,
+            COWGIRL_SPRITE_ROWS,
+            cowgirl.x,
+            cowgirl.y,
+            cowgirl.width,
+            cowgirl.height
+          );
+        }
+
+        ctx.restore();
+      } else {
+        ctx.fillStyle = "#d67b7b";
+        ctx.fillRect(cowgirl.x, cowgirl.y, cowgirl.width, cowgirl.height);
+      }
+    }
+
     function drawFallingObjects() {
       for (const obj of fallingObjects) {
         if (obj.usesSpriteSheet && obj.image.complete && obj.image.naturalWidth > 0) {
@@ -1721,6 +2068,7 @@ Final Score: ${score}`,
 
       drawPlayer();
       drawStalkerButcher();
+      drawCowgirl();
       drawMooFlash();
       drawFallingObjects();
       drawHearts();

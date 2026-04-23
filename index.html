@@ -255,6 +255,7 @@
     let activeDialogue = null;
     let dialogueTimeout = null;
     let overlayTapHandler = null;
+    let introDialoguePlayed = false;
 
     const BASE_WIDTH = 400;
     const BASE_HEIGHT = 600;
@@ -324,6 +325,10 @@
     const mooSound = new Audio("moo.m4a");
     mooSound.volume = 0.9;
     mooSound.preload = "auto";
+
+    const dialogueSound = new Audio("dialogue sounds.mp3");
+    dialogueSound.volume = 0.9;
+    dialogueSound.preload = "auto";
 
     let isMuted = false;
     let soundsUnlocked = false;
@@ -396,7 +401,7 @@
       if (soundsUnlocked) return;
       soundsUnlocked = true;
 
-      const sounds = [hitSound, bonusSound, mooSound];
+      const sounds = [hitSound, bonusSound, mooSound, dialogueSound];
 
       sounds.forEach((sound) => {
         try {
@@ -568,6 +573,16 @@
     }
 
     function showStartOverlay() {
+      if (!introDialoguePlayed) {
+        introDialoguePlayed = true;
+
+        try {
+          unlockSounds();
+          dialogueSound.currentTime = 0;
+          dialogueSound.play().catch(() => {});
+        } catch (e) {}
+      }
+
       showOverlay(
         `Moo.\n\nMoo mooo mooo moo.\n\nUnderstood?`,
         [
@@ -963,8 +978,7 @@
           frameDuration = BUTCHER_FRAME_DURATION;
           canHome = true;
 
-  // 👇 ONLY faster after 18000
-        speedMultiplier = cowbellModeActive ? 1.3 : 1.0;
+          speedMultiplier = cowbellModeActive ? 1.3 : 1.0;
         } else if (roll < 0.50) {
           type = "bonus1000";
           image = bonus1000Img;

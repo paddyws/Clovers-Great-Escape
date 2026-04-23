@@ -1461,10 +1461,10 @@ Final Score: ${score}`,
         const playerHitbox = getHitbox(player, 0.12);
         const objectHitbox =
           obj.type === "butcher"
-            ? getHitbox(obj, 0.35)
+            ? getHitbox(obj, 0.38)
             : obj.type === "bad"
-            ? getHitbox(obj, 0.3)
-          : getHitbox(obj, 0.25);
+            ? getHitbox(obj, 0.31)
+            : getHitbox(obj, 0.25);
 
         const hit = rectsIntersect(playerHitbox, objectHitbox);
 

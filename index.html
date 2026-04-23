@@ -765,6 +765,7 @@
       freedomSequenceActive = true;
       gamePaused = false;
       playerFacingLeft = false;
+      player.invulnerableTimer = 999999;
       endBanner.classList.add("hidden");
     }
 
@@ -1386,7 +1387,7 @@
         }
       }
 
-      if (stalkerButcher.active && stalkerButcher.hitCooldown <= 0 && player.invulnerableTimer <= 0) {
+      if (!freedomSequenceActive && stalkerButcher.active && stalkerButcher.hitCooldown <= 0 && player.invulnerableTimer <= 0) {
         const playerHitbox = getHitbox(player, 0.12);
         const stalkerHitbox = getHitbox(stalkerButcher, 0.28);
 
@@ -1481,7 +1482,7 @@ Final Score: ${score}`,
             continue;
           }
 
-          if ((obj.type === "bad" || obj.type === "butcher") && player.invulnerableTimer <= 0) {
+          if (!freedomSequenceActive && (obj.type === "bad" || obj.type === "butcher") && player.invulnerableTimer <= 0) {
             lives--;
             player.invulnerableTimer = 60;
             hitFlashTimer = 20;

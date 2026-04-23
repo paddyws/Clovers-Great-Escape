@@ -735,7 +735,7 @@
       gamePaused = true;
 
       showOverlay(
-        `You feel warm and fuzzy inside.\n\nYOU ESCAPED CLOVER CONGRATULATIONS\n\nDo you wish to enter mortality?`,
+        `You feel warm and fuzzy inside.\n\nCLOVER YOU ESCAPED!!!  CONGRATULATIONS!!! What will you do with your newfound free range life? \n\nDo you wish to enter mortality?`,
         [
           {
             label: "Mooooo Again.",
@@ -1081,7 +1081,9 @@
 
       let isMoving = false;
 
-      if (freedomSequenceActive) {
+      if (heartsCelebrationActive) {
+        playerAnimationFrame = 0;
+      } else if (freedomSequenceActive) {
         player.x += scaleX(2.6);
         playerFacingLeft = false;
 
@@ -1313,7 +1315,7 @@
         player.invulnerableTimer > 0 &&
         Math.floor(player.invulnerableTimer / 5) % 2 === 0;
 
-      if (blinking) return;
+      if (blinking && !heartsCelebrationActive) return;
 
       if (playerSpriteSheet.complete && playerSpriteSheet.naturalWidth > 0) {
         ctx.save();

@@ -390,6 +390,8 @@
 
     let bossFightActive = false;
     let bossGrass = [];
+    let bossPatternTimer = 0;
+    let bossPatternPhase = "left"; // left, right, jump
 
     const cowgirlBoss = {
       x: 0,
@@ -1207,14 +1209,17 @@ Cowtow, or I'll turn you into cornbread.`,
       cowgirlBoss.damageCooldown = 0;
       cowgirlBoss.animationOffset = Math.floor(Math.random() * 1000);
 
+      bossPatternTimer = 0;
+      bossPatternPhase = "left";
+
       bossGrass = [];
-      for (let i = 0; i < 8; i++) {
+      for (let i = 0; i < 5; i++) {
         spawnBossGrass();
       }
     }
 
     function spawnBossGrass() {
-      const size = scaleX(36);
+      const size = scaleX(72);
       bossGrass.push({
         x: Math.random() * Math.max(1, canvas.width - size),
         y: scaleY(145) + Math.random() * Math.max(1, canvas.height - scaleY(190) - size),
@@ -1305,7 +1310,7 @@ Cowtow, or I'll turn you into cornbread.`,
         cowgirlBoss.damageCooldown--;
       }
 
-      if (frame % 90 === 0 && bossGrass.length < 12) {
+      if (frame % 180 === 0 && bossGrass.length < 6) {
         spawnBossGrass();
       }
 
@@ -1317,25 +1322,52 @@ Cowtow, or I'll turn you into cornbread.`,
       const dy = playerCenterY - bossCenterY;
       const distance = Math.hypot(dx, dy) || 1;
 
-      cowgirlBoss.facingLeft = dx < 0;
-
       if (cowgirlBoss.y < scaleY(85)) {
         cowgirlBoss.y += Math.max(scaleY(4.4), 3);
         cowgirlBoss.state = "jumping";
-      } else if (cowgirlBoss.attackCooldown > 0) {
-        cowgirlBoss.attackCooldown--;
-        cowgirlBoss.state = "running";
-        cowgirlBoss.x += (dx / distance) * cowgirlBoss.speed;
-        cowgirlBoss.y += (dy / distance) * cowgirlBoss.speed * 0.78;
+        cowgirlBoss.facingLeft = dx < 0;
       } else {
-        cowgirlBoss.state = "attacking";
-        cowgirlBoss.attackTimer++;
-        cowgirlBoss.x += (dx / distance) * cowgirlBoss.speed * 1.9;
-        cowgirlBoss.y += (dy / distance) * cowgirlBoss.speed * 1.5;
+        bossPatternTimer++;
 
-        if (cowgirlBoss.attackTimer > 34) {
-          cowgirlBoss.attackTimer = 0;
-          cowgirlBoss.attackCooldown = 70;
+        if (bossPatternPhase === "left") {
+          cowgirlBoss.state = "running";
+          cowgirlBoss.facingLeft = true;
+          cowgirlBoss.x -= cowgirlBoss.speed * 1.15;
+
+          // keep her near the top while she paces
+          if (cowgirlBoss.y > scaleY(85)) {
+            cowgirlBoss.y -= Math.min(scaleY(2), cowgirlBoss.y - scaleY(85));
+          }
+
+          if (bossPatternTimer >= 60) {
+            bossPatternTimer = 0;
+            bossPatternPhase = "right";
+          }
+        } else if (bossPatternPhase === "right") {
+          cowgirlBoss.state = "running";
+          cowgirlBoss.facingLeft = false;
+          cowgirlBoss.x += cowgirlBoss.speed * 1.15;
+
+          // keep her near the top while she paces
+          if (cowgirlBoss.y > scaleY(85)) {
+            cowgirlBoss.y -= Math.min(scaleY(2), cowgirlBoss.y - scaleY(85));
+          }
+
+          if (bossPatternTimer >= 60) {
+            bossPatternTimer = 0;
+            bossPatternPhase = "jump";
+          }
+        } else if (bossPatternPhase === "jump") {
+          cowgirlBoss.state = "attacking";
+          cowgirlBoss.facingLeft = dx < 0;
+          cowgirlBoss.x += (dx / distance) * cowgirlBoss.speed * 2.8;
+          cowgirlBoss.y += (dy / distance) * cowgirlBoss.speed * 2.15;
+
+          if (bossPatternTimer >= 45) {
+            bossPatternTimer = 0;
+            bossPatternPhase = "left";
+            cowgirlBoss.y = scaleY(85);
+          }
         }
       }
 
@@ -1402,6 +1434,8 @@ Cowtow, or I'll turn you into cornbread.`,
       cowgirlBoss.x += bossCenterX < playerCenterX ? -scaleX(34) : scaleX(34);
       cowgirlBoss.attackCooldown = 55;
       cowgirlBoss.state = "jumping";
+      bossPatternTimer = 0;
+      bossPatternPhase = "left";
 
       if (cowgirlBoss.health <= 0) {
         defeatCowgirlBoss();
@@ -1765,6 +1799,8 @@ Cowtow, or I'll turn you into cornbread.`,
       cowgirlBoss.attackTimer = 0;
       cowgirlBoss.attackCooldown = 0;
       cowgirlBoss.damageCooldown = 0;
+      bossPatternTimer = 0;
+      bossPatternPhase = "left";
 
       clearDialogueHandlers();
       endBanner.classList.add("hidden");

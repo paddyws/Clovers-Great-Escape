@@ -572,24 +572,13 @@
       }
     }
 
-    function showStartOverlay() {
-      if (!introDialoguePlayed) {
-        introDialoguePlayed = true;
-
-        try {
-          unlockSounds();
-          dialogueSound.currentTime = 0;
-          dialogueSound.play().catch(() => {});
-        } catch (e) {}
-      }
-
+    function showCowDialogueOverlay() {
       showOverlay(
         `Moo.\n\nMoo mooo mooo moo.\n\nUnderstood?`,
         [
           {
             label: "Moo.",
             onClick: async () => {
-              unlockSounds();
               gameStarted = true;
               hideOverlay();
 
@@ -607,6 +596,34 @@
         {
           speed: 34,
           requireContinueBeforeButtons: true
+        }
+      );
+    }
+
+    function showStartOverlay() {
+      showOverlay(
+        `Click here to become a cow`,
+        [
+          {
+            label: "Become a cow",
+            onClick: () => {
+              unlockSounds();
+
+              if (!introDialoguePlayed) {
+                introDialoguePlayed = true;
+
+                try {
+                  dialogueSound.currentTime = 0;
+                  dialogueSound.play().catch(() => {});
+                } catch (e) {}
+              }
+
+              showCowDialogueOverlay();
+            }
+          }
+        ],
+        {
+          speed: 20
         }
       );
     }

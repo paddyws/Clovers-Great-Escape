@@ -379,6 +379,34 @@
     const bonus1000Img = new Image();
     bonus1000Img.src = "falling5.png";
 
+    const pastureImage = new Image();
+    pastureImage.src = "pasture.png";
+
+    const MOO_COOLDOWN_FRAMES = 480; // 8 seconds at about 60fps
+
+    let greenerPasturesActive = false;
+    let greenerPasturesFade = 0;
+    let greenerPasturesTextShown = false;
+
+    let bossFightActive = false;
+    let bossGrass = [];
+
+    const cowgirlBoss = {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      speed: 0,
+      health: 4,
+      maxHealth: 4,
+      state: "hidden",
+      facingLeft: false,
+      attackTimer: 0,
+      attackCooldown: 0,
+      damageCooldown: 0,
+      animationOffset: 0
+    };
+
     const music = new Audio("music.mp3");
     music.loop = true;
     music.volume = 0.5;
@@ -745,12 +773,14 @@
 
       mooPulseActive = true;
       mooPulseTimer = 120;
-      mooCooldownTimer = 600;
+      mooCooldownTimer = MOO_COOLDOWN_FRAMES;
       mooFlashTimer = 18;
       bonusFlashTimer = 40;
       bonusFlashText = "MOO!";
 
-      if (isCowgirlNearPlayer()) {
+      if (bossFightActive) {
+        hitCowgirlBossWithMoo();
+      } else if (isCowgirlNearPlayer()) {
         awardCowgirlPointsAndFlee();
       }
 
@@ -1020,19 +1050,16 @@
       music.pause();
 
       showOverlay(
-        `Whew.\n\nThat was close.\n\nWould you like to be milked?`,
+        `Whew.
+
+That was close.
+
+Almost to....greener pastures.`,
         [
           {
             label: "Mooooo",
             onClick: () => {
-              startWarmAndFuzzyEnding();
-            }
-          },
-          {
-            label: "Noooooo",
-            secondary: true,
-            onClick: () => {
-              startFreedomEnding();
+              startGreenerPasturesSequence();
             }
           }
         ],
@@ -1040,6 +1067,372 @@
           speed: 30,
           requireContinueBeforeButtons: true
         }
+      );
+    }
+
+    function startGreenerPasturesSequence() {
+      clearDialogueHandlers();
+      overlay.classList.add("hidden");
+      overlayContinue.classList.add("hidden");
+      overlayButtons.innerHTML = "";
+
+      greenerPasturesActive = true;
+      greenerPasturesFade = 0;
+      greenerPasturesTextShown = false;
+      bossFightActive = false;
+      gamePaused = false;
+
+      fallingObjects = [];
+      cowgirl.visible = false;
+      cowgirl.unlocked = true;
+      stalkerButcher.active = false;
+
+      player.invulnerableTimer = 999999;
+      player.width = scaleX(72 * 1.5);
+      player.height = scaleY(72 * 1.5);
+      player.x = scaleX(40);
+      player.y = canvas.height - player.height - scaleY(32);
+      playerFacingLeft = false;
+    }
+
+    function updateGreenerPasturesSequence() {
+      frame++;
+
+      if (greenerPasturesFade < 1) {
+        greenerPasturesFade = Math.min(1, greenerPasturesFade + 0.012);
+      }
+
+      const paceSpeed = scaleX(1.4);
+      player.x += playerFacingLeft ? -paceSpeed : paceSpeed;
+
+      if (player.x < scaleX(28)) {
+        playerFacingLeft = false;
+      }
+      if (player.x + player.width > canvas.width - scaleX(28)) {
+        playerFacingLeft = true;
+      }
+
+      playerAnimationFrame = Math.floor(frame / PLAYER_FRAME_DURATION) % PLAYER_TOTAL_FRAMES;
+
+      if (greenerPasturesFade >= 1 && !greenerPasturesTextShown) {
+        greenerPasturesTextShown = true;
+        gamePaused = true;
+
+        showOverlay(
+          `What is this place?...`,
+          [
+            {
+              label: "Continue",
+              onClick: () => {
+                showPastureSuspiciousMoo();
+              }
+            }
+          ],
+          { speed: 30, requireContinueBeforeButtons: true }
+        );
+      }
+    }
+
+    function showPastureSuspiciousMoo() {
+      playSound(mooSound);
+
+      showOverlay(
+        `You moo suspiciously....
+
+Is this free range?`,
+        [
+          {
+            label: "Continue",
+            onClick: () => {
+              showCowgirlBossIntro();
+            }
+          }
+        ],
+        { speed: 30, requireContinueBeforeButtons: true }
+      );
+    }
+
+    function showCowgirlBossIntro() {
+      showOverlay(
+        `The cowgirl appears.
+
+Clover. You leave me no choice.
+
+Cowtow, or I'll turn you into cornbread.`,
+        [
+          {
+            label: "MOOOO",
+            onClick: () => {
+              startCowgirlBossFight();
+            }
+          }
+        ],
+        { speed: 30, requireContinueBeforeButtons: true }
+      );
+    }
+
+    function startCowgirlBossFight() {
+      clearDialogueHandlers();
+      overlay.classList.add("hidden");
+      overlayContinue.classList.add("hidden");
+      overlayButtons.innerHTML = "";
+
+      greenerPasturesActive = false;
+      bossFightActive = true;
+      gamePaused = false;
+      gameWon = false;
+
+      lives = 3;
+      player.invulnerableTimer = 90;
+      mooPulseActive = false;
+      mooPulseTimer = 0;
+      mooCooldownTimer = 0;
+      hitFlashTimer = 0;
+      bonusFlashTimer = 80;
+      bonusFlashText = "MOO HER DOWN!";
+
+      player.x = canvas.width / 2 - player.width / 2;
+      player.y = canvas.height - player.height - scaleY(34);
+      playerFacingLeft = false;
+
+      cowgirlBoss.width = scaleX(112);
+      cowgirlBoss.height = scaleY(112);
+      cowgirlBoss.x = canvas.width / 2 - cowgirlBoss.width / 2;
+      cowgirlBoss.y = -cowgirlBoss.height - scaleY(40);
+      cowgirlBoss.speed = Math.max(scaleX(3.6), 2.5);
+      cowgirlBoss.health = 4;
+      cowgirlBoss.maxHealth = 4;
+      cowgirlBoss.state = "jumping";
+      cowgirlBoss.facingLeft = false;
+      cowgirlBoss.attackTimer = 0;
+      cowgirlBoss.attackCooldown = 70;
+      cowgirlBoss.damageCooldown = 0;
+      cowgirlBoss.animationOffset = Math.floor(Math.random() * 1000);
+
+      bossGrass = [];
+      for (let i = 0; i < 8; i++) {
+        spawnBossGrass();
+      }
+    }
+
+    function spawnBossGrass() {
+      const size = scaleX(36);
+      bossGrass.push({
+        x: Math.random() * Math.max(1, canvas.width - size),
+        y: scaleY(145) + Math.random() * Math.max(1, canvas.height - scaleY(190) - size),
+        width: size,
+        height: size,
+        pulse: Math.floor(Math.random() * 1000)
+      });
+    }
+
+    function updateBossPlayerControls() {
+      let isMoving = false;
+      player.width = scaleX(72 * 1.5);
+      player.height = scaleY(72 * 1.5);
+      player.speed = Math.max(scaleX(11), 4);
+
+      if (keys["ArrowLeft"] || keys["a"] || keys["A"]) {
+        player.x -= player.speed;
+        playerFacingLeft = true;
+        isMoving = true;
+      }
+      if (keys["ArrowRight"] || keys["d"] || keys["D"]) {
+        player.x += player.speed;
+        playerFacingLeft = false;
+        isMoving = true;
+      }
+      if (keys["ArrowUp"] || keys["w"] || keys["W"]) {
+        player.y -= player.speed;
+        isMoving = true;
+      }
+      if (keys["ArrowDown"] || keys["s"] || keys["S"]) {
+        player.y += player.speed;
+        isMoving = true;
+      }
+
+      if (touchActive && touchTargetX !== null && touchTargetY !== null) {
+        const dx = touchTargetX - player.x;
+        const dy = touchTargetY - player.y;
+
+        if (Math.abs(dx) > player.speed) {
+          player.x += Math.sign(dx) * player.speed;
+          playerFacingLeft = dx < 0;
+          isMoving = true;
+        } else if (Math.abs(dx) > 1) {
+          player.x = touchTargetX;
+          playerFacingLeft = dx < 0;
+          isMoving = true;
+        }
+
+        if (Math.abs(dy) > player.speed) {
+          player.y += Math.sign(dy) * player.speed;
+          isMoving = true;
+        } else if (Math.abs(dy) > 1) {
+          player.y = touchTargetY;
+          isMoving = true;
+        }
+      }
+
+      if (player.x < 0) player.x = 0;
+      if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+      if (player.y < scaleY(120)) player.y = scaleY(120);
+      if (player.y + player.height > canvas.height) player.y = canvas.height - player.height;
+
+      playerAnimationFrame = isMoving
+        ? Math.floor(frame / PLAYER_FRAME_DURATION) % PLAYER_TOTAL_FRAMES
+        : 0;
+    }
+
+    function updateBossFight() {
+      frame++;
+      updateBossPlayerControls();
+
+      if (player.invulnerableTimer > 0) player.invulnerableTimer--;
+      if (hitFlashTimer > 0) hitFlashTimer--;
+      if (bonusFlashTimer > 0) bonusFlashTimer--;
+      if (mooFlashTimer > 0) mooFlashTimer--;
+
+      if (mooPulseTimer > 0) {
+        mooPulseTimer--;
+      } else {
+        mooPulseActive = false;
+      }
+
+      if (mooCooldownTimer > 0) {
+        mooCooldownTimer--;
+      }
+
+      if (cowgirlBoss.damageCooldown > 0) {
+        cowgirlBoss.damageCooldown--;
+      }
+
+      if (frame % 90 === 0 && bossGrass.length < 12) {
+        spawnBossGrass();
+      }
+
+      const playerCenterX = player.x + player.width / 2;
+      const playerCenterY = player.y + player.height / 2;
+      const bossCenterX = cowgirlBoss.x + cowgirlBoss.width / 2;
+      const bossCenterY = cowgirlBoss.y + cowgirlBoss.height / 2;
+      const dx = playerCenterX - bossCenterX;
+      const dy = playerCenterY - bossCenterY;
+      const distance = Math.hypot(dx, dy) || 1;
+
+      cowgirlBoss.facingLeft = dx < 0;
+
+      if (cowgirlBoss.y < scaleY(85)) {
+        cowgirlBoss.y += Math.max(scaleY(4.4), 3);
+        cowgirlBoss.state = "jumping";
+      } else if (cowgirlBoss.attackCooldown > 0) {
+        cowgirlBoss.attackCooldown--;
+        cowgirlBoss.state = "running";
+        cowgirlBoss.x += (dx / distance) * cowgirlBoss.speed;
+        cowgirlBoss.y += (dy / distance) * cowgirlBoss.speed * 0.78;
+      } else {
+        cowgirlBoss.state = "attacking";
+        cowgirlBoss.attackTimer++;
+        cowgirlBoss.x += (dx / distance) * cowgirlBoss.speed * 1.9;
+        cowgirlBoss.y += (dy / distance) * cowgirlBoss.speed * 1.5;
+
+        if (cowgirlBoss.attackTimer > 34) {
+          cowgirlBoss.attackTimer = 0;
+          cowgirlBoss.attackCooldown = 70;
+        }
+      }
+
+      if (cowgirlBoss.x < -cowgirlBoss.width * 0.15) cowgirlBoss.x = -cowgirlBoss.width * 0.15;
+      if (cowgirlBoss.x + cowgirlBoss.width > canvas.width + cowgirlBoss.width * 0.15) {
+        cowgirlBoss.x = canvas.width - cowgirlBoss.width * 0.85;
+      }
+      if (cowgirlBoss.y < scaleY(65)) cowgirlBoss.y = scaleY(65);
+      if (cowgirlBoss.y + cowgirlBoss.height > canvas.height) {
+        cowgirlBoss.y = canvas.height - cowgirlBoss.height;
+      }
+
+      const playerHitbox = getHitbox(player, 0.14);
+      const bossHitbox = getHitbox(cowgirlBoss, cowgirlBoss.state === "attacking" ? 0.12 : 0.22);
+
+      if (rectsIntersect(playerHitbox, bossHitbox) && cowgirlBoss.damageCooldown <= 0 && player.invulnerableTimer <= 0) {
+        lives--;
+        player.invulnerableTimer = 80;
+        cowgirlBoss.damageCooldown = 65;
+        hitFlashTimer = 22;
+        playSound(hitSound);
+
+        if (lives <= 0) {
+          gameOver = true;
+          gamePaused = true;
+          bossFightActive = false;
+          showOverlay(
+            `Clover became cornbread.\n\nFinal Score: ${score}`,
+            [
+              {
+                label: "Again",
+                onClick: () => { restartGame(); }
+              }
+            ],
+            { speed: 28, requireContinueBeforeButtons: true }
+          );
+          return;
+        }
+      }
+
+      for (let i = bossGrass.length - 1; i >= 0; i--) {
+        const grass = bossGrass[i];
+        if (rectsIntersect(playerHitbox, getHitbox(grass, 0.08))) {
+          score += 200;
+          maybeAwardExtraLife();
+          bonusFlashTimer = 28;
+          bonusFlashText = "+200 grass";
+          playSound(bonusSound);
+          bossGrass.splice(i, 1);
+          spawnBossGrass();
+        }
+      }
+    }
+
+    function hitCowgirlBossWithMoo() {
+      if (!bossFightActive || cowgirlBoss.health <= 0) return;
+
+      cowgirlBoss.health--;
+      bonusFlashTimer = 44;
+      bonusFlashText = `MOO HIT! ${Math.max(0, cowgirlBoss.health)} left`;
+
+      const bossCenterX = cowgirlBoss.x + cowgirlBoss.width / 2;
+      const playerCenterX = player.x + player.width / 2;
+      cowgirlBoss.x += bossCenterX < playerCenterX ? -scaleX(34) : scaleX(34);
+      cowgirlBoss.attackCooldown = 55;
+      cowgirlBoss.state = "jumping";
+
+      if (cowgirlBoss.health <= 0) {
+        defeatCowgirlBoss();
+      }
+    }
+
+    function defeatCowgirlBoss() {
+      bossFightActive = false;
+      gameWon = true;
+      gamePaused = true;
+      score += 1000;
+      bonusFlashTimer = 80;
+      bonusFlashText = "+1000";
+      playSound(bonusSound);
+
+      showOverlay(
+        `The cowgirl is defeated.\n\nClover stands victorious.\n\nNow...\n\nWould you like to be milked?`,
+        [
+          {
+            label: "Mooooo",
+            onClick: () => { startWarmAndFuzzyEnding(); }
+          },
+          {
+            label: "Noooooo",
+            secondary: true,
+            onClick: () => { startFreedomEnding(); }
+          }
+        ],
+        { speed: 30, requireContinueBeforeButtons: true }
       );
     }
 
@@ -1363,6 +1756,18 @@
       cowgirl.fleeVY = 0;
       cowgirl.animationOffset = 0;
 
+      greenerPasturesActive = false;
+      greenerPasturesFade = 0;
+      greenerPasturesTextShown = false;
+      bossFightActive = false;
+      bossGrass = [];
+      cowgirlBoss.health = 4;
+      cowgirlBoss.maxHealth = 4;
+      cowgirlBoss.state = "hidden";
+      cowgirlBoss.attackTimer = 0;
+      cowgirlBoss.attackCooldown = 0;
+      cowgirlBoss.damageCooldown = 0;
+
       clearDialogueHandlers();
       endBanner.classList.add("hidden");
     }
@@ -1518,6 +1923,16 @@
 
     function update() {
       updateHearts();
+
+      if (greenerPasturesActive && !gamePaused) {
+        updateGreenerPasturesSequence();
+        return;
+      }
+
+      if (bossFightActive && !gamePaused) {
+        updateBossFight();
+        return;
+      }
 
       if (!gameStarted || gameOver || gamePaused) return;
 
@@ -2077,8 +2492,137 @@ Final Score: ${score}`,
       ctx.restore();
     }
 
+    function drawPastureBackground() {
+      if (pastureImage.complete && pastureImage.naturalWidth > 0) {
+        ctx.drawImage(pastureImage, 0, 0, canvas.width, canvas.height);
+      } else {
+        const sky = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        sky.addColorStop(0, "#54b6ff");
+        sky.addColorStop(0.55, "#a7dcff");
+        sky.addColorStop(0.56, "#62a932");
+        sky.addColorStop(1, "#2e751f");
+        ctx.fillStyle = sky;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function drawGreenerPasturesSequence() {
+      ctx.save();
+      ctx.globalAlpha = greenerPasturesFade;
+      drawPastureBackground();
+      ctx.restore();
+
+      if (greenerPasturesFade < 1) {
+        ctx.save();
+        ctx.globalAlpha = 1 - greenerPasturesFade;
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.restore();
+      }
+
+      drawPlayer();
+    }
+
+    function drawBossGrass() {
+      for (const grass of bossGrass) {
+        const pulse = 1 + Math.sin((frame + grass.pulse) * 0.08) * 0.05;
+        const w = grass.width * pulse;
+        const h = grass.height * pulse;
+        const x = grass.x + (grass.width - w) / 2;
+        const y = grass.y + (grass.height - h) / 2;
+
+        if (bonus200Img.complete && bonus200Img.naturalWidth > 0) {
+          ctx.drawImage(bonus200Img, x, y, w, h);
+        } else {
+          ctx.fillStyle = "#61d957";
+          ctx.fillRect(x, y, w, h);
+        }
+      }
+    }
+
+    function drawCowgirlBoss() {
+      let sprite = cowgirlRunSpriteSheet;
+      let frameDuration = COWGIRL_RUN_FRAME_DURATION;
+
+      if (cowgirlBoss.state === "attacking") {
+        sprite = cowgirlAttackSpriteSheet;
+        frameDuration = COWGIRL_ATTACK_FRAME_DURATION;
+      } else if (cowgirlBoss.state === "jumping") {
+        sprite = cowgirlJumpSpriteSheet;
+        frameDuration = COWGIRL_JUMP_FRAME_DURATION;
+      }
+
+      const animFrame = Math.floor((frame + cowgirlBoss.animationOffset) / frameDuration) % COWGIRL_TOTAL_FRAMES;
+
+      if (sprite.complete && sprite.naturalWidth > 0) {
+        ctx.save();
+
+        if (cowgirlBoss.facingLeft) {
+          ctx.translate(cowgirlBoss.x + cowgirlBoss.width, cowgirlBoss.y);
+          ctx.scale(-1, 1);
+          drawSpriteFrame(sprite, animFrame, COWGIRL_SPRITE_COLS, COWGIRL_SPRITE_ROWS, 0, 0, cowgirlBoss.width, cowgirlBoss.height);
+        } else {
+          drawSpriteFrame(sprite, animFrame, COWGIRL_SPRITE_COLS, COWGIRL_SPRITE_ROWS, cowgirlBoss.x, cowgirlBoss.y, cowgirlBoss.width, cowgirlBoss.height);
+        }
+
+        ctx.restore();
+      } else {
+        ctx.fillStyle = "#b74747";
+        ctx.fillRect(cowgirlBoss.x, cowgirlBoss.y, cowgirlBoss.width, cowgirlBoss.height);
+      }
+    }
+
+    function drawBossHUD() {
+      const barWidth = scaleX(250);
+      const barHeight = scaleY(16);
+      const x = canvas.width / 2 - barWidth / 2;
+      const y = scaleY(18);
+
+      ctx.save();
+      ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
+      ctx.fillRect(x - scaleX(4), y - scaleY(4), barWidth + scaleX(8), barHeight + scaleY(8));
+
+      ctx.fillStyle = "#3b1010";
+      ctx.fillRect(x, y, barWidth, barHeight);
+
+      ctx.fillStyle = "#ff4d4d";
+      ctx.fillRect(x, y, barWidth * Math.max(0, cowgirlBoss.health / cowgirlBoss.maxHealth), barHeight);
+
+      ctx.strokeStyle = "white";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x, y, barWidth, barHeight);
+
+      ctx.fillStyle = "white";
+      ctx.font = `${Math.max(scaleY(14), 11)}px Arial`;
+      ctx.textAlign = "center";
+      ctx.fillText(`Cowgirl Moos Left: ${Math.max(0, cowgirlBoss.health)}`, canvas.width / 2, y + scaleY(34));
+      ctx.restore();
+    }
+
+    function drawBossFight() {
+      drawPastureBackground();
+      drawBossGrass();
+      drawPlayer();
+      drawCowgirlBoss();
+      drawMooFlash();
+      drawHUD();
+      drawBossHUD();
+      drawHitFlash();
+      drawBonusFlash();
+    }
+
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (greenerPasturesActive) {
+        drawGreenerPasturesSequence();
+        return;
+      }
+
+      if (bossFightActive) {
+        drawBossFight();
+        return;
+      }
 
       drawPlayer();
       drawStalkerButcher();

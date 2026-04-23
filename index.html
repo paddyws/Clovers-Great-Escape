@@ -322,6 +322,7 @@
       animationOffset: 0
     };
 
+
     const cowgirlIdleSpriteSheet = new Image();
     cowgirlIdleSpriteSheet.src = "Crazed Cowgirl w. pitchfork_)-idle-v1.png";
 
@@ -346,15 +347,15 @@
     const COWGIRL_JUMP_FRAME_DURATION = 4;
     const COWGIRL_WALK_FRAME_DURATION = 7;
 
-    const COWGIRL_MOVE_INTERVAL = 300;
+    const COWGIRL_MOVE_INTERVAL = 600;   // 10 seconds at about 60fps
     const COWGIRL_SWIPE_DURATION = 42;
-    const COWGIRL_RESPAWN_TIME = 300;
+    const COWGIRL_RESPAWN_TIME = 600;    // 10 seconds
     const COWGIRL_TRIGGER_SCORE = 5000;
 
     const cowgirl = {
       unlocked: false,
       visible: false,
-      state: "hidden",
+      state: "hidden", // hidden, idle, running, swiping, fleeing
       x: 0,
       y: 0,
       width: 0,
@@ -481,6 +482,7 @@
       stalkerButcher.animationOffset = Math.floor(Math.random() * 1000);
     }
 
+
     function getCowgirlCorners() {
       const padX = scaleX(18);
       const padY = scaleY(18);
@@ -507,7 +509,6 @@
     function spawnCowgirl() {
       cowgirl.unlocked = true;
       cowgirl.visible = true;
-      cowgirl.state = "idle";
       cowgirl.width = scaleX(76 * 1.2);
       cowgirl.height = scaleY(76 * 1.2);
       cowgirl.speed = Math.max(scaleX(3.8), 2.4);
@@ -517,8 +518,31 @@
       cowgirl.damageCooldown = 0;
       cowgirl.animationOffset = Math.floor(Math.random() * 1000);
 
-      const startCorner = Math.floor(Math.random() * 4);
-      placeCowgirlAtCorner(startCorner);
+      const entryCorner = Math.floor(Math.random() * 4);
+      cowgirl.currentCorner = entryCorner;
+      cowgirl.targetCorner = entryCorner;
+
+      const corners = getCowgirlCorners();
+      const target = corners[entryCorner];
+      const offX = scaleX(95);
+      const offY = scaleY(95);
+
+      if (entryCorner === 0) {
+        cowgirl.x = -cowgirl.width - offX;
+        cowgirl.y = -cowgirl.height - offY;
+      } else if (entryCorner === 1) {
+        cowgirl.x = canvas.width + offX;
+        cowgirl.y = -cowgirl.height - offY;
+      } else if (entryCorner === 2) {
+        cowgirl.x = canvas.width + offX;
+        cowgirl.y = canvas.height + offY;
+      } else {
+        cowgirl.x = -cowgirl.width - offX;
+        cowgirl.y = canvas.height + offY;
+      }
+
+      cowgirl.state = "running";
+      cowgirl.facingLeft = target.x - cowgirl.x < 0;
     }
 
     function sendCowgirlOffscreen() {
@@ -564,15 +588,15 @@
     }
 
     function getCowgirlSwipeHitbox() {
-      const reach = scaleX(54);
-      const verticalPad = scaleY(10);
-      const attackWidth = cowgirl.width * 0.58 + reach;
-      const attackHeight = cowgirl.height * 0.68;
+      const reach = scaleX(95);
+      const verticalPad = scaleY(4);
+      const attackWidth = cowgirl.width * 0.9 + reach;
+      const attackHeight = cowgirl.height * 0.95;
 
       return {
         x: cowgirl.facingLeft
           ? cowgirl.x - reach
-          : cowgirl.x + cowgirl.width * 0.42,
+          : cowgirl.x + cowgirl.width * 0.10,
         y: cowgirl.y + verticalPad,
         width: attackWidth,
         height: attackHeight
@@ -605,6 +629,7 @@
 
       if (cowgirl.state === "idle") {
         cowgirl.moveTimer--;
+
         if (cowgirl.moveTimer <= 0) {
           startCowgirlRunToNextCorner();
         }
@@ -629,6 +654,7 @@
         }
       } else if (cowgirl.state === "swiping") {
         cowgirl.swipeTimer--;
+
         if (cowgirl.swipeTimer <= 0) {
           cowgirl.state = "idle";
           cowgirl.moveTimer = COWGIRL_MOVE_INTERVAL;
@@ -684,7 +710,7 @@
               }
             }
           }
-        } else if (cowgirl.state === "idle" || cowgirl.state === "running") {
+        } else if (cowgirl.state === "running") {
           const cowgirlHitbox = getCowgirlTouchHitbox();
           if (rectsIntersect(playerHitbox, cowgirlHitbox)) {
             sendCowgirlOffscreen();
@@ -733,7 +759,7 @@
       bonusFlashTimer = 40;
       bonusFlashText = "MOO!";
 
-      if (cowgirl.visible) {
+      if (cowgirl.visible && cowgirl.state === "running") {
         sendCowgirlOffscreen();
       }
 
@@ -911,6 +937,7 @@
 
               if (!introDialoguePlayed) {
                 introDialoguePlayed = true;
+
                 playDialogueSound();
               }
 
@@ -1086,6 +1113,7 @@
         }
       );
     }
+
 
     function triggerCosmicCowEnding() {
       gamePaused = true;
@@ -1401,7 +1429,7 @@
           totalFrames = BUTCHER_TOTAL_FRAMES;
           frameDuration = BUTCHER_FRAME_DURATION;
           canHome = true;
-          speedMultiplier = cowbellModeActive ? 0.8 : 1.2;
+          speedMultiplier = cowbellModeActive ? .8 : 1.2;
         } else if (roll < 0.50) {
           type = "bonus1000";
           image = bonus1000Img;
@@ -1908,6 +1936,8 @@ Final Score: ${score}`,
         ctx.fillRect(stalkerButcher.x, stalkerButcher.y, stalkerButcher.width, stalkerButcher.height);
       }
     }
+
+
 
     function drawCowgirl() {
       if (!cowgirl.visible) return;

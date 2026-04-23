@@ -798,7 +798,7 @@
       gamePaused = true;
 
       showOverlay(
-        `You feel warm and fuzzy inside.\n\nCLOVER YOU ESCAPED!!!  CONGRATULATIONS!!! What will you do with your newfound free range life? \n\nDo you wish to enter mortality?`,
+        `You feel warm and fuzzy inside.\n\nCLOVER YOU ESCAPED!!!  CONGRATULATIONS!!! \n\nDo you wish to enter mortality?`,
         [
           {
             label: "Mooooo Again.",
@@ -810,7 +810,7 @@
             label: "Noooooo.",
             secondary: true,
             onClick: () => {
-              exitToMortality();
+              triggerCosmicCowEnding();
             }
           }
         ],
@@ -819,6 +819,78 @@
           requireContinueBeforeButtons: true
         }
       );
+    }
+
+
+    function triggerCosmicCowEnding() {
+      gamePaused = true;
+      clearDialogueHandlers();
+      overlay.classList.add("hidden");
+      overlayContinue.classList.add("hidden");
+      overlayButtons.innerHTML = "";
+
+      const cosmicOverlay = document.createElement("div");
+      cosmicOverlay.style.position = "fixed";
+      cosmicOverlay.style.inset = "0";
+      cosmicOverlay.style.display = "flex";
+      cosmicOverlay.style.alignItems = "center";
+      cosmicOverlay.style.justifyContent = "center";
+      cosmicOverlay.style.background = "rgba(0, 0, 0, 1)";
+      cosmicOverlay.style.color = "white";
+      cosmicOverlay.style.fontFamily = "Arial, sans-serif";
+      cosmicOverlay.style.fontSize = "clamp(28px, 4vw, 42px)";
+      cosmicOverlay.style.textAlign = "center";
+      cosmicOverlay.style.padding = "32px";
+      cosmicOverlay.style.opacity = "0";
+      cosmicOverlay.style.transition = "opacity 3s ease";
+      cosmicOverlay.style.zIndex = "9999";
+
+      const cosmicText = document.createElement("div");
+      cosmicText.style.whiteSpace = "pre-line";
+      cosmicText.style.textShadow = "0 0 14px rgba(255,255,255,0.22)";
+      cosmicText.textContent = "Clover hesitates...";
+      cosmicOverlay.appendChild(cosmicText);
+      document.body.appendChild(cosmicOverlay);
+
+      requestAnimationFrame(() => {
+        cosmicOverlay.style.opacity = "1";
+      });
+
+      try {
+        if (!isMuted) {
+          const ghostMoo = mooSound.cloneNode();
+          ghostMoo.volume = 0.25;
+          setTimeout(() => {
+            ghostMoo.play().catch(() => {});
+          }, 9600);
+        }
+      } catch (err) {}
+
+      setTimeout(() => {
+        cosmicText.textContent = "The warmth lingers.";
+      }, 2500);
+
+      setTimeout(() => {
+        cosmicText.textContent = "The world fades.";
+      }, 5000);
+
+      setTimeout(() => {
+        cosmicText.textContent = "But Clover does not.";
+      }, 7500);
+
+      setTimeout(() => {
+        cosmicText.textContent = "Moooo...";
+      }, 10000);
+
+      setTimeout(() => {
+        cosmicOverlay.style.transition = "opacity 5s ease";
+        cosmicOverlay.style.opacity = "0";
+
+        setTimeout(() => {
+          document.body.innerHTML = "";
+          document.body.style.background = "black";
+        }, 5000);
+      }, 13000);
     }
 
     function exitToMortality() {

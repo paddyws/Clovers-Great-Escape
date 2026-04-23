@@ -303,6 +303,25 @@
     const BUTCHER_TOTAL_FRAMES = 25;
     const BUTCHER_FRAME_DURATION = 6;
 
+    const stalkerButcherSpriteSheet = new Image();
+    stalkerButcherSpriteSheet.src = "Pitchfork Butcher-walk.png";
+
+    const STALKER_BUTCHER_SPRITE_COLS = 5;
+    const STALKER_BUTCHER_SPRITE_ROWS = 5;
+    const STALKER_BUTCHER_TOTAL_FRAMES = 25;
+    const STALKER_BUTCHER_FRAME_DURATION = 8;
+
+    const stalkerButcher = {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      speed: 0,
+      active: true,
+      hitCooldown: 0,
+      animationOffset: 0
+    };
+
     const bonus200Img = new Image();
     bonus200Img.src = "falling4.png";
 
@@ -395,6 +414,21 @@
       const base = score >= 10000 ? 0.015 : 0.010;
       const extra = score >= 10000 ? 0.015 : 0.012;
       return base + Math.min(score / 60000, extra);
+    }
+
+    function getStalkerButcherSpeed() {
+      return Math.max(scaleX(0.38), 0.22);
+    }
+
+    function resetStalkerButcherPosition() {
+      stalkerButcher.width = scaleX(70 * 1.15);
+      stalkerButcher.height = scaleY(70 * 1.15);
+      stalkerButcher.speed = getStalkerButcherSpeed();
+      stalkerButcher.x = scaleX(12);
+      stalkerButcher.y = scaleY(16);
+      stalkerButcher.active = true;
+      stalkerButcher.hitCooldown = 0;
+      stalkerButcher.animationOffset = Math.floor(Math.random() * 1000);
     }
 
     function unlockSounds() {
@@ -952,6 +986,8 @@
       touchTargetX = null;
       touchTargetY = null;
 
+      resetStalkerButcherPosition();
+
       clearDialogueHandlers();
       endBanner.classList.add("hidden");
     }
@@ -1125,6 +1161,10 @@
       player.height = scaleY(72 * 1.5);
       player.speed = Math.max(scaleX(11), 4);
 
+      stalkerButcher.width = scaleX(70 * 1.15);
+      stalkerButcher.height = scaleY(70 * 1.15);
+      stalkerButcher.speed = getStalkerButcherSpeed();
+
       let isMoving = false;
 
       if (heartsCelebrationActive) {
@@ -1213,6 +1253,37 @@
         player.y = canvas.height - player.height;
       }
 
+      if (stalkerButcher.active && !freedomSequenceActive && !heartsCelebrationActive) {
+        const stalkerCenterX = stalkerButcher.x + stalkerButcher.width / 2;
+        const stalkerCenterY = stalkerButcher.y + stalkerButcher.height / 2;
+        const playerCenterX = player.x + player.width / 2;
+        const playerCenterY = player.y + player.height / 2;
+        const dx = playerCenterX - stalkerCenterX;
+        const dy = playerCenterY - stalkerCenterY;
+        const distance = Math.hypot(dx, dy) || 1;
+
+        if (mooPulseActive) {
+          stalkerButcher.x -= (dx / distance) * scaleX(0.9);
+          stalkerButcher.y -= (dy / distance) * scaleY(0.9);
+        } else {
+          stalkerButcher.x += (dx / distance) * stalkerButcher.speed;
+          stalkerButcher.y += (dy / distance) * stalkerButcher.speed;
+        }
+
+        if (stalkerButcher.x < 0) stalkerButcher.x = 0;
+        if (stalkerButcher.x + stalkerButcher.width > canvas.width) {
+          stalkerButcher.x = canvas.width - stalkerButcher.width;
+        }
+        if (stalkerButcher.y < 0) stalkerButcher.y = 0;
+        if (stalkerButcher.y + stalkerButcher.height > canvas.height) {
+          stalkerButcher.y = canvas.height - stalkerButcher.height;
+        }
+      }
+
+      if (stalkerButcher.hitCooldown > 0) {
+        stalkerButcher.hitCooldown--;
+      }
+
       if (player.invulnerableTimer > 0) {
         player.invulnerableTimer--;
       }
@@ -1240,6 +1311,45 @@
 
         if (frame % spawnInterval === 0) {
           spawnObject();
+        }
+      }
+
+      if (stalkerButcher.active && stalkerButcher.hitCooldown <= 0 && player.invulnerableTimer <= 0) {
+        const playerHitbox = getHitbox(player, 0.12);
+        const stalkerHitbox = getHitbox(stalkerButcher, 0.28);
+
+        if (rectsIntersect(playerHitbox, stalkerHitbox)) {
+          lives -= 3;
+          player.invulnerableTimer = 90;
+          stalkerButcher.hitCooldown = 150;
+          hitFlashTimer = 28;
+          playSound(hitSound);
+          resetStalkerButcherPosition();
+          stalkerButcher.hitCooldown = 150;
+
+          if (lives <= 0) {
+            gameOver = true;
+            gamePaused = true;
+            music.pause();
+
+            showOverlay(
+              `You became a steak.
+
+Final Score: ${score}`,
+              [
+                {
+                  label: "Again",
+                  onClick: () => {
+                    restartGame();
+                  }
+                }
+              ],
+              {
+                speed: 28,
+                requireContinueBeforeButtons: true
+              }
+            );
+          }
         }
       }
 
@@ -1417,6 +1527,29 @@
       }
     }
 
+    function drawStalkerButcher() {
+      if (!stalkerButcher.active) return;
+
+      if (stalkerButcherSpriteSheet.complete && stalkerButcherSpriteSheet.naturalWidth > 0) {
+        const animFrame =
+          Math.floor((frame + stalkerButcher.animationOffset) / STALKER_BUTCHER_FRAME_DURATION) % STALKER_BUTCHER_TOTAL_FRAMES;
+
+        drawSpriteFrame(
+          stalkerButcherSpriteSheet,
+          animFrame,
+          STALKER_BUTCHER_SPRITE_COLS,
+          STALKER_BUTCHER_SPRITE_ROWS,
+          stalkerButcher.x,
+          stalkerButcher.y,
+          stalkerButcher.width,
+          stalkerButcher.height
+        );
+      } else {
+        ctx.fillStyle = "#aa3333";
+        ctx.fillRect(stalkerButcher.x, stalkerButcher.y, stalkerButcher.width, stalkerButcher.height);
+      }
+    }
+
     function drawFallingObjects() {
       for (const obj of fallingObjects) {
         if (obj.usesSpriteSheet && obj.image.complete && obj.image.naturalWidth > 0) {
@@ -1513,6 +1646,7 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       drawPlayer();
+      drawStalkerButcher();
       drawMooFlash();
       drawFallingObjects();
       drawHearts();

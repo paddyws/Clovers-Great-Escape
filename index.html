@@ -154,74 +154,90 @@
     }
 
 
-    .difficulty-menu {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      padding: 4px 0 2px;
-    }
+    
+/* 🌙 Soft dark Papyrus menu */
 
-    .difficulty-title {
-      margin: 0 0 4px;
-      font-size: 18px;
-      font-weight: 900;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #fff7d6;
-      text-shadow: 0 0 14px rgba(255, 230, 160, 0.28);
-    }
+.difficulty-menu {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-family: Papyrus, fantasy;
+}
 
-    .difficulty-subtitle {
-      margin: 0 0 4px;
-      font-size: 13px;
-      line-height: 1.35;
-      color: rgba(246, 240, 232, 0.82);
-    }
+.difficulty-title {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: 0.08em;
+  color: #d9d3b8;
+  text-shadow: 0 0 10px rgba(255, 230, 160, 0.15);
+}
 
-    .difficulty-options {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+.difficulty-subtitle {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #bfb79c;
+  opacity: 0.85;
+  margin-bottom: 6px;
+}
 
-    .difficulty-card {
-      width: 100%;
-      padding: 13px 16px;
-      border: 1px solid rgba(255, 240, 220, 0.22);
-      border-radius: 999px;
-      cursor: pointer;
-      background: linear-gradient(180deg, #f6e7d4, #cfae86);
-      color: #2a1d14;
-      text-align: center;
-      font-size: 16px;
-      font-weight: 900;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      box-shadow: 0 9px 22px rgba(0, 0, 0, 0.30);
-      transform: translateY(0);
-      transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
-    }
+.difficulty-options {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
 
-    .difficulty-card:hover,
-    .difficulty-card:focus-visible {
-      transform: translateY(-2px);
-      box-shadow: 0 13px 28px rgba(0, 0, 0, 0.42);
-      filter: brightness(1.05);
-      outline: none;
-    }
+.difficulty-card {
+  font-family: Papyrus, fantasy;
+  width: 160px;
+  padding: 7px 10px;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid rgba(200, 185, 140, 0.18);
+  background: linear-gradient(
+    180deg,
+    rgba(34, 31, 25, 0.95),
+    rgba(20, 18, 15, 0.95)
+  );
+  color: #dcd5b9;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    0 6px 14px rgba(0,0,0,0.45);
+  transition: all 0.15s ease;
+}
 
-    .difficulty-card:active {
-      transform: translateY(1px) scale(0.99);
-    }
+.difficulty-card:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(48, 44, 34, 0.95),
+    rgba(24, 22, 18, 0.95)
+  );
+  transform: translateY(-1px) scale(1.02);
+}
 
-    .difficulty-card.cowgirl {
-      background: linear-gradient(180deg, #e99a58, #a9442b);
-      color: #fff7ed;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
-    }
+.difficulty-card:active {
+  transform: scale(0.96);
+}
+
+.difficulty-card.cowgirl {
+  color: #e6a98f;
+  border-color: rgba(180, 90, 60, 0.35);
+}
+
+.difficulty-card.cowgirl:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(70, 42, 30, 0.95),
+    rgba(32, 20, 16, 0.95)
+  );
+}
+
 
     .end-banner {
       position: absolute;
@@ -588,7 +604,7 @@
     }
 
     function getStalkerButcherSpeed() {
-      return Math.max(scaleX(0.38), 0.22) * difficultyMultiplier;
+      return Math.max(scaleX(0.38), 0.22) * difficultyMultiplier*difficultyMultiplier;
     }
 
     function resetStalkerButcherPosition() {
@@ -2549,7 +2565,7 @@ Final Score: ${score}`,
           const dy = playerCenterY - objCenterY;
 
           const homingMultiplier = score >= 10000 ? 1.18 : 1.08;
-          const homing = dx * getHomingStrength() * homingMultiplier*difficultyMultiplier;
+          const homing = dx * getHomingStrength() * homingMultiplier;
           const maxSideSpeed = scaleX(score >= 10000 ? 1.5 : 1.35);
 
           obj.x += Math.max(-maxSideSpeed, Math.min(maxSideSpeed, homing));

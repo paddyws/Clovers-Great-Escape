@@ -382,9 +382,9 @@
     const pastureImage = new Image();
     pastureImage.src = "pasture.png";
 
-    const MOO_COOLDOWN_FRAMES = 300; // 5 seconds at about 60fps
+    const MOO_COOLDOWN_FRAMES = 680; // 5 seconds at about 60fps
     const MOO_BOSS_COOLDOWN_FRAMES = 0;
-    const MOO_PULSE_RADIUS = 110;
+    const MOO_PULSE_RADIUS = 130;
 
     let greenerPasturesActive = false;
     let greenerPasturesFade = 0;
@@ -1260,8 +1260,8 @@ Cowtow, or I'll turn you into cornbread.`,
       cowgirlBoss.x = canvas.width / 2 - cowgirlBoss.width / 2;
       cowgirlBoss.y = scaleY(34);
       cowgirlBoss.speed = Math.max(scaleX(4.8), 3.2);
-      cowgirlBoss.health = 50;
-      cowgirlBoss.maxHealth = 50;
+      cowgirlBoss.health = 80;
+      cowgirlBoss.maxHealth = 80;
       cowgirlBoss.state = "running";
       cowgirlBoss.facingLeft = false;
       cowgirlBoss.attackTimer = 0;
@@ -1925,8 +1925,8 @@ Final Score: ${score}`,
       bossGrass = [];
       bossPitchforks = [];
       bossGrassSpawnTimer = 0;
-      cowgirlBoss.health = 50;
-      cowgirlBoss.maxHealth = 50;
+      cowgirlBoss.health = 80;
+      cowgirlBoss.maxHealth = 80;
       cowgirlBoss.state = "hidden";
       cowgirlBoss.attackTimer = 0;
       cowgirlBoss.attackCooldown = 0;

@@ -2842,11 +2842,10 @@ Final Score: ${score}`,
 
     function drawHUD() {
       ctx.fillStyle = "white";
-      ctx.font = `${Math.max(scaleY(20), 14)}px Arial`;
-      ctx.fillText(`Score: ${score}`, scaleX(12), scaleY(30));
-      ctx.fillText(`Lives: ${lives}`, scaleX(12), scaleY(58));
+      ctx.font = `${  Math.max(scaleY(20), 14)}px Arial`;
+      ctx.fillText(`  Score: ${score}`, scaleX(12), scaleY(30));
+      ctx.fillText(`  Lives: ${lives}`, scaleX(12), scaleY(58));
       ctx.font = `${Math.max(scaleY(13), 10)}px Arial`;
-      ctx.fillText(`Mode: ${selectedDifficulty.toUpperCase()}`, scaleX(12), scaleY(78));
 
       const nextLifeAt = (Math.floor(score / 2000) + 1) * 2000;
       const remaining = nextLifeAt - score;

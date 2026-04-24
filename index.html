@@ -382,7 +382,9 @@
     const pastureImage = new Image();
     pastureImage.src = "pasture.png";
 
-    const MOO_COOLDOWN_FRAMES = 0; // no moo cooldown
+    const MOO_COOLDOWN_FRAMES = 300; // 5 seconds at about 60fps
+    const MOO_BOSS_COOLDOWN_FRAMES = 0;
+    const MOO_PULSE_RADIUS = 110;
 
     let greenerPasturesActive = false;
     let greenerPasturesFade = 0;
@@ -779,23 +781,59 @@
       });
     }
 
+    function getMooPulseRadius() {
+      return scaleX(MOO_PULSE_RADIUS);
+    }
+
+    function destroyHostileObjectsInMooPulse() {
+      const pulseCenterX = player.x + player.width / 2;
+      const pulseCenterY = player.y + player.height / 2;
+      const pulseRadius = getMooPulseRadius();
+      let destroyedCount = 0;
+
+      for (let i = fallingObjects.length - 1; i >= 0; i--) {
+        const obj = fallingObjects[i];
+        const isHostile = obj.type === "bad" || obj.type === "butcher";
+        if (!isHostile) continue;
+
+        const objCenterX = obj.x + obj.width / 2;
+        const objCenterY = obj.y + obj.height / 2;
+        const distance = Math.hypot(objCenterX - pulseCenterX, objCenterY - pulseCenterY);
+
+        if (distance <= pulseRadius + obj.width / 2) {
+          fallingObjects.splice(i, 1);
+          destroyedCount++;
+        }
+      }
+
+      if (destroyedCount > 0) {
+        score += destroyedCount * 100;
+        maybeShowSpeedModeBanner();
+        maybeAwardExtraLife();
+        bonusFlashTimer = 44;
+        bonusFlashText = `MOO BLAST! +${destroyedCount * 100}`;
+        playSound(bonusSound);
+      }
+    }
+
     function activateMooPulse() {
       if (!gameStarted || gamePaused || gameOver) return;
       if (freedomSequenceActive || heartsCelebrationActive) return;
+      if (mooCooldownTimer > 0 && !bossFightActive) return;
 
       unlockSounds();
 
       mooPulseActive = true;
       mooPulseTimer = 120;
-      mooCooldownTimer = MOO_COOLDOWN_FRAMES;
+      mooCooldownTimer = bossFightActive ? MOO_BOSS_COOLDOWN_FRAMES : MOO_COOLDOWN_FRAMES;
       mooFlashTimer = 18;
       bonusFlashTimer = 40;
       bonusFlashText = "MOO!";
 
       if (bossFightActive) {
         hitCowgirlBossWithMoo();
-      } else if (isCowgirlNearPlayer()) {
-        awardCowgirlPointsAndFlee();
+      } else {
+        destroyHostileObjectsInMooPulse();
       }
 
       playSound(mooSound);
@@ -2286,19 +2324,11 @@ Final Score: ${score}`,
           const dx = playerCenterX - objCenterX;
           const dy = playerCenterY - objCenterY;
 
-          if (mooPulseActive) {
-            const pushX = -Math.sign(dx || 1) * scaleX(2.8);
-            const pushY = -Math.sign(dy || 1) * scaleY(1.6);
+          const homingMultiplier = score >= 10000 ? 1.18 : 1.08;
+          const homing = dx * getHomingStrength() * homingMultiplier;
+          const maxSideSpeed = scaleX(score >= 10000 ? 1.5 : 1.35);
 
-            obj.x += pushX;
-            obj.y += pushY;
-          } else {
-            const homingMultiplier = score >= 10000 ? 1.18 : 1.08;
-            const homing = dx * getHomingStrength() * homingMultiplier;
-            const maxSideSpeed = scaleX(score >= 10000 ? 1.5 : 1.35);
-
-            obj.x += Math.max(-maxSideSpeed, Math.min(maxSideSpeed, homing));
-          }
+          obj.x += Math.max(-maxSideSpeed, Math.min(maxSideSpeed, homing));
         }
 
         if (obj.x < -obj.width * 0.25) obj.x = -obj.width * 0.25;
@@ -2440,7 +2470,7 @@ Final Score: ${score}`,
         ctx.arc(
           player.x + player.width / 2,
           player.y + player.height / 2,
-          scaleX(90 - mooFlashTimer * 2),
+          getMooPulseRadius() * (1 - mooFlashTimer / 36),
           0,
           Math.PI * 2
         );

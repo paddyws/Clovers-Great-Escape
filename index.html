@@ -1322,10 +1322,12 @@ Cowtow, or I'll turn you into cornbread.`,
       const bossCenterY = cowgirlBoss.y + cowgirlBoss.height / 2;
       const playerCenterX = player.x + player.width / 2;
       const playerCenterY = player.y + player.height / 2;
+
       const dx = playerCenterX - bossCenterX;
       const dy = playerCenterY - bossCenterY;
       const distance = Math.hypot(dx, dy) || 1;
       const speed = Math.max(scaleX(7.2), 4.6);
+
       bossPitchforks.push({
         x: bossCenterX,
         y: bossCenterY,
@@ -1333,20 +1335,32 @@ Cowtow, or I'll turn you into cornbread.`,
         vy: (dy / distance) * speed,
         width: scaleX(92),
         height: scaleY(24),
+
+        // This angle points the pitchfork toward Clover, whether she is
+        // left, right, above, below, or diagonal from the cowgirl.
         angle: Math.atan2(dy, dx),
+
         life: 150
       });
+
       bonusFlashTimer = 48;
       bonusFlashText = "I WILL THROW THIS PITCHFORK AT YOU";
     }
 
     function getRotatedPitchforkHitbox(pitchfork) {
-      const tipOffset = pitchfork.width * 0.32;
+      // The drawn image is rotated toward Clover. This places the damage box
+      // out near the front/spiky side instead of the wooden handle side.
+      const contraction = 0.07;
+      const tipOffset = pitchfork.width * 0.50;
+
+      const hitboxWidth = pitchfork.width * 0.44 * (1 - contraction);
+      const hitboxHeight = pitchfork.height * 1.1 * (1 - contraction);
+
       return {
-        x: pitchfork.x + Math.cos(pitchfork.angle) * tipOffset - pitchfork.width * 0.36,
-        y: pitchfork.y + Math.sin(pitchfork.angle) * tipOffset - pitchfork.height * 0.55,
-        width: pitchfork.width * 0.72,
-        height: pitchfork.height * 1.1
+        x: pitchfork.x + Math.cos(pitchfork.angle) * tipOffset - hitboxWidth / 2,
+        y: pitchfork.y + Math.sin(pitchfork.angle) * tipOffset - hitboxHeight / 2,
+        width: hitboxWidth,
+        height: hitboxHeight
       };
     }
 
@@ -2766,6 +2780,9 @@ Final Score: ${score}`,
       for (const pitchfork of bossPitchforks) {
         ctx.save();
         ctx.translate(pitchfork.x, pitchfork.y);
+
+        // Assumes pitchfork.png has the spikes pointing to the right.
+        // Math.atan2 above rotates that right-facing spike side toward Clover.
         ctx.rotate(pitchfork.angle);
 
         if (pitchforkImage.complete && pitchforkImage.naturalWidth > 0) {

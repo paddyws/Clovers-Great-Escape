@@ -384,7 +384,7 @@
 
     const MOO_COOLDOWN_FRAMES = 480; // 5 seconds at about 60fps
     const MOO_BOSS_COOLDOWN_FRAMES = 0;
-    const MOO_PULSE_RADIUS = 130;
+    const MOO_PULSE_RADIUS = 150;
 
     let greenerPasturesActive = false;
     let greenerPasturesFade = 0;
@@ -807,11 +807,12 @@
       }
 
       if (destroyedCount > 0) {
-        score += destroyedCount * 100;
+        const mooPoints = destroyedCount * destroyedCount * 100;
+        score += mooPoints;
         maybeShowSpeedModeBanner();
         maybeAwardExtraLife();
         bonusFlashTimer = 44;
-        bonusFlashText = `MOO BLAST! +${destroyedCount * 100}`;
+        bonusFlashText = `MOO BLAST! +${mooPoints}`;
         playSound(bonusSound);
       }
     }

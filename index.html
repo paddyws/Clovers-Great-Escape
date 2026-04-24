@@ -288,59 +288,12 @@
     const PLAYER_FRAME_DURATION = 6;
     let playerAnimationFrame = 0;
 
-    const falling1SpriteSheet = new Image();
-    falling1SpriteSheet.src = "butcher lady-walk.png";
-
-    const FALLING1_SPRITE_COLS = 5;
-    const FALLING1_SPRITE_ROWS = 5;
-    const FALLING1_TOTAL_FRAMES = 25;
-    const FALLING1_FRAME_DURATION = 6;
-
-    const falling2Img = new Image();
-    falling2Img.src = "falling2.png";
-
-    const falling3Img = new Image();
-    falling3Img.src = "falling3.png";
-
-    const badImages = [
-      {
-        image: falling1SpriteSheet,
-        usesSpriteSheet: true,
-        spriteCols: FALLING1_SPRITE_COLS,
-        spriteRows: FALLING1_SPRITE_ROWS,
-        totalFrames: FALLING1_TOTAL_FRAMES,
-        frameDuration: FALLING1_FRAME_DURATION
-      },
-      {
-        image: falling2Img,
-        usesSpriteSheet: false,
-        spriteCols: 1,
-        spriteRows: 1,
-        totalFrames: 1,
-        frameDuration: 1
-      },
-      {
-        image: falling3Img,
-        usesSpriteSheet: false,
-        spriteCols: 1,
-        spriteRows: 1,
-        totalFrames: 1,
-        frameDuration: 1
-      }
-    ];
-
-    function chooseBadImage() {
-      const choice = badImages[Math.floor(Math.random() * badImages.length)];
-
-      return {
-        image: choice.image,
-        usesSpriteSheet: choice.usesSpriteSheet || false,
-        spriteCols: choice.spriteCols || 1,
-        spriteRows: choice.spriteRows || 1,
-        totalFrames: choice.totalFrames || 1,
-        frameDuration: choice.frameDuration || 1
-      };
-    }
+    const badImageFiles = ["falling1.png", "falling2.png", "falling3.png"];
+    const badImages = badImageFiles.map(file => {
+      const img = new Image();
+      img.src = file;
+      return img;
+    });
 
     const butcherSpriteSheet = new Image();
     butcherSpriteSheet.src = "butcher-walk.png";
@@ -1999,8 +1952,8 @@ Final Score: ${score}`,
       bossGrass = [];
       bossPitchforks = [];
       bossGrassSpawnTimer = 0;
-      cowgirlBoss.health = 60;
-      cowgirlBoss.maxHealth = 60;
+      cowgirlBoss.health = 80;
+      cowgirlBoss.maxHealth = 80;
       cowgirlBoss.state = "hidden";
       cowgirlBoss.attackTimer = 0;
       cowgirlBoss.attackCooldown = 0;
@@ -2044,15 +1997,14 @@ Final Score: ${score}`,
       const postCowbell = score >= 10000;
 
       let type = "bad";
-      let badChoice = chooseBadImage();
-      let image = badChoice.image;
+      let image = badImages[Math.floor(Math.random() * badImages.length)];
       let basePoints = 0;
       let speedMultiplier = 1;
-      let usesSpriteSheet = badChoice.usesSpriteSheet;
-      let spriteCols = badChoice.spriteCols;
-      let spriteRows = badChoice.spriteRows;
-      let totalFrames = badChoice.totalFrames;
-      let frameDuration = badChoice.frameDuration;
+      let usesSpriteSheet = false;
+      let spriteCols = 1;
+      let spriteRows = 1;
+      let totalFrames = 1;
+      let frameDuration = 1;
       let canHome = false;
 
       const roll = Math.random();
@@ -2080,13 +2032,7 @@ Final Score: ${score}`,
           speedMultiplier = 1.0;
         } else {
           type = "bad";
-          badChoice = chooseBadImage();
-          image = badChoice.image;
-          usesSpriteSheet = badChoice.usesSpriteSheet;
-          spriteCols = badChoice.spriteCols;
-          spriteRows = badChoice.spriteRows;
-          totalFrames = badChoice.totalFrames;
-          frameDuration = badChoice.frameDuration;
+          image = badImages[Math.floor(Math.random() * badImages.length)];
         }
       } else {
         if (roll < 0.15) {
@@ -2101,13 +2047,7 @@ Final Score: ${score}`,
           speedMultiplier = 0.9;
         } else {
           type = "bad";
-          badChoice = chooseBadImage();
-          image = badChoice.image;
-          usesSpriteSheet = badChoice.usesSpriteSheet;
-          spriteCols = badChoice.spriteCols;
-          spriteRows = badChoice.spriteRows;
-          totalFrames = badChoice.totalFrames;
-          frameDuration = badChoice.frameDuration;
+          image = badImages[Math.floor(Math.random() * badImages.length)];
         }
       }
 

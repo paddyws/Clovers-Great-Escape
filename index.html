@@ -155,39 +155,52 @@
 
 
     .difficulty-menu {
-      display: grid;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       gap: 12px;
-      margin-top: 16px;
+      padding: 4px 0 2px;
     }
 
     .difficulty-title {
-      font-size: 26px;
+      margin: 0 0 4px;
+      font-size: 18px;
       font-weight: 900;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       color: #fff7d6;
-      text-shadow: 0 0 18px rgba(255, 230, 160, 0.35);
+      text-shadow: 0 0 14px rgba(255, 230, 160, 0.28);
     }
 
     .difficulty-subtitle {
-      margin-top: 6px;
+      margin: 0 0 4px;
       font-size: 13px;
       line-height: 1.35;
-      color: rgba(246, 240, 232, 0.78);
+      color: rgba(246, 240, 232, 0.82);
+    }
+
+    .difficulty-options {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
     .difficulty-card {
       width: 100%;
-      padding: 13px 14px;
-      border: 1px solid rgba(255, 240, 220, 0.2);
-      border-radius: 16px;
+      padding: 13px 16px;
+      border: 1px solid rgba(255, 240, 220, 0.22);
+      border-radius: 999px;
       cursor: pointer;
-      background:
-        radial-gradient(circle at top left, rgba(255, 255, 255, 0.14), transparent 35%),
-        linear-gradient(135deg, rgba(246, 231, 212, 0.98), rgba(188, 149, 108, 0.95));
+      background: linear-gradient(180deg, #f6e7d4, #cfae86);
       color: #2a1d14;
-      text-align: left;
-      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+      text-align: center;
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      box-shadow: 0 9px 22px rgba(0, 0, 0, 0.30);
       transform: translateY(0);
       transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
     }
@@ -195,39 +208,17 @@
     .difficulty-card:hover,
     .difficulty-card:focus-visible {
       transform: translateY(-2px);
-      box-shadow: 0 14px 26px rgba(0, 0, 0, 0.38);
+      box-shadow: 0 13px 28px rgba(0, 0, 0, 0.42);
       filter: brightness(1.05);
       outline: none;
     }
 
-    .difficulty-card-title {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      font-size: 16px;
-      font-weight: 900;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .difficulty-speed {
-      font-size: 12px;
-      font-weight: 800;
-      opacity: 0.75;
-    }
-
-    .difficulty-desc {
-      margin-top: 5px;
-      font-size: 12px;
-      line-height: 1.35;
-      opacity: 0.82;
+    .difficulty-card:active {
+      transform: translateY(1px) scale(0.99);
     }
 
     .difficulty-card.cowgirl {
-      background:
-        radial-gradient(circle at top left, rgba(255, 255, 255, 0.13), transparent 35%),
-        linear-gradient(135deg, rgba(255, 196, 122, 0.98), rgba(154, 54, 39, 0.98));
+      background: linear-gradient(180deg, #e99a58, #a9442b);
       color: #fff7ed;
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
     }
@@ -1092,30 +1083,17 @@
       overlayButtons.innerHTML = "";
 
       overlayText.innerHTML = `
-        <div class="difficulty-title">Clover's Great Escape</div>
-        <div class="difficulty-subtitle">Choose your difficulty. WASD to move. SPACE or double-tap to MOOOOOOOO.</div>
         <div class="difficulty-menu">
-          <button class="difficulty-card" type="button" data-difficulty="easy">
-            <div class="difficulty-card-title">
-              <span>Easy</span>
-              <span class="difficulty-speed">0.8x speed</span>
-            </div>
-            <div class="difficulty-desc">A gentler pasture path. Still doomed, just slower.</div>
-          </button>
-          <button class="difficulty-card" type="button" data-difficulty="normal">
-            <div class="difficulty-card-title">
-              <span>Normal</span>
-              <span class="difficulty-speed">1.0x speed</span>
-            </div>
-            <div class="difficulty-desc">The classic escape. Reasonable moo-based suffering.</div>
-          </button>
-          <button class="difficulty-card cowgirl" type="button" data-difficulty="cowgirl">
-            <div class="difficulty-card-title">
-              <span>Cowgirl</span>
-              <span class="difficulty-speed">1.25x speed</span>
-            </div>
-            <div class="difficulty-desc">Fast, mean, and wearing boots. Clover beware.</div>
-          </button>
+          <div class="difficulty-title">Choose Difficulty</div>
+          <div class="difficulty-subtitle">
+            WASD to move<br>
+            SPACE or double-tap to MOOOOOOO
+          </div>
+          <div class="difficulty-options">
+            <button class="difficulty-card" type="button" data-difficulty="easy">Easy</button>
+            <button class="difficulty-card" type="button" data-difficulty="normal">Normal</button>
+            <button class="difficulty-card cowgirl" type="button" data-difficulty="cowgirl">Cowgirl</button>
+          </div>
         </div>
       `;
 

@@ -382,9 +382,6 @@
     const pastureImage = new Image();
     pastureImage.src = "pasture.png";
 
-    const pitchforkImage = new Image();
-    pitchforkImage.src = "pitchfork.png";
-
     const MOO_COOLDOWN_FRAMES = 0; // no moo cooldown
 
     let greenerPasturesActive = false;
@@ -394,10 +391,13 @@
     let bossFightActive = false;
     let bossGrass = [];
     let bossPitchforks = [];
-    let bossPatternTimer = 0;
-    let bossPatternPhase = "chase"; // chase, attack, recover, retreat
     let bossGrassSpawnTimer = 0;
-    let bossPitchforkTimer = 0;
+    let bossPatternTimer = 0;
+    let bossPatternPhase = "corner"; // corner, throw, fleeing
+    let bossTargetCorner = 0;
+
+    const pitchforkImage = new Image();
+    pitchforkImage.src = "pitchfork.png";
 
     const cowgirlBoss = {
       x: 0,
@@ -413,8 +413,7 @@
       attackCooldown: 0,
       damageCooldown: 0,
       flashTimer: 0,
-      retreatTargetX: 0,
-      retreatTargetY: 0,
+      throwCooldown: 0,
       animationOffset: 0
     };
 
@@ -422,6 +421,11 @@
     music.loop = true;
     music.volume = 0.5;
     music.preload = "auto";
+
+    const cowgirlMusic = new Audio("cowgirl.mp3");
+    cowgirlMusic.loop = true;
+    cowgirlMusic.volume = 0.55;
+    cowgirlMusic.preload = "auto";
 
     const hitSound = new Audio("hit.mp3");
     hitSound.volume = 0.8;
@@ -438,11 +442,6 @@
     const dialogueSound = new Audio("dialoguesounds.mp3");
     dialogueSound.volume = 0.9;
     dialogueSound.preload = "auto";
-
-    const bossMusic = new Audio("cowgirl.mp3");
-    bossMusic.loop = true;
-    bossMusic.volume = 0.65;
-    bossMusic.preload = "auto";
 
     let isMuted = false;
     let soundsUnlocked = false;
@@ -758,7 +757,7 @@
       if (soundsUnlocked) return;
       soundsUnlocked = true;
 
-      const sounds = [hitSound, bonusSound, mooSound, bossMusic];
+      const sounds = [hitSound, bonusSound, mooSound, cowgirlMusic];
 
       sounds.forEach((sound) => {
         try {
@@ -1168,6 +1167,14 @@ Is this free range?`,
     }
 
     function showCowgirlBossIntro() {
+      music.pause();
+      if (!isMuted) {
+        try {
+          cowgirlMusic.currentTime = 0;
+          cowgirlMusic.play().catch(() => {});
+        } catch (err) {}
+      }
+
       showOverlay(
         `Clover. You leave me no choice.
 
@@ -1201,62 +1208,133 @@ Cowtow, or I'll turn you into cornbread.`,
       mooPulseTimer = 0;
       mooCooldownTimer = 0;
       hitFlashTimer = 0;
-      bonusFlashTimer = 120;
-      bonusFlashText = "I WILL THROW THIS PITCHFORK AT YOU";
-
-      music.pause();
-      if (!isMuted) {
-        try {
-          bossMusic.currentTime = 0;
-          bossMusic.play().catch(() => {});
-        } catch (err) {}
-      }
+      bonusFlashTimer = 80;
+      bonusFlashText = "CLOVER MOO MOO CLOVER MOO YOUR LITTLE HEART OUT";
 
       player.x = canvas.width / 2 - player.width / 2;
       player.y = canvas.height - player.height - scaleY(34);
       playerFacingLeft = false;
 
+      music.pause();
+
       cowgirlBoss.width = scaleX(112 * 1.5);
       cowgirlBoss.height = scaleY(112 * 1.5);
       cowgirlBoss.x = canvas.width / 2 - cowgirlBoss.width / 2;
-      cowgirlBoss.y = canvas.height - cowgirlBoss.height - scaleY(42);
-      cowgirlBoss.speed = Math.max(scaleX(3.6), 2.6);
+      cowgirlBoss.y = scaleY(34);
+      cowgirlBoss.speed = Math.max(scaleX(4.8), 3.2);
       cowgirlBoss.health = 50;
       cowgirlBoss.maxHealth = 50;
-      cowgirlBoss.state = "chasing";
+      cowgirlBoss.state = "running";
       cowgirlBoss.facingLeft = false;
       cowgirlBoss.attackTimer = 0;
       cowgirlBoss.attackCooldown = 0;
       cowgirlBoss.damageCooldown = 0;
       cowgirlBoss.flashTimer = 0;
-      cowgirlBoss.retreatTargetX = cowgirlBoss.x;
-      cowgirlBoss.retreatTargetY = cowgirlBoss.y;
+      cowgirlBoss.throwCooldown = 55;
       cowgirlBoss.animationOffset = Math.floor(Math.random() * 1000);
 
       bossPatternTimer = 0;
-      bossPatternPhase = "chase";
-      bossGrassSpawnTimer = 0;
-      bossPitchforkTimer = 45;
+      bossPatternPhase = "corner";
+      bossTargetCorner = 0;
 
       bossGrass = [];
       bossPitchforks = [];
+      bossGrassSpawnTimer = 0;
       spawnBossGrass();
     }
 
-    function getBossBottomThirdTop() {
-      return canvas.height * 2 / 3;
+    function getBossCorners() {
+      const pad = scaleX(18);
+      const topPad = scaleY(54);
+      const bottomPad = scaleY(18);
+      return [
+        { x: pad, y: topPad },
+        { x: canvas.width - cowgirlBoss.width - pad, y: topPad },
+        { x: canvas.width - cowgirlBoss.width - pad, y: canvas.height - cowgirlBoss.height - bottomPad },
+        { x: pad, y: canvas.height - cowgirlBoss.height - bottomPad }
+      ];
+    }
+
+    function pickDifferentBossCorner() {
+      let next = Math.floor(Math.random() * 4);
+      if (next === bossTargetCorner) next = (next + 1 + Math.floor(Math.random() * 3)) % 4;
+      bossTargetCorner = next;
+      bossPatternTimer = 0;
+      bossPatternPhase = "corner";
+      cowgirlBoss.state = "running";
     }
 
     function spawnBossGrass() {
       const size = scaleX(78);
-      const bottomThirdTop = getBossBottomThirdTop();
       bossGrass.push({
         x: Math.random() * Math.max(1, canvas.width - size),
-        y: bottomThirdTop + Math.random() * Math.max(1, canvas.height - bottomThirdTop - size),
+        y: scaleY(75) + Math.random() * Math.max(1, canvas.height - scaleY(75) - size),
         width: size,
         height: size,
         pulse: Math.floor(Math.random() * 1000)
       });
+    }
+
+    function throwBossPitchfork() {
+      const bossCenterX = cowgirlBoss.x + cowgirlBoss.width / 2;
+      const bossCenterY = cowgirlBoss.y + cowgirlBoss.height / 2;
+      const playerCenterX = player.x + player.width / 2;
+      const playerCenterY = player.y + player.height / 2;
+      const dx = playerCenterX - bossCenterX;
+      const dy = playerCenterY - bossCenterY;
+      const distance = Math.hypot(dx, dy) || 1;
+      const speed = Math.max(scaleX(7.2), 4.6);
+      bossPitchforks.push({
+        x: bossCenterX,
+        y: bossCenterY,
+        vx: (dx / distance) * speed,
+        vy: (dy / distance) * speed,
+        width: scaleX(92),
+        height: scaleY(24),
+        angle: Math.atan2(dy, dx),
+        life: 150
+      });
+      bonusFlashTimer = 48;
+      bonusFlashText = "I WILL THROW THIS PITCHFORK AT YOU";
+    }
+
+    function getRotatedPitchforkHitbox(pitchfork) {
+      const tipOffset = pitchfork.width * 0.32;
+      return {
+        x: pitchfork.x + Math.cos(pitchfork.angle) * tipOffset - pitchfork.width * 0.36,
+        y: pitchfork.y + Math.sin(pitchfork.angle) * tipOffset - pitchfork.height * 0.55,
+        width: pitchfork.width * 0.72,
+        height: pitchfork.height * 1.1
+      };
+    }
+
+    function damagePlayerInBossFight() {
+      if (player.invulnerableTimer > 0) return false;
+      lives--;
+      player.invulnerableTimer = 80;
+      hitFlashTimer = 22;
+      playSound(hitSound);
+
+      if (lives <= 0) {
+        gameOver = true;
+        gamePaused = true;
+        bossFightActive = false;
+        cowgirlMusic.pause();
+        showOverlay(
+          `Clover became cornbread.
+
+Final Score: ${score}`,
+          [
+            {
+              label: "Again",
+              onClick: () => { restartGame(); }
+            }
+          ],
+          { speed: 28, requireContinueBeforeButtons: true }
+        );
+        return true;
+      }
+      return false;
     }
 
     function updateBossPlayerControls() {
@@ -1309,103 +1387,13 @@ Cowtow, or I'll turn you into cornbread.`,
 
       if (player.x < 0) player.x = 0;
       if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
-      if (player.y < getBossBottomThirdTop()) player.y = getBossBottomThirdTop();
+      const bossPlayerTopLimit = canvas.height / 2;
+      if (player.y < bossPlayerTopLimit) player.y = bossPlayerTopLimit;
       if (player.y + player.height > canvas.height) player.y = canvas.height - player.height;
 
       playerAnimationFrame = isMoving
         ? Math.floor(frame / PLAYER_FRAME_DURATION) % PLAYER_TOTAL_FRAMES
         : 0;
-    }
-
-    function sendBossToOtherCorner() {
-      const bottomThirdTop = getBossBottomThirdTop();
-      const leftCornerX = scaleX(10);
-      const rightCornerX = canvas.width - cowgirlBoss.width - scaleX(10);
-      const cornerY = canvas.height - cowgirlBoss.height - scaleY(10);
-      const bossCenterX = cowgirlBoss.x + cowgirlBoss.width / 2;
-
-      cowgirlBoss.retreatTargetX = bossCenterX < canvas.width / 2 ? rightCornerX : leftCornerX;
-      cowgirlBoss.retreatTargetY = Math.max(bottomThirdTop, cornerY);
-      cowgirlBoss.damageCooldown = 36;
-      bossPatternTimer = 0;
-      bossPatternPhase = "retreat";
-    }
-
-    function throwBossPitchfork() {
-      if (!bossFightActive || cowgirlBoss.health <= 0) return;
-
-      const startX = cowgirlBoss.x + cowgirlBoss.width / 2;
-      const startY = cowgirlBoss.y + cowgirlBoss.height * 0.55;
-      const targetX = player.x + player.width / 2;
-      const targetY = player.y + player.height / 2;
-      const dx = targetX - startX;
-      const dy = targetY - startY;
-      const distance = Math.hypot(dx, dy) || 1;
-      const speed = Math.max(scaleX(6.2), 4.2);
-
-      bossPitchforks.push({
-        x: startX,
-        y: startY,
-        width: scaleX(92),
-        height: scaleY(34),
-        vx: (dx / distance) * speed,
-        vy: (dy / distance) * speed,
-        angle: Math.atan2(dy, dx)
-      });
-
-      bonusFlashTimer = 36;
-      bonusFlashText = "I WILL THROW THIS PITCHFORK AT YOU";
-    }
-
-    function updateBossPitchforks(playerHitbox) {
-      for (let i = bossPitchforks.length - 1; i >= 0; i--) {
-        const fork = bossPitchforks[i];
-        fork.x += fork.vx;
-        fork.y += fork.vy;
-
-        const forkHitbox = {
-          x: fork.x - fork.width / 2,
-          y: fork.y - fork.height / 2,
-          width: fork.width,
-          height: fork.height
-        };
-
-        if (rectsIntersect(playerHitbox, getHitbox(forkHitbox, 0.25)) && player.invulnerableTimer <= 0) {
-          lives--;
-          player.invulnerableTimer = 80;
-          hitFlashTimer = 22;
-          playSound(hitSound);
-          bossPitchforks.splice(i, 1);
-
-          if (lives <= 0) {
-            gameOver = true;
-            gamePaused = true;
-            bossFightActive = false;
-            bossMusic.pause();
-            bossMusic.currentTime = 0;
-            showOverlay(
-              `Clover became pitchforked.\n\nFinal Score: ${score}`,
-              [
-                {
-                  label: "Again",
-                  onClick: () => { restartGame(); }
-                }
-              ],
-              { speed: 28, requireContinueBeforeButtons: true }
-            );
-          }
-          continue;
-        }
-
-        if (
-          fork.x < -scaleX(140) ||
-          fork.x > canvas.width + scaleX(140) ||
-          fork.y < -scaleY(140) ||
-          fork.y > canvas.height + scaleY(140)
-        ) {
-          bossPitchforks.splice(i, 1);
-        }
-      }
     }
 
     function updateBossFight() {
@@ -1427,126 +1415,84 @@ Cowtow, or I'll turn you into cornbread.`,
         mooCooldownTimer--;
       }
 
-      if (cowgirlBoss.damageCooldown > 0) {
-        cowgirlBoss.damageCooldown--;
-      }
-      if (cowgirlBoss.flashTimer > 0) {
-        cowgirlBoss.flashTimer--;
-      }
+      if (cowgirlBoss.damageCooldown > 0) cowgirlBoss.damageCooldown--;
+      if (cowgirlBoss.flashTimer > 0) cowgirlBoss.flashTimer--;
+      if (cowgirlBoss.throwCooldown > 0) cowgirlBoss.throwCooldown--;
 
       bossGrassSpawnTimer++;
-      if (bossGrassSpawnTimer >= 18 && bossGrass.length < 10) {
+      if (bossGrassSpawnTimer >= 18) {
         bossGrassSpawnTimer = 0;
         spawnBossGrass();
       }
 
-      bossPitchforkTimer--;
-      if (bossPitchforkTimer <= 0) {
-        throwBossPitchfork();
-        bossPitchforkTimer = 70;
-      }
-
-      const bottomThirdTop = getBossBottomThirdTop();
-      const bossMinY = bottomThirdTop;
-      const bossMaxY = canvas.height - cowgirlBoss.height;
-      const playerCenterX = player.x + player.width / 2;
-      const playerCenterY = player.y + player.height / 2;
-      const bossCenterX = cowgirlBoss.x + cowgirlBoss.width / 2;
-      const bossCenterY = cowgirlBoss.y + cowgirlBoss.height / 2;
-      const targetX = playerCenterX - cowgirlBoss.width / 2;
-      const targetY = Math.max(bossMinY, Math.min(bossMaxY, playerCenterY - cowgirlBoss.height / 2));
-      const dx = targetX - cowgirlBoss.x;
-      const dy = targetY - cowgirlBoss.y;
+      const playerHitbox = getHitbox(player, 0.14);
+      const corners = getBossCorners();
+      const target = corners[bossTargetCorner];
+      const dx = target.x - cowgirlBoss.x;
+      const dy = target.y - cowgirlBoss.y;
       const distance = Math.hypot(dx, dy) || 1;
 
       bossPatternTimer++;
+      cowgirlBoss.facingLeft = dx < 0;
 
-      if (bossPatternPhase === "chase") {
-        cowgirlBoss.state = "chasing";
-        cowgirlBoss.facingLeft = dx < 0;
+      if (bossPatternPhase === "corner") {
+        cowgirlBoss.state = "running";
         cowgirlBoss.x += (dx / distance) * cowgirlBoss.speed;
         cowgirlBoss.y += (dy / distance) * cowgirlBoss.speed;
 
-        if (bossPatternTimer >= 70 || distance < scaleX(95)) {
+        if (distance <= cowgirlBoss.speed + 2) {
+          cowgirlBoss.x = target.x;
+          cowgirlBoss.y = target.y;
+          bossPatternPhase = "throw";
           bossPatternTimer = 0;
-          bossPatternPhase = "attack";
-          cowgirlBoss.attackTimer = 30;
+          cowgirlBoss.throwCooldown = 20;
         }
-      } else if (bossPatternPhase === "attack") {
+      } else if (bossPatternPhase === "throw") {
         cowgirlBoss.state = "attacking";
-        cowgirlBoss.facingLeft = dx < 0;
-        cowgirlBoss.x += (dx / distance) * cowgirlBoss.speed * 3.35;
-        cowgirlBoss.y += (dy / distance) * cowgirlBoss.speed * 2.7;
-        cowgirlBoss.attackTimer--;
+        cowgirlBoss.facingLeft = (player.x + player.width / 2) < (cowgirlBoss.x + cowgirlBoss.width / 2);
 
-        if (cowgirlBoss.attackTimer <= 0 || bossPatternTimer >= 36) {
-          bossPatternTimer = 0;
-          bossPatternPhase = "recover";
+        if (cowgirlBoss.throwCooldown <= 0) {
+          throwBossPitchfork();
+          cowgirlBoss.throwCooldown = 55;
         }
-      } else if (bossPatternPhase === "recover") {
-        cowgirlBoss.state = "running";
-        cowgirlBoss.facingLeft = dx < 0;
 
-        if (bossPatternTimer >= 24) {
-          bossPatternTimer = 0;
-          bossPatternPhase = "chase";
-        }
-      } else if (bossPatternPhase === "retreat") {
-        cowgirlBoss.state = "running";
-        const rdx = cowgirlBoss.retreatTargetX - cowgirlBoss.x;
-        const rdy = cowgirlBoss.retreatTargetY - cowgirlBoss.y;
-        const rdist = Math.hypot(rdx, rdy) || 1;
-        cowgirlBoss.facingLeft = rdx < 0;
-        cowgirlBoss.x += (rdx / rdist) * cowgirlBoss.speed * 2.5;
-        cowgirlBoss.y += (rdy / rdist) * cowgirlBoss.speed * 2.0;
-
-        if (rdist < scaleX(12) || bossPatternTimer >= 55) {
-          bossPatternTimer = 0;
-          bossPatternPhase = "chase";
+        if (bossPatternTimer >= 95) {
+          pickDifferentBossCorner();
         }
       }
 
-      if (cowgirlBoss.x < -cowgirlBoss.width * 0.15) cowgirlBoss.x = -cowgirlBoss.width * 0.15;
-      if (cowgirlBoss.x + cowgirlBoss.width > canvas.width + cowgirlBoss.width * 0.15) {
-        cowgirlBoss.x = canvas.width - cowgirlBoss.width * 0.85;
-      }
-      if (cowgirlBoss.y < bossMinY) cowgirlBoss.y = bossMinY;
-      if (cowgirlBoss.y > bossMaxY) cowgirlBoss.y = bossMaxY;
+      if (cowgirlBoss.x < 0) cowgirlBoss.x = 0;
+      if (cowgirlBoss.x + cowgirlBoss.width > canvas.width) cowgirlBoss.x = canvas.width - cowgirlBoss.width;
+      if (cowgirlBoss.y < 0) cowgirlBoss.y = 0;
+      if (cowgirlBoss.y + cowgirlBoss.height > canvas.height) cowgirlBoss.y = canvas.height - cowgirlBoss.height;
 
-      const playerHitbox = getHitbox(player, 0.14);
-      updateBossPitchforks(playerHitbox);
-      if (!bossFightActive) return;
-
-      const bossHitbox = getHitbox(cowgirlBoss, cowgirlBoss.state === "attacking" ? 0.12 : 0.22);
-
+      const bossHitbox = getHitbox(cowgirlBoss, 0.24);
       if (rectsIntersect(playerHitbox, bossHitbox) && cowgirlBoss.damageCooldown <= 0) {
-        if (cowgirlBoss.state === "attacking" && player.invulnerableTimer <= 0) {
-          lives--;
-          player.invulnerableTimer = 80;
-          cowgirlBoss.damageCooldown = 65;
-          hitFlashTimer = 22;
-          playSound(hitSound);
+        cowgirlBoss.damageCooldown = 45;
+        pickDifferentBossCorner();
+      }
 
-          if (lives <= 0) {
-            gameOver = true;
-            gamePaused = true;
-            bossFightActive = false;
-            bossMusic.pause();
-            bossMusic.currentTime = 0;
-            showOverlay(
-              `Clover became cornbread.\n\nFinal Score: ${score}`,
-              [
-                {
-                  label: "Again",
-                  onClick: () => { restartGame(); }
-                }
-              ],
-              { speed: 28, requireContinueBeforeButtons: true }
-            );
-            return;
-          }
-        } else {
-          sendBossToOtherCorner();
+      for (let i = bossPitchforks.length - 1; i >= 0; i--) {
+        const pitchfork = bossPitchforks[i];
+        pitchfork.x += pitchfork.vx;
+        pitchfork.y += pitchfork.vy;
+        pitchfork.life--;
+
+        const pitchforkHitbox = getRotatedPitchforkHitbox(pitchfork);
+        if (rectsIntersect(playerHitbox, pitchforkHitbox)) {
+          bossPitchforks.splice(i, 1);
+          if (damagePlayerInBossFight()) return;
+          continue;
+        }
+
+        if (
+          pitchfork.life <= 0 ||
+          pitchfork.x < -pitchfork.width ||
+          pitchfork.x > canvas.width + pitchfork.width ||
+          pitchfork.y < -pitchfork.width ||
+          pitchfork.y > canvas.height + pitchfork.width
+        ) {
+          bossPitchforks.splice(i, 1);
         }
       }
 
@@ -1582,17 +1528,16 @@ Cowtow, or I'll turn you into cornbread.`,
 
     function defeatCowgirlBoss() {
       bossFightActive = false;
+      cowgirlMusic.pause();
       gameWon = true;
       gamePaused = true;
       score += 1000;
       bonusFlashTimer = 80;
       bonusFlashText = "+1000";
-      bossMusic.pause();
-      bossMusic.currentTime = 0;
       playSound(bonusSound);
 
       showOverlay(
-        `Oh everyone hates that manager....  Would you like to be milked?`,
+        `I hate the manager.  Would you like to be milked?`,
         [
           {
             label: "Mooooo",
@@ -1861,6 +1806,8 @@ Cowtow, or I'll turn you into cornbread.`,
 
     function resetGameState() {
       resizeCanvasToDisplaySize();
+      cowgirlMusic.pause();
+      cowgirlMusic.currentTime = 0;
 
       player.width = scaleX(72 * 1.5);
       player.height = scaleY(72 * 1.5);
@@ -1935,7 +1882,6 @@ Cowtow, or I'll turn you into cornbread.`,
       bossGrass = [];
       bossPitchforks = [];
       bossGrassSpawnTimer = 0;
-      bossPitchforkTimer = 0;
       cowgirlBoss.health = 50;
       cowgirlBoss.maxHealth = 50;
       cowgirlBoss.state = "hidden";
@@ -1945,9 +1891,6 @@ Cowtow, or I'll turn you into cornbread.`,
       cowgirlBoss.flashTimer = 0;
       bossPatternTimer = 0;
       bossPatternPhase = "chase";
-
-      bossMusic.pause();
-      bossMusic.currentTime = 0;
 
       clearDialogueHandlers();
       endBanner.classList.add("hidden");
@@ -2721,23 +2664,6 @@ Final Score: ${score}`,
       }
     }
 
-    function drawBossPitchforks() {
-      for (const fork of bossPitchforks) {
-        ctx.save();
-        ctx.translate(fork.x, fork.y);
-        ctx.rotate(fork.angle);
-
-        if (pitchforkImage.complete && pitchforkImage.naturalWidth > 0) {
-          ctx.drawImage(pitchforkImage, -fork.width / 2, -fork.height / 2, fork.width, fork.height);
-        } else {
-          ctx.fillStyle = "#c9c9c9";
-          ctx.fillRect(-fork.width / 2, -fork.height / 2, fork.width, fork.height);
-        }
-
-        ctx.restore();
-      }
-    }
-
     function drawCowgirlBoss() {
       let sprite = cowgirlRunSpriteSheet;
       let frameDuration = COWGIRL_RUN_FRAME_DURATION;
@@ -2773,6 +2699,32 @@ Final Score: ${score}`,
       }
     }
 
+
+    function drawBossPitchforks() {
+      for (const pitchfork of bossPitchforks) {
+        ctx.save();
+        ctx.translate(pitchfork.x, pitchfork.y);
+        ctx.rotate(pitchfork.angle);
+
+        if (pitchforkImage.complete && pitchforkImage.naturalWidth > 0) {
+          ctx.drawImage(
+            pitchforkImage,
+            -pitchfork.width / 2,
+            -pitchfork.height / 2,
+            pitchfork.width,
+            pitchfork.height
+          );
+        } else {
+          ctx.fillStyle = "#9a6a3a";
+          ctx.fillRect(-pitchfork.width / 2, -pitchfork.height * 0.18, pitchfork.width, pitchfork.height * 0.36);
+          ctx.fillStyle = "#bfc3c7";
+          ctx.fillRect(pitchfork.width * 0.15, -pitchfork.height / 2, pitchfork.width * 0.35, pitchfork.height);
+        }
+
+        ctx.restore();
+      }
+    }
+
     function drawBossHUD() {
       const barWidth = scaleX(250);
       const barHeight = scaleY(16);
@@ -2805,9 +2757,9 @@ Final Score: ${score}`,
     function drawBossFight() {
       drawPastureBackground();
       drawBossGrass();
-      drawBossPitchforks();
       drawPlayer();
       drawCowgirlBoss();
+      drawBossPitchforks();
       drawMooFlash();
       drawHUD();
       drawBossHUD();

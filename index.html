@@ -391,6 +391,8 @@
     let greenerPasturesTextShown = false;
 
     let bossFightActive = false;
+    let bossDefeatedPastureActive = false;
+    let bossPoofs = [];
     let bossGrass = [];
     let bossPitchforks = [];
     let bossGrassSpawnTimer = 0;
@@ -1133,6 +1135,8 @@ Will there ever be...greener pastures?`,
       greenerPasturesFade = 0;
       greenerPasturesTextShown = false;
       bossFightActive = false;
+      bossDefeatedPastureActive = false;
+      bossPoofs = [];
       gamePaused = false;
 
       fallingObjects = [];
@@ -1238,6 +1242,8 @@ Cowtow, or I'll turn you into cornbread.`,
 
       greenerPasturesActive = false;
       bossFightActive = true;
+      bossDefeatedPastureActive = false;
+      bossPoofs = [];
       gamePaused = false;
       gameWon = false;
 
@@ -1610,11 +1616,76 @@ Final Score: ${score}`,
   }
 }
 
+    function createBossPoof() {
+      bossPoofs = [];
+
+      const cx = cowgirlBoss.x + cowgirlBoss.width / 2;
+      const cy = cowgirlBoss.y + cowgirlBoss.height / 2;
+
+      for (let i = 0; i < 42; i++) {
+        bossPoofs.push({
+          x: cx,
+          y: cy,
+          vx: (Math.random() - 0.5) * scaleX(5.6),
+          vy: (Math.random() - 0.5) * scaleY(5.6) - scaleY(0.4),
+          size: Math.random() * scaleX(18) + scaleX(12),
+          life: Math.random() * 48 + 48,
+          maxLife: 96
+        });
+      }
+    }
+
+    function updateBossPoofs() {
+      for (let i = bossPoofs.length - 1; i >= 0; i--) {
+        const poof = bossPoofs[i];
+
+        poof.x += poof.vx;
+        poof.y += poof.vy;
+        poof.vx *= 0.97;
+        poof.vy *= 0.97;
+        poof.size *= 1.008;
+        poof.life--;
+
+        if (poof.life <= 0) {
+          bossPoofs.splice(i, 1);
+        }
+      }
+    }
+
+    function drawBossPoofs() {
+      ctx.save();
+
+      for (const poof of bossPoofs) {
+        const alpha = Math.max(0, poof.life / poof.maxLife);
+
+        ctx.globalAlpha = alpha * 0.85;
+        ctx.fillStyle = "rgba(225, 225, 225, 0.75)";
+        ctx.beginPath();
+        ctx.arc(poof.x, poof.y, poof.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.globalAlpha = alpha * 0.35;
+        ctx.fillStyle = "rgba(120, 120, 120, 0.65)";
+        ctx.beginPath();
+        ctx.arc(poof.x - poof.size * 0.2, poof.y + poof.size * 0.15, poof.size * 0.7, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
     function defeatCowgirlBoss() {
       bossFightActive = false;
+      bossDefeatedPastureActive = true;
       cowgirlMusic.pause();
+
       gameWon = true;
       gamePaused = true;
+
+      bossPitchforks = [];
+      bossGrass = [];
+      createBossPoof();
+
       score += 1000;
       bonusFlashTimer = 80;
       bonusFlashText = "+1000";
@@ -1639,6 +1710,8 @@ Final Score: ${score}`,
 
     function startFreedomEnding() {
       hideOverlay();
+      bossFightActive = false;
+      bossDefeatedPastureActive = true;
       freedomSequenceActive = true;
       gamePaused = false;
       playerFacingLeft = false;
@@ -1647,6 +1720,8 @@ Final Score: ${score}`,
     }
 
     function startWarmAndFuzzyEnding() {
+      bossFightActive = false;
+      bossDefeatedPastureActive = true;
       heartsCelebrationActive = true;
       finalOverlayShown = false;
       heartExplosionCount = 0;
@@ -1963,6 +2038,8 @@ Final Score: ${score}`,
       greenerPasturesFade = 0;
       greenerPasturesTextShown = false;
       bossFightActive = false;
+      bossDefeatedPastureActive = false;
+      bossPoofs = [];
       bossGrass = [];
       bossPitchforks = [];
       bossGrassSpawnTimer = 0;
@@ -2131,6 +2208,10 @@ Final Score: ${score}`,
 
     function update() {
       updateHearts();
+
+      if (bossDefeatedPastureActive) {
+        updateBossPoofs();
+      }
 
       if (greenerPasturesActive && !gamePaused) {
         updateGreenerPasturesSequence();
@@ -2846,6 +2927,17 @@ Final Score: ${score}`,
       drawBonusFlash();
     }
 
+    function drawBossDefeatedPasture() {
+      drawPastureBackground();
+      drawPlayer();
+      drawBossPoofs();
+      drawMooFlash();
+      drawHearts();
+      drawHUD();
+      drawHitFlash();
+      drawBonusFlash();
+    }
+
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -2856,6 +2948,11 @@ Final Score: ${score}`,
 
       if (bossFightActive) {
         drawBossFight();
+        return;
+      }
+
+      if (bossDefeatedPastureActive) {
+        drawBossDefeatedPasture();
         return;
       }
 

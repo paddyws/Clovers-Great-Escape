@@ -2850,7 +2850,7 @@ Final Score: ${score}`,
       const nextLifeAt = (Math.floor(score / 2000) + 1) * 2000;
       const remaining = nextLifeAt - score;
       ctx.font = `${Math.max(scaleY(16), 12)}px Arial`;
-      ctx.fillText(`    Next life in: ${remaining > 0 ? remaining : 0}`, scaleX(12), scaleY(100));
+      ctx.fillText(`  Next life in: ${remaining > 0 ? remaining : 0}`, scaleX(12), scaleY(100));
 
       const mooReady = mooCooldownTimer <= 0;
       const mooSeconds = (mooCooldownTimer / 60).toFixed(1);
@@ -2858,7 +2858,7 @@ Final Score: ${score}`,
       ctx.fillStyle = mooReady ? "#9cffb0" : "#ffffff";
       ctx.font = `${Math.max(scaleY(15), 11)}px Arial`;
       ctx.fillText(
-        mooReady ? "    Moo ready: SPACE / double tap" : `Moo cooldown: ${mooSeconds}s`,
+        mooReady ? "  Moo ready: SPACE / double tap" : `  Moo cooldown: ${mooSeconds}s`,
         scaleX(12),
         scaleY(126)
       );

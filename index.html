@@ -382,7 +382,7 @@
     const pastureImage = new Image();
     pastureImage.src = "pasture.png";
 
-    const MOO_COOLDOWN_FRAMES = 480; // 8 seconds at about 60fps
+    const MOO_COOLDOWN_FRAMES = 0; // no moo cooldown
 
     let greenerPasturesActive = false;
     let greenerPasturesFade = 0;
@@ -391,7 +391,7 @@
     let bossFightActive = false;
     let bossGrass = [];
     let bossPatternTimer = 0;
-    let bossPatternPhase = "left"; // left, right, jump
+    let bossPatternPhase = "chase"; // chase, attack, recover
 
     const cowgirlBoss = {
       x: 0,
@@ -406,6 +406,7 @@
       attackTimer: 0,
       attackCooldown: 0,
       damageCooldown: 0,
+      flashTimer: 0,
       animationOffset: 0
     };
 
@@ -768,7 +769,6 @@
 
     function activateMooPulse() {
       if (!gameStarted || gamePaused || gameOver) return;
-      if (mooCooldownTimer > 0) return;
       if (freedomSequenceActive || heartsCelebrationActive) return;
 
       unlockSounds();
@@ -1189,7 +1189,7 @@ Cowtow, or I'll turn you into cornbread.`,
       mooCooldownTimer = 0;
       hitFlashTimer = 0;
       bonusFlashTimer = 80;
-      bonusFlashText = "MOO HER DOWN!";
+      bonusFlashText = "CLOVER MOO MOO CLOVER MOO YOUR LITTLE HEART OUT";
 
       player.x = canvas.width / 2 - player.width / 2;
       player.y = canvas.height - player.height - scaleY(34);
@@ -1198,19 +1198,20 @@ Cowtow, or I'll turn you into cornbread.`,
       cowgirlBoss.width = scaleX(112);
       cowgirlBoss.height = scaleY(112);
       cowgirlBoss.x = canvas.width / 2 - cowgirlBoss.width / 2;
-      cowgirlBoss.y = -cowgirlBoss.height - scaleY(40);
-      cowgirlBoss.speed = Math.max(scaleX(3.6), 2.5);
-      cowgirlBoss.health = 4;
-      cowgirlBoss.maxHealth = 4;
-      cowgirlBoss.state = "jumping";
+      cowgirlBoss.y = canvas.height - cowgirlBoss.height - scaleY(42);
+      cowgirlBoss.speed = Math.max(scaleX(4.2), 2.9);
+      cowgirlBoss.health = 20;
+      cowgirlBoss.maxHealth = 20;
+      cowgirlBoss.state = "chasing";
       cowgirlBoss.facingLeft = false;
       cowgirlBoss.attackTimer = 0;
-      cowgirlBoss.attackCooldown = 70;
+      cowgirlBoss.attackCooldown = 0;
       cowgirlBoss.damageCooldown = 0;
+      cowgirlBoss.flashTimer = 0;
       cowgirlBoss.animationOffset = Math.floor(Math.random() * 1000);
 
       bossPatternTimer = 0;
-      bossPatternPhase = "left";
+      bossPatternPhase = "chase";
 
       bossGrass = [];
       for (let i = 0; i < 5; i++) {
@@ -1218,11 +1219,16 @@ Cowtow, or I'll turn you into cornbread.`,
       }
     }
 
+    function getBossBottomThirdTop() {
+      return canvas.height * 2 / 3;
+    }
+
     function spawnBossGrass() {
-      const size = scaleX(72);
+      const size = scaleX(78);
+      const bottomThirdTop = getBossBottomThirdTop();
       bossGrass.push({
         x: Math.random() * Math.max(1, canvas.width - size),
-        y: scaleY(145) + Math.random() * Math.max(1, canvas.height - scaleY(190) - size),
+        y: bottomThirdTop + Math.random() * Math.max(1, canvas.height - bottomThirdTop - size),
         width: size,
         height: size,
         pulse: Math.floor(Math.random() * 1000)
@@ -1309,65 +1315,58 @@ Cowtow, or I'll turn you into cornbread.`,
       if (cowgirlBoss.damageCooldown > 0) {
         cowgirlBoss.damageCooldown--;
       }
+      if (cowgirlBoss.flashTimer > 0) {
+        cowgirlBoss.flashTimer--;
+      }
 
-      if (frame % 180 === 0 && bossGrass.length < 6) {
+      if (frame % 18 === 0 && bossGrass.length < 24) {
         spawnBossGrass();
       }
 
+      const bottomThirdTop = getBossBottomThirdTop();
+      const bossMinY = bottomThirdTop;
+      const bossMaxY = canvas.height - cowgirlBoss.height;
       const playerCenterX = player.x + player.width / 2;
       const playerCenterY = player.y + player.height / 2;
       const bossCenterX = cowgirlBoss.x + cowgirlBoss.width / 2;
       const bossCenterY = cowgirlBoss.y + cowgirlBoss.height / 2;
-      const dx = playerCenterX - bossCenterX;
-      const dy = playerCenterY - bossCenterY;
+      const targetX = playerCenterX - cowgirlBoss.width / 2;
+      const targetY = Math.max(bossMinY, Math.min(bossMaxY, playerCenterY - cowgirlBoss.height / 2));
+      const dx = targetX - cowgirlBoss.x;
+      const dy = targetY - cowgirlBoss.y;
       const distance = Math.hypot(dx, dy) || 1;
 
-      if (cowgirlBoss.y < scaleY(85)) {
-        cowgirlBoss.y += Math.max(scaleY(4.4), 3);
-        cowgirlBoss.state = "jumping";
+      bossPatternTimer++;
+
+      if (bossPatternPhase === "chase") {
+        cowgirlBoss.state = "chasing";
         cowgirlBoss.facingLeft = dx < 0;
-      } else {
-        bossPatternTimer++;
+        cowgirlBoss.x += (dx / distance) * cowgirlBoss.speed;
+        cowgirlBoss.y += (dy / distance) * cowgirlBoss.speed;
 
-        if (bossPatternPhase === "left") {
-          cowgirlBoss.state = "running";
-          cowgirlBoss.facingLeft = true;
-          cowgirlBoss.x -= cowgirlBoss.speed * 1.15;
+        if (bossPatternTimer >= 75 || distance < scaleX(90)) {
+          bossPatternTimer = 0;
+          bossPatternPhase = "attack";
+          cowgirlBoss.attackTimer = 28;
+        }
+      } else if (bossPatternPhase === "attack") {
+        cowgirlBoss.state = "attacking";
+        cowgirlBoss.facingLeft = dx < 0;
+        cowgirlBoss.x += (dx / distance) * cowgirlBoss.speed * 3.2;
+        cowgirlBoss.y += (dy / distance) * cowgirlBoss.speed * 2.6;
+        cowgirlBoss.attackTimer--;
 
-          // keep her near the top while she paces
-          if (cowgirlBoss.y > scaleY(85)) {
-            cowgirlBoss.y -= Math.min(scaleY(2), cowgirlBoss.y - scaleY(85));
-          }
+        if (cowgirlBoss.attackTimer <= 0 || bossPatternTimer >= 34) {
+          bossPatternTimer = 0;
+          bossPatternPhase = "recover";
+        }
+      } else if (bossPatternPhase === "recover") {
+        cowgirlBoss.state = "running";
+        cowgirlBoss.facingLeft = dx < 0;
 
-          if (bossPatternTimer >= 60) {
-            bossPatternTimer = 0;
-            bossPatternPhase = "right";
-          }
-        } else if (bossPatternPhase === "right") {
-          cowgirlBoss.state = "running";
-          cowgirlBoss.facingLeft = false;
-          cowgirlBoss.x += cowgirlBoss.speed * 1.15;
-
-          // keep her near the top while she paces
-          if (cowgirlBoss.y > scaleY(85)) {
-            cowgirlBoss.y -= Math.min(scaleY(2), cowgirlBoss.y - scaleY(85));
-          }
-
-          if (bossPatternTimer >= 60) {
-            bossPatternTimer = 0;
-            bossPatternPhase = "jump";
-          }
-        } else if (bossPatternPhase === "jump") {
-          cowgirlBoss.state = "attacking";
-          cowgirlBoss.facingLeft = dx < 0;
-          cowgirlBoss.x += (dx / distance) * cowgirlBoss.speed * 2.8;
-          cowgirlBoss.y += (dy / distance) * cowgirlBoss.speed * 2.15;
-
-          if (bossPatternTimer >= 45) {
-            bossPatternTimer = 0;
-            bossPatternPhase = "left";
-            cowgirlBoss.y = scaleY(85);
-          }
+        if (bossPatternTimer >= 26) {
+          bossPatternTimer = 0;
+          bossPatternPhase = "chase";
         }
       }
 
@@ -1375,15 +1374,13 @@ Cowtow, or I'll turn you into cornbread.`,
       if (cowgirlBoss.x + cowgirlBoss.width > canvas.width + cowgirlBoss.width * 0.15) {
         cowgirlBoss.x = canvas.width - cowgirlBoss.width * 0.85;
       }
-      if (cowgirlBoss.y < scaleY(65)) cowgirlBoss.y = scaleY(65);
-      if (cowgirlBoss.y + cowgirlBoss.height > canvas.height) {
-        cowgirlBoss.y = canvas.height - cowgirlBoss.height;
-      }
+      if (cowgirlBoss.y < bossMinY) cowgirlBoss.y = bossMinY;
+      if (cowgirlBoss.y > bossMaxY) cowgirlBoss.y = bossMaxY;
 
       const playerHitbox = getHitbox(player, 0.14);
       const bossHitbox = getHitbox(cowgirlBoss, cowgirlBoss.state === "attacking" ? 0.12 : 0.22);
 
-      if (rectsIntersect(playerHitbox, bossHitbox) && cowgirlBoss.damageCooldown <= 0 && player.invulnerableTimer <= 0) {
+      if (cowgirlBoss.state === "attacking" && rectsIntersect(playerHitbox, bossHitbox) && cowgirlBoss.damageCooldown <= 0 && player.invulnerableTimer <= 0) {
         lives--;
         player.invulnerableTimer = 80;
         cowgirlBoss.damageCooldown = 65;
@@ -1426,16 +1423,13 @@ Cowtow, or I'll turn you into cornbread.`,
       if (!bossFightActive || cowgirlBoss.health <= 0) return;
 
       cowgirlBoss.health--;
+      cowgirlBoss.flashTimer = 12;
       bonusFlashTimer = 44;
       bonusFlashText = `MOO HIT! ${Math.max(0, cowgirlBoss.health)} left`;
 
       const bossCenterX = cowgirlBoss.x + cowgirlBoss.width / 2;
       const playerCenterX = player.x + player.width / 2;
-      cowgirlBoss.x += bossCenterX < playerCenterX ? -scaleX(34) : scaleX(34);
-      cowgirlBoss.attackCooldown = 55;
-      cowgirlBoss.state = "jumping";
-      bossPatternTimer = 0;
-      bossPatternPhase = "left";
+      cowgirlBoss.x += bossCenterX < playerCenterX ? -scaleX(22) : scaleX(22);
 
       if (cowgirlBoss.health <= 0) {
         defeatCowgirlBoss();
@@ -1793,14 +1787,15 @@ Cowtow, or I'll turn you into cornbread.`,
       greenerPasturesTextShown = false;
       bossFightActive = false;
       bossGrass = [];
-      cowgirlBoss.health = 4;
-      cowgirlBoss.maxHealth = 4;
+      cowgirlBoss.health = 20;
+      cowgirlBoss.maxHealth = 20;
       cowgirlBoss.state = "hidden";
       cowgirlBoss.attackTimer = 0;
       cowgirlBoss.attackCooldown = 0;
       cowgirlBoss.damageCooldown = 0;
+      cowgirlBoss.flashTimer = 0;
       bossPatternTimer = 0;
-      bossPatternPhase = "left";
+      bossPatternPhase = "chase";
 
       clearDialogueHandlers();
       endBanner.classList.add("hidden");
@@ -2590,6 +2585,9 @@ Final Score: ${score}`,
 
       if (sprite.complete && sprite.naturalWidth > 0) {
         ctx.save();
+        if (cowgirlBoss.flashTimer > 0) {
+          ctx.filter = cowgirlBoss.flashTimer % 4 < 2 ? "brightness(3) saturate(0)" : "brightness(1.8)";
+        }
 
         if (cowgirlBoss.facingLeft) {
           ctx.translate(cowgirlBoss.x + cowgirlBoss.width, cowgirlBoss.y);
@@ -2601,7 +2599,7 @@ Final Score: ${score}`,
 
         ctx.restore();
       } else {
-        ctx.fillStyle = "#b74747";
+        ctx.fillStyle = cowgirlBoss.flashTimer > 0 ? "#ffffff" : "#b74747";
         ctx.fillRect(cowgirlBoss.x, cowgirlBoss.y, cowgirlBoss.width, cowgirlBoss.height);
       }
     }
@@ -2630,6 +2628,8 @@ Final Score: ${score}`,
       ctx.font = `${Math.max(scaleY(14), 11)}px Arial`;
       ctx.textAlign = "center";
       ctx.fillText(`Cowgirl Moos Left: ${Math.max(0, cowgirlBoss.health)}`, canvas.width / 2, y + scaleY(34));
+      ctx.font = `${Math.max(scaleY(11), 9)}px Arial`;
+      ctx.fillText("CLOVER MOO MOO CLOVER MOO YOUR LITTLE HEART OUT", canvas.width / 2, y + scaleY(50));
       ctx.restore();
     }
 

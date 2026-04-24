@@ -1554,21 +1554,47 @@ Final Score: ${score}`,
     }
 
     function hitCowgirlBossWithMoo() {
-      if (!bossFightActive || cowgirlBoss.health <= 0) return;
+  if (!bossFightActive || cowgirlBoss.health <= 0) return;
 
-      cowgirlBoss.health--;
-      cowgirlBoss.flashTimer = 12;
-      bonusFlashTimer = 44;
-      bonusFlashText = `MOO HIT! ${Math.max(0, cowgirlBoss.health)} left`;
+  // centers
+  const pulseCenterX = player.x + player.width / 2;
+  const pulseCenterY = player.y + player.height / 2;
 
-      const bossCenterX = cowgirlBoss.x + cowgirlBoss.width / 2;
-      const playerCenterX = player.x + player.width / 2;
-      cowgirlBoss.x += bossCenterX < playerCenterX ? -scaleX(22) : scaleX(22);
+  const bossCenterX = cowgirlBoss.x + cowgirlBoss.width / 2;
+  const bossCenterY = cowgirlBoss.y + cowgirlBoss.height / 2;
 
-      if (cowgirlBoss.health <= 0) {
-        defeatCowgirlBoss();
-      }
-    }
+  // distance check
+  const distance = Math.hypot(
+    bossCenterX - pulseCenterX,
+    bossCenterY - pulseCenterY
+  );
+
+  const pulseRadius = getMooPulseRadius();
+
+  // ❌ outside radius → do nothing
+  if (distance > pulseRadius + cowgirlBoss.width / 2) {
+    return;
+  }
+
+  // ✅ inside radius → hit
+  cowgirlBoss.health--;
+  cowgirlBoss.flashTimer = 12;
+
+  // knockback (away from player)
+  const pushDir = bossCenterX < pulseCenterX ? -1 : 1;
+  cowgirlBoss.x += pushDir * scaleX(22);
+
+  // keep her on screen
+  if (cowgirlBoss.x < 0) cowgirlBoss.x = 0;
+  if (cowgirlBoss.x + cowgirlBoss.width > canvas.width) {
+    cowgirlBoss.x = canvas.width - cowgirlBoss.width;
+  }
+
+  // defeat check
+  if (cowgirlBoss.health <= 0) {
+    defeatCowgirlBoss();
+  }
+}
 
     function defeatCowgirlBoss() {
       bossFightActive = false;

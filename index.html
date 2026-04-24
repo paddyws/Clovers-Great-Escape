@@ -785,33 +785,36 @@
       return scaleX(MOO_PULSE_RADIUS);
     }
 
-    function destroyHostileObjectsInMooPulse() {
+    function mooHitFallingEnemiesInRadius() {
       const pulseCenterX = player.x + player.width / 2;
       const pulseCenterY = player.y + player.height / 2;
       const pulseRadius = getMooPulseRadius();
-      let destroyedCount = 0;
+      let hitCount = 0;
 
-      for (let i = fallingObjects.length - 1; i >= 0; i--) {
-        const obj = fallingObjects[i];
+      for (const obj of fallingObjects) {
         const isHostile = obj.type === "bad" || obj.type === "butcher";
-        if (!isHostile) continue;
+        if (!isHostile || obj.hitByMoo) continue;
 
         const objCenterX = obj.x + obj.width / 2;
         const objCenterY = obj.y + obj.height / 2;
         const distance = Math.hypot(objCenterX - pulseCenterX, objCenterY - pulseCenterY);
 
         if (distance <= pulseRadius + obj.width / 2) {
-          fallingObjects.splice(i, 1);
-          destroyedCount++;
+          obj.hitByMoo = true;
+          obj.mooFadeTimer = 36;
+          obj.mooFadeDuration = 36;
+          obj.speed = 0;
+          obj.canHome = false;
+          hitCount++;
         }
       }
 
-      if (destroyedCount > 0) {
-        score += destroyedCount * 100;
+      if (hitCount > 0) {
+        score += hitCount * 100;
         maybeShowSpeedModeBanner();
         maybeAwardExtraLife();
         bonusFlashTimer = 44;
-        bonusFlashText = `MOO BLAST! +${destroyedCount * 100}`;
+        bonusFlashText = `MOO! +${hitCount * 100}`;
         playSound(bonusSound);
       }
     }
@@ -833,7 +836,7 @@
       if (bossFightActive) {
         hitCowgirlBossWithMoo();
       } else {
-        destroyHostileObjectsInMooPulse();
+        mooHitFallingEnemiesInRadius();
       }
 
       playSound(mooSound);
@@ -2313,6 +2316,15 @@ Final Score: ${score}`,
 
       for (let i = fallingObjects.length - 1; i >= 0; i--) {
         const obj = fallingObjects[i];
+
+        if (obj.hitByMoo) {
+          obj.mooFadeTimer--;
+          if (obj.mooFadeTimer <= 0) {
+            fallingObjects.splice(i, 1);
+          }
+          continue;
+        }
+
         obj.y += obj.speed;
 
         if (obj.canHome && !freedomSequenceActive && !heartsCelebrationActive) {
@@ -2561,6 +2573,15 @@ Final Score: ${score}`,
 
     function drawFallingObjects() {
       for (const obj of fallingObjects) {
+        ctx.save();
+
+        if (obj.hitByMoo) {
+          const fadeDuration = obj.mooFadeDuration || 36;
+          const fadeProgress = 1 - obj.mooFadeTimer / fadeDuration;
+          const blinkOn = Math.floor(frame / 4) % 2 === 0;
+          ctx.globalAlpha = blinkOn ? Math.max(0, 1 - fadeProgress) : Math.max(0, 0.25 - fadeProgress * 0.25);
+        }
+
         if (obj.usesSpriteSheet && obj.image.complete && obj.image.naturalWidth > 0) {
           const animFrame =
             Math.floor((frame + obj.animationOffset) / obj.frameDuration) % obj.totalFrames;
@@ -2584,6 +2605,8 @@ Final Score: ${score}`,
 
           ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
         }
+
+        ctx.restore();
       }
     }
 

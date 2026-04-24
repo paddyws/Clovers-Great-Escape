@@ -1266,9 +1266,12 @@ Cowtow, or I'll turn you into cornbread.`,
 
     function spawnBossGrass() {
       const size = scaleX(78);
+      const minY = canvas.height / 2;
+      const maxY = canvas.height - size;
+
       bossGrass.push({
         x: Math.random() * Math.max(1, canvas.width - size),
-        y: scaleY(75) + Math.random() * Math.max(1, canvas.height - scaleY(75) - size),
+        y: minY + Math.random() * Math.max(1, maxY - minY),
         width: size,
         height: size,
         pulse: Math.floor(Math.random() * 1000)
@@ -1420,9 +1423,11 @@ Final Score: ${score}`,
       if (cowgirlBoss.throwCooldown > 0) cowgirlBoss.throwCooldown--;
 
       bossGrassSpawnTimer++;
-      if (bossGrassSpawnTimer >= 18) {
+      if (bossGrassSpawnTimer >= 60) {
         bossGrassSpawnTimer = 0;
-        spawnBossGrass();
+        if (bossGrass.length < 2) {
+          spawnBossGrass();
+        }
       }
 
       const playerHitbox = getHitbox(player, 0.14);

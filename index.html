@@ -2549,7 +2549,7 @@ Final Score: ${score}`,
           const dy = playerCenterY - objCenterY;
 
           const homingMultiplier = score >= 10000 ? 1.18 : 1.08;
-          const homing = dx * getHomingStrength() * homingMultiplier;
+          const homing = dx * getHomingStrength() * homingMultiplier*difficultyMultiplier;
           const maxSideSpeed = scaleX(score >= 10000 ? 1.5 : 1.35);
 
           obj.x += Math.max(-maxSideSpeed, Math.min(maxSideSpeed, homing));

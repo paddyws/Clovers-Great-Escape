@@ -2390,7 +2390,7 @@ Final Score: ${score}`,
 
           if (!freedomSequenceActive && (obj.type === "bad" || obj.type === "butcher") && player.invulnerableTimer <= 0) {
             lives--;
-            player.invulnerableTimer = 60;
+            player.invulnerableTimer = 90;
             hitFlashTimer = 20;
             fallingObjects.splice(i, 1);
 

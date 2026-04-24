@@ -153,83 +153,6 @@
       background: linear-gradient(180deg, #d9d2ca, #b9aea4);
     }
 
-    .start-title {
-      font-size: clamp(28px, 8vw, 42px);
-      font-weight: 900;
-      letter-spacing: 0.08em;
-      color: #fff7d6;
-      text-shadow:
-        0 0 10px rgba(255, 230, 150, 0.65),
-        0 5px 0 rgba(77, 45, 18, 0.8),
-        0 10px 18px rgba(0, 0, 0, 0.75);
-      line-height: 0.95;
-      margin-bottom: 8px;
-    }
-
-    .start-subtitle {
-      font-size: 15px;
-      opacity: 0.9;
-      margin-bottom: 14px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-
-    .start-controls {
-      margin-top: 14px;
-      padding: 12px;
-      border-radius: 14px;
-      background:
-        linear-gradient(180deg, rgba(255, 247, 214, 0.13), rgba(255, 247, 214, 0.05));
-      border: 1px solid rgba(255, 247, 214, 0.16);
-      font-size: 13px;
-      line-height: 1.7;
-      letter-spacing: 0.04em;
-      color: #f6f0e8;
-    }
-
-    .start-moo {
-      display: inline-block;
-      color: #ffd36e;
-      font-weight: 900;
-      letter-spacing: 0.08em;
-      transform: rotate(-1deg);
-      text-shadow: 0 0 10px rgba(255, 211, 110, 0.35);
-    }
-
-    .difficulty-btn {
-      display: block;
-      width: 100%;
-      margin: 6px auto;
-      font-size: 18px;
-      letter-spacing: 0.12em;
-      border: 2px solid rgba(255, 247, 214, 0.35);
-      transition:
-        transform 0.15s ease,
-        filter 0.15s ease,
-        box-shadow 0.15s ease;
-    }
-
-    .difficulty-btn:hover {
-      transform: scale(1.05);
-      filter: brightness(1.08);
-      box-shadow: 0 0 18px rgba(255, 247, 214, 0.45);
-    }
-
-    .difficulty-easy {
-      background: linear-gradient(180deg, #b8ff8f, #4caf50);
-      color: #173b13;
-    }
-
-    .difficulty-medium {
-      background: linear-gradient(180deg, #ffe680, #e7a928);
-      color: #3a2600;
-    }
-
-    .difficulty-hard {
-      background: linear-gradient(180deg, #ff7777, #b30000);
-      color: white;
-    }
-
     .end-banner {
       position: absolute;
       inset: 0;
@@ -333,7 +256,6 @@
     let dialogueTimeout = null;
     let overlayTapHandler = null;
     let introDialoguePlayed = false;
-    let gameDifficultySpeedMultiplier = 1;
 
     const BASE_WIDTH = 400;
     const BASE_HEIGHT = 600;
@@ -366,59 +288,12 @@
     const PLAYER_FRAME_DURATION = 6;
     let playerAnimationFrame = 0;
 
-    const falling1SpriteSheet = new Image();
-    falling1SpriteSheet.src = "butcher lady-walk.png";
-
-    const FALLING1_SPRITE_COLS = 5;
-    const FALLING1_SPRITE_ROWS = 5;
-    const FALLING1_TOTAL_FRAMES = 25;
-    const FALLING1_FRAME_DURATION = 6;
-
-    const falling2Img = new Image();
-    falling2Img.src = "falling2.png";
-
-    const falling3Img = new Image();
-    falling3Img.src = "falling3.png";
-
-    const badImages = [
-      {
-        image: falling1SpriteSheet,
-        usesSpriteSheet: true,
-        spriteCols: FALLING1_SPRITE_COLS,
-        spriteRows: FALLING1_SPRITE_ROWS,
-        totalFrames: FALLING1_TOTAL_FRAMES,
-        frameDuration: FALLING1_FRAME_DURATION
-      },
-      {
-        image: falling2Img,
-        usesSpriteSheet: false,
-        spriteCols: 1,
-        spriteRows: 1,
-        totalFrames: 1,
-        frameDuration: 1
-      },
-      {
-        image: falling3Img,
-        usesSpriteSheet: false,
-        spriteCols: 1,
-        spriteRows: 1,
-        totalFrames: 1,
-        frameDuration: 1
-      }
-    ];
-
-    function chooseBadImage() {
-      const choice = badImages[Math.floor(Math.random() * badImages.length)];
-
-      return {
-        image: choice.image,
-        usesSpriteSheet: choice.usesSpriteSheet || false,
-        spriteCols: choice.spriteCols || 1,
-        spriteRows: choice.spriteRows || 1,
-        totalFrames: choice.totalFrames || 1,
-        frameDuration: choice.frameDuration || 1
-      };
-    }
+    const badImageFiles = ["falling1.png", "falling2.png", "falling3.png"];
+    const badImages = badImageFiles.map(file => {
+      const img = new Image();
+      img.src = file;
+      return img;
+    });
 
     const butcherSpriteSheet = new Image();
     butcherSpriteSheet.src = "butcher-walk.png";
@@ -1126,50 +1001,28 @@
     }
 
     function showStartOverlay() {
-      clearDialogueHandlers();
+      showOverlay(
+        `Word on the street is: you like to chew your cud...?`,
+        [
+          {
+            label: "Become a cow.",
+            onClick: () => {
+              unlockSounds();
 
-      gamePaused = true;
-      overlay.classList.remove("hidden");
-      overlayButtons.innerHTML = "";
-      overlayContinue.classList.add("hidden");
+              if (!introDialoguePlayed) {
+                introDialoguePlayed = true;
 
-      overlayText.innerHTML = `
-        <div class="start-title">CLOVER'S<br>GREAT ESCAPE</div>
-        <div class="start-subtitle">Choose your difficulty</div>
+                playDialogueSound();
+              }
 
-        <div class="start-controls">
-          WASD to MOVE<br>
-          SPACEBAR or DOUBLETAP to <span class="start-moo">MOOOOOOOO</span>
-        </div>
-      `;
-
-      const difficulties = [
-        { label: "EASY", speed: 0.8, className: "difficulty-easy" },
-        { label: "MEDIUM", speed: 1, className: "difficulty-medium" },
-        { label: "HARD", speed: 1.25, className: "difficulty-hard" }
-      ];
-
-      difficulties.forEach((difficulty) => {
-        const button = document.createElement("button");
-        button.className = `overlay-btn difficulty-btn ${difficulty.className}`;
-        button.textContent = difficulty.label;
-
-        button.addEventListener("click", () => {
-          unlockSounds();
-
-          lives = 3;
-          gameDifficultySpeedMultiplier = difficulty.speed;
-
-          if (!introDialoguePlayed) {
-            introDialoguePlayed = true;
-            playDialogueSound();
+              showCowDialogueOverlay();
+            }
           }
-
-          showCowDialogueOverlay();
-        });
-
-        overlayButtons.appendChild(button);
-      });
+        ],
+        {
+          speed: 20
+        }
+      );
     }
 
     function showCheckpoint18000() {
@@ -1408,8 +1261,8 @@ Cowtow, or I'll turn you into cornbread.`,
       cowgirlBoss.x = canvas.width / 2 - cowgirlBoss.width / 2;
       cowgirlBoss.y = scaleY(34);
       cowgirlBoss.speed = Math.max(scaleX(4.8), 3.2);
-      cowgirlBoss.health = 80;
-      cowgirlBoss.maxHealth = 80;
+      cowgirlBoss.health = 60;
+      cowgirlBoss.maxHealth = 60;
       cowgirlBoss.state = "running";
       cowgirlBoss.facingLeft = false;
       cowgirlBoss.attackTimer = 0;
@@ -2048,7 +1901,6 @@ Final Score: ${score}`,
       bonusFlashTimer = 0;
       bonusFlashText = "";
       speedModeActivated = false;
-      gameDifficultySpeedMultiplier = 1;
 
       checkpoint18000Shown = false;
       checkpoint10000Shown = false;
@@ -2100,8 +1952,8 @@ Final Score: ${score}`,
       bossGrass = [];
       bossPitchforks = [];
       bossGrassSpawnTimer = 0;
-      cowgirlBoss.health = 60;
-      cowgirlBoss.maxHealth = 60;
+      cowgirlBoss.health = 80;
+      cowgirlBoss.maxHealth = 80;
       cowgirlBoss.state = "hidden";
       cowgirlBoss.attackTimer = 0;
       cowgirlBoss.attackCooldown = 0;
@@ -2115,8 +1967,7 @@ Final Score: ${score}`,
     }
 
     function getSpeedMultiplier() {
-      const madnessMultiplier = score >= 180000 ? 1.3 * 1.5 : 1.3;
-      return madnessMultiplier * gameDifficultySpeedMultiplier;
+      return score >= 180000 ? 1.3 * 1.5 : 1.3;
     }
 
     function getBonusMultiplier() {
@@ -2146,15 +1997,14 @@ Final Score: ${score}`,
       const postCowbell = score >= 10000;
 
       let type = "bad";
-      let badChoice = chooseBadImage();
-      let image = badChoice.image;
+      let image = badImages[Math.floor(Math.random() * badImages.length)];
       let basePoints = 0;
       let speedMultiplier = 1;
-      let usesSpriteSheet = badChoice.usesSpriteSheet;
-      let spriteCols = badChoice.spriteCols;
-      let spriteRows = badChoice.spriteRows;
-      let totalFrames = badChoice.totalFrames;
-      let frameDuration = badChoice.frameDuration;
+      let usesSpriteSheet = false;
+      let spriteCols = 1;
+      let spriteRows = 1;
+      let totalFrames = 1;
+      let frameDuration = 1;
       let canHome = false;
 
       const roll = Math.random();
@@ -2182,13 +2032,7 @@ Final Score: ${score}`,
           speedMultiplier = 1.0;
         } else {
           type = "bad";
-          badChoice = chooseBadImage();
-          image = badChoice.image;
-          usesSpriteSheet = badChoice.usesSpriteSheet;
-          spriteCols = badChoice.spriteCols;
-          spriteRows = badChoice.spriteRows;
-          totalFrames = badChoice.totalFrames;
-          frameDuration = badChoice.frameDuration;
+          image = badImages[Math.floor(Math.random() * badImages.length)];
         }
       } else {
         if (roll < 0.15) {
@@ -2203,13 +2047,7 @@ Final Score: ${score}`,
           speedMultiplier = 0.9;
         } else {
           type = "bad";
-          badChoice = chooseBadImage();
-          image = badChoice.image;
-          usesSpriteSheet = badChoice.usesSpriteSheet;
-          spriteCols = badChoice.spriteCols;
-          spriteRows = badChoice.spriteRows;
-          totalFrames = badChoice.totalFrames;
-          frameDuration = badChoice.frameDuration;
+          image = badImages[Math.floor(Math.random() * badImages.length)];
         }
       }
 

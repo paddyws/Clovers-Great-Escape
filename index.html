@@ -153,6 +153,85 @@
       background: linear-gradient(180deg, #d9d2ca, #b9aea4);
     }
 
+
+    .difficulty-menu {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .difficulty-title {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #fff7d6;
+      text-shadow: 0 0 18px rgba(255, 230, 160, 0.35);
+    }
+
+    .difficulty-subtitle {
+      margin-top: 6px;
+      font-size: 13px;
+      line-height: 1.35;
+      color: rgba(246, 240, 232, 0.78);
+    }
+
+    .difficulty-card {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid rgba(255, 240, 220, 0.2);
+      border-radius: 16px;
+      cursor: pointer;
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.14), transparent 35%),
+        linear-gradient(135deg, rgba(246, 231, 212, 0.98), rgba(188, 149, 108, 0.95));
+      color: #2a1d14;
+      text-align: left;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+      transform: translateY(0);
+      transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
+    }
+
+    .difficulty-card:hover,
+    .difficulty-card:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 26px rgba(0, 0, 0, 0.38);
+      filter: brightness(1.05);
+      outline: none;
+    }
+
+    .difficulty-card-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .difficulty-speed {
+      font-size: 12px;
+      font-weight: 800;
+      opacity: 0.75;
+    }
+
+    .difficulty-desc {
+      margin-top: 5px;
+      font-size: 12px;
+      line-height: 1.35;
+      opacity: 0.82;
+    }
+
+    .difficulty-card.cowgirl {
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.13), transparent 35%),
+        linear-gradient(135deg, rgba(255, 196, 122, 0.98), rgba(154, 54, 39, 0.98));
+      color: #fff7ed;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+    }
+
     .end-banner {
       position: absolute;
       inset: 0;
@@ -256,6 +335,9 @@
     let dialogueTimeout = null;
     let overlayTapHandler = null;
     let introDialoguePlayed = false;
+
+    let difficultyMultiplier = 1.0;
+    let selectedDifficulty = "normal";
 
     const BASE_WIDTH = 400;
     const BASE_HEIGHT = 600;
@@ -515,7 +597,7 @@
     }
 
     function getStalkerButcherSpeed() {
-      return Math.max(scaleX(0.38), 0.22);
+      return Math.max(scaleX(0.38), 0.22) * difficultyMultiplier;
     }
 
     function resetStalkerButcherPosition() {
@@ -1003,28 +1085,67 @@
     }
 
     function showStartOverlay() {
-      showOverlay(
-        `Word on the street is: you like to chew your cud...?`,
-        [
-          {
-            label: "Become a cow.",
-            onClick: () => {
-              unlockSounds();
+      clearDialogueHandlers();
+      gamePaused = true;
+      overlay.classList.remove("hidden");
+      overlayContinue.classList.add("hidden");
+      overlayButtons.innerHTML = "";
 
-              if (!introDialoguePlayed) {
-                introDialoguePlayed = true;
+      overlayText.innerHTML = `
+        <div class="difficulty-title">Clover's Great Escape</div>
+        <div class="difficulty-subtitle">Choose your difficulty. WASD to move. SPACE or double-tap to MOOOOOOOO.</div>
+        <div class="difficulty-menu">
+          <button class="difficulty-card" type="button" data-difficulty="easy">
+            <div class="difficulty-card-title">
+              <span>Easy</span>
+              <span class="difficulty-speed">0.8x speed</span>
+            </div>
+            <div class="difficulty-desc">A gentler pasture path. Still doomed, just slower.</div>
+          </button>
+          <button class="difficulty-card" type="button" data-difficulty="normal">
+            <div class="difficulty-card-title">
+              <span>Normal</span>
+              <span class="difficulty-speed">1.0x speed</span>
+            </div>
+            <div class="difficulty-desc">The classic escape. Reasonable moo-based suffering.</div>
+          </button>
+          <button class="difficulty-card cowgirl" type="button" data-difficulty="cowgirl">
+            <div class="difficulty-card-title">
+              <span>Cowgirl</span>
+              <span class="difficulty-speed">1.25x speed</span>
+            </div>
+            <div class="difficulty-desc">Fast, mean, and wearing boots. Clover beware.</div>
+          </button>
+        </div>
+      `;
 
-                playDialogueSound();
-              }
+      overlayText.querySelectorAll(".difficulty-card").forEach((button) => {
+        button.addEventListener("click", () => {
+          const difficulty = button.dataset.difficulty;
 
-              showCowDialogueOverlay();
-            }
+          if (difficulty === "easy") {
+            startGameWithDifficulty("easy", 0.8);
+          } else if (difficulty === "cowgirl") {
+            startGameWithDifficulty("cowgirl", 1.25);
+          } else {
+            startGameWithDifficulty("normal", 1.0);
           }
-        ],
-        {
-          speed: 20
-        }
-      );
+        });
+      });
+    }
+
+    function startGameWithDifficulty(name, multiplier) {
+      selectedDifficulty = name;
+      difficultyMultiplier = multiplier;
+
+      unlockSounds();
+
+      if (!introDialoguePlayed) {
+        introDialoguePlayed = true;
+        playDialogueSound();
+      }
+
+      showCowDialogueOverlay();
     }
 
     function showCheckpoint18000() {
@@ -1266,7 +1387,7 @@ Cowtow, or I'll turn you into cornbread.`,
       cowgirlBoss.height = scaleY(112 * 1.5);
       cowgirlBoss.x = canvas.width / 2 - cowgirlBoss.width / 2;
       cowgirlBoss.y = scaleY(34);
-      cowgirlBoss.speed = Math.max(scaleX(4.8), 3.2);
+      cowgirlBoss.speed = Math.max(scaleX(4.8), 3.2) * difficultyMultiplier;
       cowgirlBoss.health = 60;
       cowgirlBoss.maxHealth = 60;
       cowgirlBoss.state = "running";
@@ -1332,7 +1453,7 @@ Cowtow, or I'll turn you into cornbread.`,
       const dx = playerCenterX - bossCenterX;
       const dy = playerCenterY - bossCenterY;
       const distance = Math.hypot(dx, dy) || 1;
-      const speed = Math.max(scaleX(7.2), 4.6);
+      const speed = Math.max(scaleX(7.2), 4.6) * difficultyMultiplier;
 
       bossPitchforks.push({
         x: bossCenterX,
@@ -1976,6 +2097,8 @@ Final Score: ${score}`,
       player.invulnerableTimer = 0;
       playerAnimationFrame = 0;
       playerFacingLeft = false;
+      difficultyMultiplier = 1.0;
+      selectedDifficulty = "normal";
 
       fallingObjects = [];
       heartBursts = [];
@@ -2058,7 +2181,8 @@ Final Score: ${score}`,
     }
 
     function getSpeedMultiplier() {
-      return score >= 180000 ? 1.3 * 1.5 : 1.3;
+      const base = score >= 180000 ? 1.3 * 1.5 : 1.3;
+      return base * difficultyMultiplier;
     }
 
     function getBonusMultiplier() {
@@ -2727,11 +2851,13 @@ Final Score: ${score}`,
       ctx.font = `${Math.max(scaleY(20), 14)}px Arial`;
       ctx.fillText(`Score: ${score}`, scaleX(12), scaleY(30));
       ctx.fillText(`Lives: ${lives}`, scaleX(12), scaleY(58));
+      ctx.font = `${Math.max(scaleY(13), 10)}px Arial`;
+      ctx.fillText(`Mode: ${selectedDifficulty.toUpperCase()}`, scaleX(12), scaleY(78));
 
       const nextLifeAt = (Math.floor(score / 2000) + 1) * 2000;
       const remaining = nextLifeAt - score;
       ctx.font = `${Math.max(scaleY(16), 12)}px Arial`;
-      ctx.fillText(`Next life in: ${remaining > 0 ? remaining : 0}`, scaleX(12), scaleY(82));
+      ctx.fillText(`Next life in: ${remaining > 0 ? remaining : 0}`, scaleX(12), scaleY(100));
 
       const mooReady = mooCooldownTimer <= 0;
       const mooSeconds = (mooCooldownTimer / 60).toFixed(1);
@@ -2741,7 +2867,7 @@ Final Score: ${score}`,
       ctx.fillText(
         mooReady ? "Moo ready: SPACE / double tap" : `Moo cooldown: ${mooSeconds}s`,
         scaleX(12),
-        scaleY(108)
+        scaleY(126)
       );
     }
 

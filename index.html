@@ -392,14 +392,6 @@
     const BUTCHER_TOTAL_FRAMES = 25;
     const BUTCHER_FRAME_DURATION = 6;
 
-    const cleaverButcherSpriteSheet = new Image();
-    cleaverButcherSpriteSheet.src = "cleaver-butcher-walk.png";
-
-    const CLEAVER_BUTCHER_SPRITE_COLS = 4;
-    const CLEAVER_BUTCHER_SPRITE_ROWS = 2;
-    const CLEAVER_BUTCHER_TOTAL_FRAMES = 8;
-    const CLEAVER_BUTCHER_FRAME_DURATION = 8;
-
     const stalkerButcherSpriteSheet = new Image();
     stalkerButcherSpriteSheet.src = "Pitchfork Butcher-walk.png";
 
@@ -603,10 +595,6 @@
         width: obj.width - insetX * 2,
         height: obj.height - insetY * 2
       };
-    }
-
-    function isHostileFallingObject(obj) {
-      return obj.type === "bad" || obj.type === "butcher" || obj.type === "cleaverButcher";
     }
 
     function getHomingStrength() {
@@ -896,7 +884,7 @@
 
       for (let i = fallingObjects.length - 1; i >= 0; i--) {
         const obj = fallingObjects[i];
-        const isHostile = isHostileFallingObject(obj);
+        const isHostile = obj.type === "bad" || obj.type === "butcher";
         if (!isHostile) continue;
 
         const objCenterX = obj.x + obj.width / 2;
@@ -2231,7 +2219,7 @@ Final Score: ${score}`,
       const roll = Math.random();
 
       if (postCowbell) {
-        if (roll < 0.28) {
+        if (roll < 0.4) {
           type = "butcher";
           image = butcherSpriteSheet;
           usesSpriteSheet = true;
@@ -2241,17 +2229,7 @@ Final Score: ${score}`,
           frameDuration = BUTCHER_FRAME_DURATION;
           canHome = true;
           speedMultiplier = cowbellModeActive ? .8 : 1.2;
-        } else if (roll < 0.42) {
-          type = "cleaverButcher";
-          image = cleaverButcherSpriteSheet;
-          usesSpriteSheet = true;
-          spriteCols = CLEAVER_BUTCHER_SPRITE_COLS;
-          spriteRows = CLEAVER_BUTCHER_SPRITE_ROWS;
-          totalFrames = CLEAVER_BUTCHER_TOTAL_FRAMES;
-          frameDuration = CLEAVER_BUTCHER_FRAME_DURATION;
-          canHome = true;
-          speedMultiplier = cowbellModeActive ? .9 : 1.35;
-        } else if (roll < 0.52) {
+        } else if (roll < 0.50) {
           type = "bonus1000";
           image = bonus1000Img;
           basePoints = 1000;
@@ -2276,16 +2254,6 @@ Final Score: ${score}`,
           image = bonus200Img;
           basePoints = 200;
           speedMultiplier = 0.9;
-        } else if (roll < 0.52) {
-          type = "cleaverButcher";
-          image = cleaverButcherSpriteSheet;
-          usesSpriteSheet = true;
-          spriteCols = CLEAVER_BUTCHER_SPRITE_COLS;
-          spriteRows = CLEAVER_BUTCHER_SPRITE_ROWS;
-          totalFrames = CLEAVER_BUTCHER_TOTAL_FRAMES;
-          frameDuration = CLEAVER_BUTCHER_FRAME_DURATION;
-          canHome = true;
-          speedMultiplier = 1.15;
         } else {
           type = "bad";
           image = badImages[Math.floor(Math.random() * badImages.length)];
@@ -2297,8 +2265,6 @@ Final Score: ${score}`,
           ? scaleX(Math.random() * 20 + 35) * 1.25
           : type === "butcher"
           ? scaleX(Math.random() * 28 + 52) * 1.15
-          : type === "cleaverButcher"
-          ? scaleX(Math.random() * 30 + 58) * 1.25
           : scaleX(Math.random() * 25 + 40) * 1.25;
 
       const x = Math.random() * (canvas.width - size);
@@ -2614,8 +2580,6 @@ Final Score: ${score}`,
         const objectHitbox =
           obj.type === "butcher"
             ? getHitbox(obj, 0.38)
-            : obj.type === "cleaverButcher"
-            ? getHitbox(obj, 0.34)
             : obj.type === "bad"
             ? getHitbox(obj, 0.31)
             : getHitbox(obj, 0.25);
@@ -2637,7 +2601,7 @@ Final Score: ${score}`,
             continue;
           }
 
-          if (!freedomSequenceActive && isHostileFallingObject(obj) && player.invulnerableTimer <= 0) {
+          if (!freedomSequenceActive && (obj.type === "bad" || obj.type === "butcher") && player.invulnerableTimer <= 0) {
             lives--;
             player.invulnerableTimer = 90;
             hitFlashTimer = 20;

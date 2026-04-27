@@ -604,7 +604,7 @@
     }
 
     function getStalkerButcherSpeed() {
-      return Math.max(scaleX(0.38), 0.22) * difficultyMultiplier*difficultyMultiplier;
+      return Math.max(scaleX(0.38), 0.22) * difficultyMultiplier*difficultyMultiplier*difficultyMultiplier;
     }
 
     function resetStalkerButcherPosition() {
@@ -1120,7 +1120,7 @@
           if (difficulty === "easy") {
             startGameWithDifficulty("easy", 0.7);
           } else if (difficulty === "cowgirl") {
-            startGameWithDifficulty("cowgirl", 1.4);
+            startGameWithDifficulty("cowgirl", 1.3);
           } else {
             startGameWithDifficulty("normal", 1.0);
           }

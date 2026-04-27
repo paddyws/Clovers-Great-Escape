@@ -1326,6 +1326,7 @@ Is this free range?`,
 
     function showCowgirlBossIntro() {
       music.pause();
+
       if (!isMuted) {
         try {
           cowgirlMusic.currentTime = 0;
@@ -1334,9 +1335,31 @@ Is this free range?`,
       }
 
       showOverlay(
-        `NO MORE MOOING STOP THAT $#&@ING SOUND.  You leave me no choice.
+        `NO MORE MOOING.
 
-Cowtow, or I'll turn you into cornbread.`,
+STOP THAT $#&@ING SOUND.`,
+        [
+          {
+            label: "...",
+            onClick: () => {
+              try {
+                mooSound.pause();
+                mooSound.currentTime = 0;
+              } catch (err) {}
+
+              showCornbreadDialogue();
+            }
+          }
+        ],
+        { speed: 28, requireContinueBeforeButtons: true }
+      );
+    }
+
+    function showCornbreadDialogue() {
+      showOverlay(
+        `You leave me no choice.
+
+Cowtow... or I'll turn you into cornbread.`,
         [
           {
             label: "MOOOO",
@@ -1807,7 +1830,7 @@ Final Score: ${score}`,
       playSound(bonusSound);
 
       showOverlay(
-        `Oh.. her eardrums. They called an ambulance. You gave her a migraine. But Clover... you know what that means.. we're free... would you like to be milked?`,
+        `Oh.. wow she's dead. The queen is dead! Clover we're free... would you like to be milked?`,
         [
           {
             label: "Mooooo",

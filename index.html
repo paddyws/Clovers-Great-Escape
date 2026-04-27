@@ -55,6 +55,40 @@
       border-radius: 12px;
     }
 
+    .game-wrap.boss-shake {
+      animation: bossScreenShake 0.46s cubic-bezier(.36,.07,.19,.97) both;
+    }
+
+    @keyframes bossScreenShake {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      10% { transform: translate(-5px, 3px) rotate(-0.6deg); }
+      20% { transform: translate(6px, -4px) rotate(0.7deg); }
+      30% { transform: translate(-7px, 2px) rotate(-0.8deg); }
+      40% { transform: translate(7px, 4px) rotate(0.8deg); }
+      50% { transform: translate(-5px, -5px) rotate(-0.5deg); }
+      60% { transform: translate(5px, 3px) rotate(0.5deg); }
+      70% { transform: translate(-4px, 5px) rotate(-0.4deg); }
+      80% { transform: translate(4px, -3px) rotate(0.4deg); }
+      90% { transform: translate(-2px, 2px) rotate(-0.2deg); }
+    }
+
+    .overlay.boss-red-flash::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(180, 0, 0, 0.42);
+      pointer-events: none;
+      animation: bossRedFlash 0.55s ease-out both;
+      z-index: 21;
+    }
+
+    @keyframes bossRedFlash {
+      0% { opacity: 0; }
+      12% { opacity: 1; }
+      35% { opacity: 0.55; }
+      100% { opacity: 0; }
+    }
+
     canvas {
       display: block;
       width: 100%;
@@ -299,6 +333,7 @@
   <script>
     const canvas = document.getElementById("game");
     const ctx = canvas.getContext("2d");
+    const gameWrap = document.querySelector(".game-wrap");
 
     const overlay = document.getElementById("overlay");
     const overlayText = document.getElementById("overlayText");
@@ -1324,6 +1359,22 @@ Is this free range?`,
       );
     }
 
+    function triggerBossAngerEffect() {
+      gameWrap.classList.remove("boss-shake");
+      overlay.classList.remove("boss-red-flash");
+
+      // Force the browser to restart the animations even if they just played.
+      void gameWrap.offsetWidth;
+
+      gameWrap.classList.add("boss-shake");
+      overlay.classList.add("boss-red-flash");
+
+      setTimeout(() => {
+        gameWrap.classList.remove("boss-shake");
+        overlay.classList.remove("boss-red-flash");
+      }, 650);
+    }
+
     function showCowgirlBossIntro() {
       music.pause();
 
@@ -1333,6 +1384,8 @@ Is this free range?`,
           cowgirlMusic.play().catch(() => {});
         } catch (err) {}
       }
+
+      triggerBossAngerEffect();
 
       showOverlay(
         `NO MORE MOOING.

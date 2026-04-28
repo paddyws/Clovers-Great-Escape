@@ -1016,12 +1016,46 @@
     }
 
     function typeNextCharacter() {
-      if (!activeDialogue) return;
+  if (!activeDialogue) return;
 
-      if (activeDialogue.index >= activeDialogue.text.length) {
-        finalizeDialogue();
-        return;
-      }
+  if (activeDialogue.index >= activeDialogue.text.length) {
+    finalizeDialogue();
+    return;
+  }
+
+  activeDialogue.index++;
+  renderDialogueText(activeDialogue.text, activeDialogue.index, false);
+
+  const currentChar = activeDialogue.text[activeDialogue.index - 1];
+  const prevChar = activeDialogue.text[activeDialogue.index - 2];
+
+  // Play sound ONLY when a new word starts
+  if (
+    currentChar !== " " &&
+    currentChar !== "
+" &&
+    currentChar !== "	" &&
+    (prevChar === " " || prevChar === "
+" || prevChar === "	" || activeDialogue.index === 1)
+  ) {
+    playDialogueBlip(currentChar);
+  }
+
+  let delay = activeDialogue.speed;
+
+  if (currentChar === "." || currentChar === "?" || currentChar === "!") {
+    delay += 120;
+  } else if (currentChar === ",") {
+    delay += 70;
+  } else if (currentChar === "
+") {
+    delay += 120;
+  } else if (currentChar === " ") {
+    delay -= 5;
+  }
+
+  dialogueTimeout = setTimeout(typeNextCharacter, Math.max(15, delay));
+}
 
       activeDialogue.index++;
       renderDialogueText(activeDialogue.text, activeDialogue.index, false);

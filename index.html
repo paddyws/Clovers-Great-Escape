@@ -885,7 +885,7 @@
       if (soundsUnlocked) return;
       soundsUnlocked = true;
 
-      const sounds = [hitSound, bonusSound, mooSound, cowgirlMusic];
+      const sounds = [hitSound, bonusSound, mooSound, cowgirlMusic, dialogueSound];
 
       sounds.forEach((sound) => {
         try {
@@ -1027,6 +1027,7 @@
       renderDialogueText(activeDialogue.text, activeDialogue.index, false);
 
       const currentChar = activeDialogue.text[activeDialogue.index - 1];
+      playDialogueBlip(currentChar);
       let delay = activeDialogue.speed;
 
       if (currentChar === "." || currentChar === "?" || currentChar === "!") {
@@ -1171,7 +1172,6 @@
 
       if (!introDialoguePlayed) {
         introDialoguePlayed = true;
-        playDialogueSound();
       }
 
       showCowDialogueOverlay();
@@ -2067,6 +2067,25 @@ Final Score: ${score}`,
         try {
           sound.currentTime = 0;
           sound.play().catch(() => {});
+        } catch (err2) {}
+      }
+    }
+
+    function playDialogueBlip(char) {
+      if (isMuted) return;
+      if (!soundsUnlocked) return;
+      if (char === " " || char === "\n" || char === "\t") return;
+
+      try {
+        const s = dialogueSound.cloneNode();
+        s.volume = 0.22;
+        s.currentTime = 0;
+        s.play().catch(() => {});
+      } catch (err) {
+        try {
+          dialogueSound.currentTime = 0;
+          dialogueSound.volume = 0.22;
+          dialogueSound.play().catch(() => {});
         } catch (err2) {}
       }
     }

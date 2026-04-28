@@ -567,12 +567,50 @@
     mooSound.volume = 0.9;
     mooSound.preload = "auto";
 
-    const dialogueSound = new Audio("dialoguesounds.mp3");
-    dialogueSound.volume = 0.9;
-    dialogueSound.preload = "auto";
 
     let isMuted = false;
     let soundsUnlocked = false;
+
+    let dialogueAudioContext = null;
+
+    function getDialogueAudioContext() {
+      if (!dialogueAudioContext) {
+        dialogueAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+
+      if (dialogueAudioContext.state === "suspended") {
+        dialogueAudioContext.resume().catch(() => {});
+      }
+
+      return dialogueAudioContext;
+    }
+
+    function playDialogueBlip(char) {
+      if (isMuted) return;
+      if (!char || char === " " || char === "\n" || char === "\t") return;
+
+      try {
+        const audioCtx = getDialogueAudioContext();
+        const now = audioCtx.currentTime;
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        // Tiny Undertale-style voice blip. No sound file needed, so it will not freeze.
+        osc.type = "square";
+        osc.frequency.setValueAtTime(520 + Math.random() * 120, now);
+
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(0.045, now + 0.004);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.04);
+      } catch (err) {}
+    }
 
     function scaleX(value) {
       return value * (canvas.width / BASE_WIDTH);
@@ -885,7 +923,7 @@
       if (soundsUnlocked) return;
       soundsUnlocked = true;
 
-      const sounds = [hitSound, bonusSound, mooSound, cowgirlMusic, dialogueSound];
+      const sounds = [hitSound, bonusSound, mooSound, cowgirlMusic];
 
       sounds.forEach((sound) => {
         try {
@@ -1016,61 +1054,30 @@
     }
 
     function typeNextCharacter() {
-  if (!activeDialogue) return;
+      if (!activeDialogue) return;
 
-  if (activeDialogue.index >= activeDialogue.text.length) {
-    finalizeDialogue();
-    return;
-  }
-
-  activeDialogue.index++;
-  renderDialogueText(activeDialogue.text, activeDialogue.index, false);
-
-  const currentChar = activeDialogue.text[activeDialogue.index - 1];
-  const prevChar = activeDialogue.text[activeDialogue.index - 2];
-
-  // Play sound ONLY when a new word starts
-  if (
-    currentChar !== " " &&
-    currentChar !== "
-" &&
-    currentChar !== "	" &&
-    (prevChar === " " || prevChar === "
-" || prevChar === "	" || activeDialogue.index === 1)
-  ) {
-    playDialogueBlip(currentChar);
-  }
-
-  let delay = activeDialogue.speed;
-
-  if (currentChar === "." || currentChar === "?" || currentChar === "!") {
-    delay += 120;
-  } else if (currentChar === ",") {
-    delay += 70;
-  } else if (currentChar === "
-") {
-    delay += 120;
-  } else if (currentChar === " ") {
-    delay -= 5;
-  }
-
-  dialogueTimeout = setTimeout(typeNextCharacter, Math.max(15, delay));
-}
+      if (activeDialogue.index >= activeDialogue.text.length) {
+        finalizeDialogue();
+        return;
+      }
 
       activeDialogue.index++;
-      renderDialogueText(activeDialogue.text, activeDialogue.index, false);
 
       const currentChar = activeDialogue.text[activeDialogue.index - 1];
-      const prevChar = activeDialogue.text[activeDialogue.index - 2];
+      playDialogueBlip(currentChar);
+      renderDialogueText(activeDialogue.text, activeDialogue.index, false);
 
-// Play sound ONLY when a new word starts
-      if (
-        currentChar !== " " &&
-        currentChar !== "\n" &&
-        (prevChar === " " || prevChar === "\n" || activeDialogue.index === 1)
-      ) {
-  playDialogueBlip();
-}
+      let delay = activeDialogue.speed;
+
+      if (currentChar === "." || currentChar === "?" || currentChar === "!") {
+        delay += 120;
+      } else if (currentChar === ",") {
+        delay += 70;
+      } else if (currentChar === "\n") {
+        delay += 120;
+      } else if (currentChar === " ") {
+        delay -= 5;
+      }
 
       dialogueTimeout = setTimeout(typeNextCharacter, Math.max(15, delay));
     }
@@ -1204,6 +1211,7 @@
 
       if (!introDialoguePlayed) {
         introDialoguePlayed = true;
+        playDialogueSound();
       }
 
       showCowDialogueOverlay();
@@ -2103,38 +2111,11 @@ Final Score: ${score}`,
       }
     }
 
-    function playDialogueBlip(char) {
-      if (isMuted) return;
-      if (!soundsUnlocked) return;
-      if (char === " " || char === "\n" || char === "\t") return;
-
-      try {
-        const s = dialogueSound.cloneNode();
-        s.volume = 0.22;
-        s.currentTime = 0;
-        s.play().catch(() => {});
-      } catch (err) {
-        try {
-          dialogueSound.currentTime = 0;
-          dialogueSound.volume = 0.22;
-          dialogueSound.play().catch(() => {});
-        } catch (err2) {}
-      }
-    }
-
     function playDialogueSound() {
       if (isMuted) return;
 
       try {
-        dialogueSound.pause();
-        dialogueSound.currentTime = 0;
-        const playAttempt = dialogueSound.play();
-
-        if (playAttempt && typeof playAttempt.catch === "function") {
-          playAttempt.catch((err) => {
-            console.log("Dialogue sound could not play:", err);
-          });
-        }
+        getDialogueAudioContext();
       } catch (err) {
         console.log("Dialogue sound error:", err);
       }

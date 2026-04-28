@@ -1027,18 +1027,16 @@
       renderDialogueText(activeDialogue.text, activeDialogue.index, false);
 
       const currentChar = activeDialogue.text[activeDialogue.index - 1];
-      playDialogueBlip(currentChar);
-      let delay = activeDialogue.speed;
+      const prevChar = activeDialogue.text[activeDialogue.index - 2];
 
-      if (currentChar === "." || currentChar === "?" || currentChar === "!") {
-        delay += 120;
-      } else if (currentChar === ",") {
-        delay += 70;
-      } else if (currentChar === "\n") {
-        delay += 120;
-      } else if (currentChar === " ") {
-        delay -= 5;
-      }
+// Play sound ONLY when a new word starts
+      if (
+        currentChar !== " " &&
+        currentChar !== "\n" &&
+        (prevChar === " " || prevChar === "\n" || activeDialogue.index === 1)
+      ) {
+  playDialogueBlip();
+}
 
       dialogueTimeout = setTimeout(typeNextCharacter, Math.max(15, delay));
     }

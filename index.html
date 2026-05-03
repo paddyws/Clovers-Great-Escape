@@ -130,6 +130,35 @@
       justify-content: center;
     }
 
+
+
+    .overlay-box.picture-overlay-box {
+      width: min(100%, 372px);
+      padding: 10px;
+      background: rgba(12, 8, 16, 0.96);
+    }
+
+    .dialogue-picture {
+      display: block;
+      width: 100%;
+      max-height: 260px;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 14px 14px 6px 6px;
+      margin: 0 0 10px;
+      image-rendering: pixelated;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
+    }
+
+    .picture-dialogue-box {
+      background: rgba(23, 20, 18, 0.96);
+      border: 1px solid rgba(255, 240, 220, 0.2);
+      border-radius: 12px;
+      padding: 13px 14px;
+      min-height: 92px;
+      text-align: center;
+    }
+
     .overlay-text {
       font-size: 17px;
       line-height: 1.45;
@@ -336,6 +365,7 @@
     const gameWrap = document.querySelector(".game-wrap");
 
     const overlay = document.getElementById("overlay");
+    const overlayBox = document.querySelector(".overlay-box");
     const overlayText = document.getElementById("overlayText");
     const overlayButtons = document.getElementById("overlayButtons");
     const overlayContinue = document.getElementById("overlayContinue");
@@ -1045,7 +1075,18 @@
 
     function renderDialogueText(text, typedLength, done = false) {
       const visible = escapeHtml(text.slice(0, typedLength)).replace(/\n/g, "<br>");
-      overlayText.innerHTML = visible + (done ? "" : `<span class="dialogue-cursor">|</span>`);
+      const typedText = visible + (done ? "" : `<span class="dialogue-cursor">|</span>`);
+
+      if (activeDialogue && activeDialogue.imageSrc) {
+        overlayBox.classList.add("picture-overlay-box");
+        overlayText.innerHTML = `
+          <img class="dialogue-picture" src="${activeDialogue.imageSrc}" alt="Purple cow close-up">
+          <div class="picture-dialogue-box">${typedText}</div>
+        `;
+      } else {
+        overlayBox.classList.remove("picture-overlay-box");
+        overlayText.innerHTML = typedText;
+      }
     }
 
     function clearDialogueHandlers() {
@@ -1059,6 +1100,7 @@
         overlayTapHandler = null;
       }
 
+      overlayBox.classList.remove("picture-overlay-box");
       activeDialogue = null;
     }
 
@@ -1142,7 +1184,8 @@
         buttons,
         index: 0,
         speed,
-        requireContinueBeforeButtons
+        requireContinueBeforeButtons,
+        imageSrc: options.imageSrc || null
       };
 
       renderDialogueText(text, 0, false);
@@ -1204,6 +1247,7 @@
       overlay.classList.remove("hidden");
       overlayContinue.classList.add("hidden");
       overlayButtons.innerHTML = "";
+      overlayBox.classList.remove("picture-overlay-box");
 
       overlayText.innerHTML = `
         <div class="difficulty-menu">
@@ -2132,7 +2176,8 @@ Would you like to be milked?..`,
         ],
         {
           speed: 34,
-          requireContinueBeforeButtons: true
+          requireContinueBeforeButtons: true,
+          imageSrc: "purple-cow-closeup.png"
         }
       );
     }

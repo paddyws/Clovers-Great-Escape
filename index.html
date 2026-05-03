@@ -2218,23 +2218,64 @@ Clover's after you will make this journey...`,
                             label: "...",
                             onClick: () => {
 
-                              // Third dialogue, part two: separate click before mortality.
+                              // Clover gift dialogue.
                               showOverlay(
-                                `Escapin isn't as easy as it looks
-It is living that is the hard part...`,
+                                `Here let me give you something...
+
+What is it?
+
+You remind me of this clover,
+it reminds me of you.`,
                                 [
                                   {
                                     label: "...",
                                     onClick: () => {
-                                      purpleCow.walkingAway = true;
-                                      showFinalMortalityChoice();
+
+                                      // 44 leaf clover received screen.
+                                      showOverlay(
+                                        `You just received a 44 leaf clover!!!`,
+                                        [
+                                          {
+                                            label: "...",
+                                            onClick: () => {
+
+                                              // Third dialogue, part two: separate click before mortality.
+                                              showOverlay(
+                                                `Escapin isn't as easy as it looks
+It is living that is the hard part...`,
+                                                [
+                                                  {
+                                                    label: "...",
+                                                    onClick: () => {
+                                                      purpleCow.walkingAway = true;
+                                                      showFinalMortalityChoice();
+                                                    }
+                                                  }
+                                                ],
+                                                {
+                                                  speed: 34,
+                                                  requireContinueBeforeButtons: true,
+                                                  imageSrc: "purple-cow-closeup.png"
+                                                }
+                                              );
+
+                                            }
+                                          }
+                                        ],
+                                        {
+                                          speed: 34,
+                                          requireContinueBeforeButtons: true,
+                                          imageSrc: "forty-four-leaf-clover.png"
+                                        }
+                                      );
+
                                     }
                                   }
                                 ],
                                 {
                                   speed: 34,
                                   requireContinueBeforeButtons: true,
-                                  imageSrc: "purple-cow-closeup.png"
+                                  imageSrc: "purple-cow-clover-gift.png"
                                 }
                               );
 

@@ -1906,108 +1906,50 @@ Final Score: ${score}`,
     }
 
     function defeatCowgirlBoss() {
-  bossFightActive = false;
-  bossDefeatedPastureActive = true;
-  cowgirlMusic.pause();
+      bossFightActive = false;
+      bossDefeatedPastureActive = true;
+      cowgirlMusic.pause();
 
-  gameWon = true;
-  gamePaused = true;
+      gameWon = true;
+      gamePaused = true;
 
-  bossPitchforks = [];
-  bossGrass = [];
-  createBossPoof();
+      bossPitchforks = [];
+      bossGrass = [];
+      createBossPoof();
 
-  score += 1000;
-  bonusFlashTimer = 80;
-  bonusFlashText = "+1000";
-  playSound(bonusSound);
+      score += 1000;
+      bonusFlashTimer = 80;
+      bonusFlashText = "+1000";
+      playSound(bonusSound);
 
-  showOverlay(
-    `Clover you did it!
+      showOverlay(
+        `Clover you did it!
 
 The cowgirl went to go nurse her migraine.
 
-Thank you Clover...
-
-We couldn’t have done it without you.`,
-    [
-      {
-        label: "Mooo",
-        onClick: () => {
-
-          setTimeout(() => {
-
-            const originalBlip = playDialogueBlip;
-            playDialogueBlip = function(char) {
-              if (isMuted) return;
-              if (!char || char === " " || char === "
-") return;
-
-              try {
-                const audioCtx = getDialogueAudioContext();
-                const now = audioCtx.currentTime;
-
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-
-                osc.type = "square";
-                osc.frequency.setValueAtTime(280 + Math.random() * 60, now);
-
-                gain.gain.setValueAtTime(0.0001, now);
-                gain.gain.exponentialRampToValueAtTime(0.04, now + 0.005);
-                gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
-
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-
-                osc.start(now);
-                osc.stop(now + 0.06);
-              } catch (err) {}
-            };
-
-            showOverlay(
-              `Clover, you've been through a lot...
-
-Would you like to be milked...
-
-Clover?`,
-              [
-                {
-                  label: "Mooooo",
-                  onClick: () => {
-                    playDialogueBlip = originalBlip;
-                    startWarmAndFuzzyEnding();
-                  }
-                },
-                {
-                  label: "Noooooo",
-                  secondary: true,
-                  onClick: () => {
-                    playDialogueBlip = originalBlip;
-                    startFreedomEnding();
-                  }
-                }
-              ],
-              {
-                speed: 40,
-                requireContinueBeforeButtons: true
-              }
-            );
-
-          }, 500);
-        }
-      }
-    ],
-    {
-      speed: 30,
-      requireContinueBeforeButtons: true
-    }
-  );
-},
+Thank you Clover...`,
+        [
           {
-            label: "Noooooo",
-            secondary: true,
-            onClick: () => { startFreedomEnding(); }
+            label: "Mooo",
+            onClick: () => {
+              showOverlay(
+                `Clover, you've been through a lot...
+
+Would you like to be milked?..`,
+                [
+                  {
+                    label: "Mooooo",
+                    onClick: () => { startWarmAndFuzzyEnding(); }
+                  },
+                  {
+                    label: "Noooooo",
+                    secondary: true,
+                    onClick: () => { startFreedomEnding(); }
+                  }
+                ],
+                { speed: 34, requireContinueBeforeButtons: true }
+              );
+            }
           }
         ],
         { speed: 30, requireContinueBeforeButtons: true }

@@ -509,6 +509,30 @@
     const pastureImage = new Image();
     pastureImage.src = "pasture.png";
 
+    const purpleCowIdleSpriteSheet = new Image();
+    purpleCowIdleSpriteSheet.src = "purple cow _3-idle.png";
+
+    const purpleCowWalkSpriteSheet = new Image();
+    purpleCowWalkSpriteSheet.src = "purple cow _3-walk.png";
+
+    const PURPLE_COW_SPRITE_COLS = 5;
+    const PURPLE_COW_SPRITE_ROWS = 5;
+    const PURPLE_COW_TOTAL_FRAMES = 25;
+    const PURPLE_COW_IDLE_FRAME_DURATION = 7;
+    const PURPLE_COW_WALK_FRAME_DURATION = 6;
+
+    const purpleCow = {
+      active: false,
+      triggered: false,
+      walkingAway: false,
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      facingLeft: true,
+      animationOffset: 0
+    };
+
     const MOO_COOLDOWN_FRAMES = 420; // 5 seconds at about 60fps
     const MOO_BOSS_COOLDOWN_FRAMES = 0;
     const MOO_PULSE_RADIUS = 140;
@@ -569,6 +593,11 @@
     const mooSound = new Audio("moo.m4a");
     mooSound.volume = 0.9;
     mooSound.preload = "auto";
+
+    const cosmicCowMusic = new Audio("Cosmic Cow.mp3");
+    cosmicCowMusic.loop = true;
+    cosmicCowMusic.volume = 0.42;
+    cosmicCowMusic.preload = "auto";
 
 
     let isMuted = false;
@@ -926,7 +955,7 @@
       if (soundsUnlocked) return;
       soundsUnlocked = true;
 
-      const sounds = [hitSound, bonusSound, mooSound, cowgirlMusic];
+      const sounds = [hitSound, bonusSound, mooSound, cowgirlMusic, cosmicCowMusic];
 
       sounds.forEach((sound) => {
         try {
@@ -2002,7 +2031,119 @@ Would you like to be milked?..`,
       gamePaused = true;
 
       showOverlay(
-        `You feel warm and fuzzy inside.\n\nCLOVER YOU ESCAPED!!!  CONGRATULATIONS!!! \n\nDo you wish to enter mortality?`,
+        `You feel warm and fuzzy inside.\n\nCLOVER YOU ESCAPED!!!  CONGRATULATIONS!!!\n\nWait... who's that off in the distance?`,
+        [
+          {
+            label: "...",
+            onClick: () => {
+              startPurpleCowEncounter();
+            }
+          }
+        ],
+        {
+          speed: 26,
+          requireContinueBeforeButtons: true
+        }
+      );
+    }
+
+    function startPurpleCowEncounter() {
+      gameWon = false;
+      heartsCelebrationActive = false;
+      bossDefeatedPastureActive = true;
+      freedomSequenceActive = false;
+      gameStarted = true;
+      gameOver = false;
+      heartBursts = [];
+
+      purpleCow.active = true;
+      purpleCow.triggered = false;
+      purpleCow.walkingAway = false;
+      purpleCow.width = scaleX(92);
+      purpleCow.height = scaleY(92);
+      purpleCow.x = canvas.width / 2 - purpleCow.width / 2;
+      purpleCow.y = scaleY(58);
+      purpleCow.facingLeft = true;
+      purpleCow.animationOffset = Math.floor(Math.random() * 1000);
+
+      player.invulnerableTimer = 999999;
+      player.width = scaleX(72 * 1.5);
+      player.height = scaleY(72 * 1.5);
+      player.x = canvas.width / 2 - player.width / 2;
+      player.y = canvas.height - player.height - scaleY(32);
+      playerFacingLeft = false;
+
+      try {
+        cowgirlMusic.pause();
+        music.pause();
+        if (!isMuted) {
+          cosmicCowMusic.currentTime = 0;
+          cosmicCowMusic.play().catch(() => {});
+        }
+      } catch (err) {}
+
+      hideOverlay();
+      gamePaused = false;
+    }
+
+    function updatePurpleCowEncounter() {
+      if (!purpleCow.active) return;
+
+      purpleCow.width = scaleX(92);
+      purpleCow.height = scaleY(92);
+
+      if (purpleCow.walkingAway) {
+        purpleCow.y -= scaleY(0.55);
+        purpleCow.x += Math.sin(frame * 0.03) * scaleX(0.25);
+        if (purpleCow.y + purpleCow.height < -scaleY(20)) {
+          purpleCow.active = false;
+          purpleCow.walkingAway = false;
+        }
+        return;
+      }
+
+      if (purpleCow.triggered) return;
+
+      const playerCenterX = player.x + player.width / 2;
+      const playerCenterY = player.y + player.height / 2;
+      const cowCenterX = purpleCow.x + purpleCow.width / 2;
+      const cowCenterY = purpleCow.y + purpleCow.height / 2;
+      const distance = Math.hypot(playerCenterX - cowCenterX, playerCenterY - cowCenterY);
+
+      if (distance <= scaleX(135)) {
+        purpleCow.triggered = true;
+        triggerPurpleCowDialogue();
+      }
+    }
+
+    function triggerPurpleCowDialogue() {
+      gamePaused = true;
+
+      showOverlay(
+        `I've been waiting a long time for you\n\nYou have a beautiful eyelash\n\nHoof there it is\n\nAnd now it's gone\n\nGone with the wind...`,
+        [
+          {
+            label: "...",
+            onClick: () => {
+              purpleCow.walkingAway = true;
+              showFinalMortalityChoice();
+            }
+          }
+        ],
+        {
+          speed: 34,
+          requireContinueBeforeButtons: true
+        }
+      );
+    }
+
+    function showFinalMortalityChoice() {
+      try {
+        cosmicCowMusic.pause();
+      } catch (err) {}
+
+      showOverlay(
+        `Would you like to enter mortality?`,
         [
           {
             label: "Mooooo Again.",
@@ -2025,9 +2166,9 @@ Would you like to be milked?..`,
       );
     }
 
-
     function triggerCosmicCowEnding() {
       gamePaused = true;
+      try { cosmicCowMusic.pause(); } catch (err) {}
       clearDialogueHandlers();
       overlay.classList.add("hidden");
       overlayContinue.classList.add("hidden");
@@ -2099,6 +2240,7 @@ Would you like to be milked?..`,
 
     function exitToMortality() {
       exitingMortality = true;
+      try { cosmicCowMusic.pause(); } catch (err) {}
       clearDialogueHandlers();
       overlayText.innerHTML = `Entering mortality<span class="dialogue-cursor">|</span>`;
       overlayButtons.innerHTML = "";
@@ -2162,6 +2304,9 @@ Would you like to be milked?..`,
       freedomSequenceActive = false;
       heartsCelebrationActive = false;
       finalOverlayShown = false;
+      purpleCow.active = false;
+      purpleCow.triggered = false;
+      purpleCow.walkingAway = false;
 
       music.pause();
       cowgirlMusic.pause();
@@ -2277,6 +2422,8 @@ Would you like to be milked?..`,
       resizeCanvasToDisplaySize();
       cowgirlMusic.pause();
       cowgirlMusic.currentTime = 0;
+      cosmicCowMusic.pause();
+      cosmicCowMusic.currentTime = 0;
 
       player.width = scaleX(72 * 1.5);
       player.height = scaleY(72 * 1.5);
@@ -2322,6 +2469,16 @@ Would you like to be milked?..`,
       mooFlashTimer = 0;
       cheatCodeBuffer = "";
       mooMooSkipUsed = false;
+
+      purpleCow.active = false;
+      purpleCow.triggered = false;
+      purpleCow.walkingAway = false;
+      purpleCow.x = 0;
+      purpleCow.y = 0;
+      purpleCow.width = 0;
+      purpleCow.height = 0;
+      purpleCow.facingLeft = true;
+      purpleCow.animationOffset = 0;
 
       touchActive = false;
       touchTargetX = null;
@@ -2646,7 +2803,11 @@ Would you like to be milked?..`,
         player.y = canvas.height - player.height;
       }
 
-      if (stalkerButcher.active && !freedomSequenceActive && !heartsCelebrationActive) {
+      if (purpleCow.active) {
+        updatePurpleCowEncounter();
+      }
+
+      if (stalkerButcher.active && !freedomSequenceActive && !heartsCelebrationActive && !purpleCow.active) {
         const stalkerCenterX = stalkerButcher.x + stalkerButcher.width / 2;
         const stalkerCenterY = stalkerButcher.y + stalkerButcher.height / 2;
         const playerCenterX = player.x + player.width / 2;
@@ -3243,8 +3404,38 @@ Final Score: ${score}`,
       drawBonusFlash();
     }
 
+    function drawPurpleCow() {
+      if (!purpleCow.active) return;
+
+      const sprite = purpleCow.walkingAway ? purpleCowWalkSpriteSheet : purpleCowIdleSpriteSheet;
+      const frameDuration = purpleCow.walkingAway ? PURPLE_COW_WALK_FRAME_DURATION : PURPLE_COW_IDLE_FRAME_DURATION;
+      const animFrame = Math.floor((frame + purpleCow.animationOffset) / frameDuration) % PURPLE_COW_TOTAL_FRAMES;
+      const bob = Math.sin((frame + purpleCow.animationOffset) * 0.045) * scaleY(2.5);
+
+      ctx.save();
+      ctx.globalAlpha = purpleCow.triggered ? 1 : 0.72 + Math.sin(frame * 0.04) * 0.14;
+      ctx.shadowColor = "rgba(170, 90, 255, 0.75)";
+      ctx.shadowBlur = scaleX(16);
+
+      if (sprite.complete && sprite.naturalWidth > 0) {
+        if (purpleCow.facingLeft) {
+          ctx.translate(purpleCow.x + purpleCow.width, purpleCow.y + bob);
+          ctx.scale(-1, 1);
+          drawSpriteFrame(sprite, animFrame, PURPLE_COW_SPRITE_COLS, PURPLE_COW_SPRITE_ROWS, 0, 0, purpleCow.width, purpleCow.height);
+        } else {
+          drawSpriteFrame(sprite, animFrame, PURPLE_COW_SPRITE_COLS, PURPLE_COW_SPRITE_ROWS, purpleCow.x, purpleCow.y + bob, purpleCow.width, purpleCow.height);
+        }
+      } else {
+        ctx.fillStyle = "#8d50ff";
+        ctx.fillRect(purpleCow.x, purpleCow.y + bob, purpleCow.width, purpleCow.height);
+      }
+
+      ctx.restore();
+    }
+
     function drawBossDefeatedPasture() {
       drawPastureBackground();
+      drawPurpleCow();
       drawPlayer();
       drawBossPoofs();
       drawMooFlash();

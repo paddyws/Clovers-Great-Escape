@@ -378,6 +378,9 @@
     let overlayTapHandler = null;
     let introDialoguePlayed = false;
 
+    let cheatCodeBuffer = "";
+    let mooMooSkipUsed = false;
+
     let difficultyMultiplier = 1.0;
     let selectedDifficulty = "normal";
 
@@ -2140,7 +2143,74 @@ Would you like to be milked?..`,
 
     window.addEventListener("resize", resizeCanvasToDisplaySize);
 
+    function skipToAfterFirstBossFight() {
+      if (mooMooSkipUsed || exitingMortality) return;
+      mooMooSkipUsed = true;
+
+      unlockSounds();
+      clearDialogueHandlers();
+      overlay.classList.add("hidden");
+      overlayContinue.classList.add("hidden");
+      overlayButtons.innerHTML = "";
+
+      gameStarted = true;
+      gameOver = false;
+      gamePaused = false;
+      greenerPasturesActive = false;
+      bossFightActive = true;
+      bossDefeatedPastureActive = false;
+      freedomSequenceActive = false;
+      heartsCelebrationActive = false;
+      finalOverlayShown = false;
+
+      music.pause();
+      cowgirlMusic.pause();
+      fallingObjects = [];
+      bossGrass = [];
+      bossPitchforks = [];
+
+      player.width = scaleX(72 * 1.5);
+      player.height = scaleY(72 * 1.5);
+      player.x = canvas.width / 2 - player.width / 2;
+      player.y = canvas.height - player.height - scaleY(34);
+      player.invulnerableTimer = 999999;
+      playerFacingLeft = false;
+
+      cowgirl.visible = false;
+      cowgirl.unlocked = true;
+      stalkerButcher.active = false;
+
+      cowgirlBoss.width = scaleX(112 * 1.5);
+      cowgirlBoss.height = scaleY(112 * 1.5);
+      cowgirlBoss.x = canvas.width / 2 - cowgirlBoss.width / 2;
+      cowgirlBoss.y = scaleY(76);
+      cowgirlBoss.health = 1;
+      cowgirlBoss.maxHealth = 60;
+      cowgirlBoss.state = "running";
+      cowgirlBoss.facingLeft = false;
+      cowgirlBoss.flashTimer = 0;
+
+      bonusFlashTimer = 80;
+      bonusFlashText = "MOO MOO SKIP";
+
+      defeatCowgirlBoss();
+    }
+
+    function updateCheatCodeBuffer(e) {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.key.length !== 1) return;
+
+      cheatCodeBuffer = (cheatCodeBuffer + e.key.toLowerCase()).slice(-6);
+
+      if (cheatCodeBuffer === "moomoo") {
+        cheatCodeBuffer = "";
+        skipToAfterFirstBossFight();
+      }
+    }
+
     document.addEventListener("keydown", (e) => {
+      updateCheatCodeBuffer(e);
+
       if (e.code === "Space") {
         e.preventDefault();
         if (!keys[e.code]) {
@@ -2250,6 +2320,8 @@ Would you like to be milked?..`,
       mooCooldownTimer = 0;
       lastTapTime = 0;
       mooFlashTimer = 0;
+      cheatCodeBuffer = "";
+      mooMooSkipUsed = false;
 
       touchActive = false;
       touchTargetX = null;

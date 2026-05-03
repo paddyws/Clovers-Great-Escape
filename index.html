@@ -631,6 +631,11 @@
     cosmicCowMusic.volume = 0.42;
     cosmicCowMusic.preload = "auto";
 
+    const cloverMusic = new Audio("Clover Clash.mp3");
+    cloverMusic.loop = false;
+    cloverMusic.volume = 0.9;
+    cloverMusic.preload = "auto";
+
 
     let isMuted = false;
     let soundsUnlocked = false;
@@ -987,7 +992,7 @@
       if (soundsUnlocked) return;
       soundsUnlocked = true;
 
-      const sounds = [hitSound, bonusSound, mooSound, cowgirlMusic, cosmicCowMusic];
+      const sounds = [hitSound, bonusSound, mooSound, cowgirlMusic, cosmicCowMusic, cloverMusic];
 
       sounds.forEach((sound) => {
         try {
@@ -2232,6 +2237,16 @@ it reminds me of you.`,
                                     onClick: () => {
 
                                       // 44 leaf clover received screen.
+                                      if (!isMuted) {
+                                        try {
+                                          music.pause();
+                                          cowgirlMusic.pause();
+                                          cosmicCowMusic.pause();
+                                          cloverMusic.currentTime = 0;
+                                          cloverMusic.play().catch(() => {});
+                                        } catch (err) {}
+                                      }
+
                                       showOverlay(
                                         `You just received a 44 leaf clover!!!`,
                                         [

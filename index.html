@@ -2182,14 +2182,82 @@ Would you like to be milked?..`,
     function triggerPurpleCowDialogue() {
       gamePaused = true;
 
+      // First dialogue: original purple cow image.
       showOverlay(
-        `I've been waiting a long time for you\n\nYou have a beautiful eyelash\n\nHoof there it is\n\nAnd now it's gone\n\nGone with the wind...`,
+        `I've been waiting a long time for you,
+Longer than I can remember...
+
+Moo.`,
         [
           {
             label: "...",
             onClick: () => {
-              purpleCow.walkingAway = true;
-              showFinalMortalityChoice();
+
+              // Second dialogue: two-cow eyelash image.
+              showOverlay(
+                `You have a beautiful eyelash,
+Hoof there it is...
+And now its gone...
+Gone with the wind...`,
+                [
+                  {
+                    label: "...",
+                    onClick: () => {
+
+                      // Third dialogue, part one: back to the original purple cow image.
+                      showOverlay(
+                        `No matter, you are wonderful Clover
+
+You know a four leaf clover?
+You are more special than that.
+
+All clover's have made this journey
+Clover's after you will make this journey...`,
+                        [
+                          {
+                            label: "...",
+                            onClick: () => {
+
+                              // Third dialogue, part two: separate click before mortality.
+                              showOverlay(
+                                `Escapin isn't as easy as it looks
+It is living that is the hard part...`,
+                                [
+                                  {
+                                    label: "...",
+                                    onClick: () => {
+                                      purpleCow.walkingAway = true;
+                                      showFinalMortalityChoice();
+                                    }
+                                  }
+                                ],
+                                {
+                                  speed: 34,
+                                  requireContinueBeforeButtons: true,
+                                  imageSrc: "purple-cow-closeup.png"
+                                }
+                              );
+
+                            }
+                          }
+                        ],
+                        {
+                          speed: 34,
+                          requireContinueBeforeButtons: true,
+                          imageSrc: "purple-cow-closeup.png"
+                        }
+                      );
+
+                    }
+                  }
+                ],
+                {
+                  speed: 34,
+                  requireContinueBeforeButtons: true,
+                  imageSrc: "purple-cow-eyelash.png"
+                }
+              );
+
             }
           }
         ],
@@ -2207,7 +2275,7 @@ Would you like to be milked?..`,
       } catch (err) {}
 
       showOverlay(
-        `Would you like to enter mortality?`,
+        `Do you wish to enter mortality?`,
         [
           {
             label: "Mooooo Again.",

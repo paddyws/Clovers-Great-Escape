@@ -554,9 +554,11 @@
     const purpleCow = {
       active: false,
       triggered: false,
+      entering: false,
       walkingAway: false,
       x: 0,
       y: 0,
+      targetY: 0,
       width: 0,
       height: 0,
       facingLeft: true,
@@ -2102,11 +2104,16 @@ Would you like to be milked?..`,
 
       purpleCow.active = true;
       purpleCow.triggered = false;
+      purpleCow.entering = true;
       purpleCow.walkingAway = false;
       purpleCow.width = scaleX(92);
       purpleCow.height = scaleY(92);
       purpleCow.x = canvas.width / 2 - purpleCow.width / 2;
-      purpleCow.y = scaleY(58);
+
+      // Start offscreen, then walk toward Clover instead of popping in.
+      purpleCow.y = -purpleCow.height - scaleY(20);
+      purpleCow.targetY = scaleY(58);
+
       purpleCow.facingLeft = true;
       purpleCow.animationOffset = Math.floor(Math.random() * 1000);
 
@@ -2135,6 +2142,18 @@ Would you like to be milked?..`,
 
       purpleCow.width = scaleX(92);
       purpleCow.height = scaleY(92);
+
+      if (purpleCow.entering) {
+        purpleCow.y += scaleY(0.75);
+        purpleCow.x += Math.sin(frame * 0.03) * scaleX(0.18);
+
+        if (purpleCow.y >= purpleCow.targetY) {
+          purpleCow.y = purpleCow.targetY;
+          purpleCow.entering = false;
+        }
+
+        return;
+      }
 
       if (purpleCow.walkingAway) {
         purpleCow.y -= scaleY(0.55);
@@ -2351,6 +2370,7 @@ Would you like to be milked?..`,
       finalOverlayShown = false;
       purpleCow.active = false;
       purpleCow.triggered = false;
+      purpleCow.entering = false;
       purpleCow.walkingAway = false;
 
       music.pause();
@@ -2517,9 +2537,11 @@ Would you like to be milked?..`,
 
       purpleCow.active = false;
       purpleCow.triggered = false;
+      purpleCow.entering = false;
       purpleCow.walkingAway = false;
       purpleCow.x = 0;
       purpleCow.y = 0;
+      purpleCow.targetY = 0;
       purpleCow.width = 0;
       purpleCow.height = 0;
       purpleCow.facingLeft = true;
@@ -3452,8 +3474,9 @@ Final Score: ${score}`,
     function drawPurpleCow() {
       if (!purpleCow.active) return;
 
-      const sprite = purpleCow.walkingAway ? purpleCowWalkSpriteSheet : purpleCowIdleSpriteSheet;
-      const frameDuration = purpleCow.walkingAway ? PURPLE_COW_WALK_FRAME_DURATION : PURPLE_COW_IDLE_FRAME_DURATION;
+      const purpleCowIsWalking = purpleCow.entering || purpleCow.walkingAway;
+      const sprite = purpleCowIsWalking ? purpleCowWalkSpriteSheet : purpleCowIdleSpriteSheet;
+      const frameDuration = purpleCowIsWalking ? PURPLE_COW_WALK_FRAME_DURATION : PURPLE_COW_IDLE_FRAME_DURATION;
       const animFrame = Math.floor((frame + purpleCow.animationOffset) / frameDuration) % PURPLE_COW_TOTAL_FRAMES;
       const bob = Math.sin((frame + purpleCow.animationOffset) * 0.045) * scaleY(2.5);
 

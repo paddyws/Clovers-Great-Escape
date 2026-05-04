@@ -425,6 +425,8 @@
     let heartsCelebrationActive = false;
     let finalOverlayShown = false;
     let exitingMortality = false;
+    let mortalityChoiceTimeout = null;
+    let mortalityChoiceQueued = false;
     let heartExplosionCount = 0;
     const MAX_HEART_EXPLOSIONS = 3;
 
@@ -2372,6 +2374,7 @@ Or use these buttons:)`,
                                                       hideOverlay();
                                                       bonusFlashTimer = 180;
                                                       bonusFlashText = "Inventory: press I, then X";
+                                                      queueFinalMortalityChoice();
                                                     }
                                                   },
                                                   {
@@ -2389,6 +2392,7 @@ It is living that is the real hard part...`,
                                                               hideOverlay();
                                                               bonusFlashTimer = 180;
                                                               bonusFlashText = "Talk to your Lucky Clover";
+                                                              queueFinalMortalityChoice();
                                                             }
                                                           }
                                                         ],
@@ -2459,7 +2463,29 @@ It is living that is the real hard part...`,
       );
     }
 
+    function clearFinalMortalityChoiceTimer() {
+      if (mortalityChoiceTimeout) {
+        clearTimeout(mortalityChoiceTimeout);
+        mortalityChoiceTimeout = null;
+      }
+      mortalityChoiceQueued = false;
+    }
+
+    function queueFinalMortalityChoice() {
+      if (mortalityChoiceQueued || exitingMortality || gameOver) return;
+
+      mortalityChoiceQueued = true;
+      mortalityChoiceTimeout = setTimeout(() => {
+        mortalityChoiceTimeout = null;
+
+        if (exitingMortality || gameOver || activeDialogue) return;
+        showFinalMortalityChoice();
+      }, 20000);
+    }
+
     function showFinalMortalityChoice() {
+      clearFinalMortalityChoiceTimer();
+
       try {
         cosmicCowMusic.pause();
       } catch (err) {}
@@ -2684,6 +2710,7 @@ It is living that is the real hard part...`,
     function skipToAfterFirstBossFight() {
       if (mooMooSkipUsed || exitingMortality) return;
       mooMooSkipUsed = true;
+      clearFinalMortalityChoiceTimer();
 
       unlockSounds();
       clearDialogueHandlers();
@@ -2872,6 +2899,7 @@ It is living that is the real hard part...`,
       heartsCelebrationActive = false;
       finalOverlayShown = false;
       exitingMortality = false;
+      clearFinalMortalityChoiceTimer();
       heartExplosionCount = 0;
 
       cowbellModeActive = false;

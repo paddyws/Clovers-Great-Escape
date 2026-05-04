@@ -449,6 +449,8 @@
     let cloverInventoryOpen = false;
     let cloverBoostTimer = 0;
     let cloverSpeechText = "";
+    let cloverSpeechTypedLength = 0;
+    let cloverSpeechTypeFrame = 0;
     let cloverSpeechTimer = 0;
     const CLOVER_SPEECH_FRAMES = 300; // about 5 seconds at 60fps
     const CLOVER_BOOST_FRAMES = 360; // about 6 seconds at 60fps
@@ -724,6 +726,13 @@
     cloverMusic.loop = false;
     cloverMusic.volume = 0.9;
     cloverMusic.preload = "auto";
+
+    function stopCloverMusic() {
+      try {
+        cloverMusic.pause();
+        cloverMusic.currentTime = 0;
+      } catch (err) {}
+    }
 
 
     let isMuted = false;
@@ -2346,6 +2355,7 @@ it reminds me of you.`,
                                           {
                                             label: "...",
                                             onClick: () => {
+                                              stopCloverMusic();
 
                                               // Inventory tutorial. Mortality choice is intentionally not shown yet.
                                               showOverlay(
@@ -2604,7 +2614,24 @@ It is living that is the hard part...`,
     }
 
     function updateCloverSpeech() {
-      if (cloverSpeechTimer > 0) cloverSpeechTimer--;
+      if (cloverSpeechTimer <= 0) {
+        cloverSpeechText = "";
+        cloverSpeechTypedLength = 0;
+        cloverSpeechTypeFrame = 0;
+        return;
+      }
+
+      cloverSpeechTimer--;
+
+      if (cloverSpeechTypedLength < cloverSpeechText.length) {
+        cloverSpeechTypeFrame++;
+
+        // Type the 44 Clover messages out visually, but do NOT play writing sounds.
+        if (cloverSpeechTypeFrame >= 2) {
+          cloverSpeechTypeFrame = 0;
+          cloverSpeechTypedLength++;
+        }
+      }
     }
 
     function showInventory() {
@@ -2636,6 +2663,8 @@ It is living that is the hard part...`,
       unlockSounds();
       cloverBoostTimer = CLOVER_BOOST_FRAMES;
       cloverSpeechText = getRandomCloverMessage();
+      cloverSpeechTypedLength = 0;
+      cloverSpeechTypeFrame = 0;
       cloverSpeechTimer = CLOVER_SPEECH_FRAMES;
       bonusFlashTimer = 80;
       bonusFlashText = "44 Clover speed +20%";
@@ -3651,7 +3680,8 @@ Final Score: ${score}`,
       ctx.textAlign = "left";
       ctx.textBaseline = "top";
 
-      const words = cloverSpeechText.split(" ");
+      const visibleCloverSpeechText = cloverSpeechText.slice(0, cloverSpeechTypedLength);
+      const words = visibleCloverSpeechText.split(" ");
       const lines = [];
       let line = "";
 

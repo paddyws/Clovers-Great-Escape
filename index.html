@@ -323,6 +323,32 @@
       display: none;
     }
 
+
+    .mobile-controls {
+      width: min(100%, 400px);
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .mobile-control-btn {
+      padding: 10px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      touch-action: manipulation;
+    }
+
+    .mobile-control-btn:active {
+      transform: scale(0.96);
+      background: rgba(255, 255, 255, 0.18);
+    }
+
     @media (max-width: 480px) {
       h1 {
         font-size: 1.5rem;
@@ -359,6 +385,12 @@
     <div id="endBanner" class="end-banner hidden">FREEDOM</div>
   </div>
 
+  <div class="mobile-controls" aria-label="Mobile inventory controls">
+    <button id="inventoryButton" class="mobile-control-btn" type="button">Inventory</button>
+    <button id="useCloverButton" class="mobile-control-btn" type="button">Use 44 Clover</button>
+  </div>
+
+
   <script>
     const canvas = document.getElementById("game");
     const ctx = canvas.getContext("2d");
@@ -370,6 +402,8 @@
     const overlayButtons = document.getElementById("overlayButtons");
     const overlayContinue = document.getElementById("overlayContinue");
     const endBanner = document.getElementById("endBanner");
+    const inventoryButton = document.getElementById("inventoryButton");
+    const useCloverButton = document.getElementById("useCloverButton");
 
     let gameStarted = false;
     let gameOver = false;
@@ -410,6 +444,58 @@
 
     let cheatCodeBuffer = "";
     let mooMooSkipUsed = false;
+
+    let cloverUnlocked = false;
+    let cloverInventoryOpen = false;
+    let cloverBoostTimer = 0;
+    const CLOVER_BOOST_FRAMES = 360; // about 6 seconds at 60fps
+    const CLOVER_SPEED_MULTIPLIER = 1.2;
+    const cloverMessages = [
+      "It is okay to mess up.",
+      "Take care of yourself. LOVE yourself. Give yourself brilliant, intelligent light Clover.",
+      "They know not what they do.",
+      "Listen to your heart.",
+      "Learn all you can.",
+      "Be yourself. You're the one I like most.",
+      "I like the way you moo.",
+      "I treasure your friendship.",
+      "You have an amazing voice.",
+      "I like your mind.",
+      "If you listen carefully, you can hear my plant heartbeat.",
+      "Love is the key.",
+      "Everyone could use a friend.",
+      "Sometimes I watch you when you walk and like the way you hoof around.",
+      "Shhhh. The other clovers may get jealous!",
+      "I like to watch you eat those other blades of grass. You wouldn't ever eat me would you?",
+      "I am lucky to have you around.",
+      "Can I always be in your pocket? It is warm in here.",
+      "Do you ever miss the farm life? Do you miss the factory?",
+      "I could spend lifetimes in your thoughts.",
+      "I look at the clouds and think of your cute little horns.",
+      "Listen do you hear that? That's the sound of thoughts passing us by, wait a second, or is that just the Mississippi?",
+      "I have to admit you're charming.",
+      "You are SO lucky to have me as a friend!",
+      "I am honored you carry me around.",
+      "Can I hear your heartbeat? Oh. It really is just MOO MOO MOO MOO.",
+      "I love to learn, and I learn so much from you.",
+      "They say I am a rare mutation, just like you.",
+      "You have such a unique timber, the way you moo.",
+      "Let's have some fun shall we! Tag you're it.",
+      "When you're quiet you're thinking, but I'm winking.",
+      "So cows are good at fractions?",
+      "Yes I have two clover brothers and sisters but we have a tense relationship.",
+      "Cows really used to eat clovers?",
+      "Sometimes I worry about you, but I trust you’ll find your way.",
+      "You don’t have to pretend with me.",
+      "I notice when you’re not okay, even if you don’t say it.",
+      "You’ve been through things you don’t talk about, haven’t you?",
+      "I’m still here, even on the days you’re hard to be around.",
+      "You don’t have to carry everything by yourself.",
+      "I like who you are, even when you don’t.",
+      "You’re allowed to change. I’ll learn you again.",
+      "Even when you feel lost, you’re not gone.",
+      "Not all who wander are lost... but I sure am, and I'm glad I wandered into you!"
+    ];
 
     let difficultyMultiplier = 1.0;
     let selectedDifficulty = "normal";
@@ -1717,7 +1803,7 @@ Final Score: ${score}`,
       let isMoving = false;
       player.width = scaleX(72 * 1.5);
       player.height = scaleY(72 * 1.5);
-      player.speed = Math.max(scaleX(11), 4);
+      player.speed = Math.max(scaleX(11), 4) * getPlayerSpeedBoostMultiplier();
 
       if (keys["ArrowLeft"] || keys["a"] || keys["A"]) {
         player.x -= player.speed;
@@ -1774,6 +1860,7 @@ Final Score: ${score}`,
 
     function updateBossFight() {
       frame++;
+      if (cloverBoostTimer > 0) cloverBoostTimer--;
       updateBossPlayerControls();
 
       if (player.invulnerableTimer > 0) player.invulnerableTimer--;
@@ -2247,6 +2334,8 @@ it reminds me of you.`,
                                         } catch (err) {}
                                       }
 
+                                      awardFortyFourLeafClover();
+
                                       showOverlay(
                                         `You just received a 44 leaf clover!!!`,
                                         [
@@ -2254,23 +2343,54 @@ it reminds me of you.`,
                                             label: "...",
                                             onClick: () => {
 
-                                              // Third dialogue, part two: separate click before mortality.
+                                              // Inventory tutorial. Mortality choice is intentionally not shown yet.
                                               showOverlay(
-                                                `Escapin isn't as easy as it looks
-It is living that is the hard part...`,
+                                                `Inventory unlocked.
+
+Press I to open your inventory.
+Press X to use the 44 Leaf Clover.
+
+On iPhone, use the Inventory and Use 44 Clover buttons below the game.`,
                                                 [
                                                   {
-                                                    label: "...",
+                                                    label: "Let me try it",
                                                     onClick: () => {
-                                                      purpleCow.walkingAway = true;
-                                                      showFinalMortalityChoice();
+                                                      hideOverlay();
+                                                      bonusFlashTimer = 180;
+                                                      bonusFlashText = "Inventory: press I, then X";
+                                                    }
+                                                  },
+                                                  {
+                                                    label: "One more thing...",
+                                                    secondary: true,
+                                                    onClick: () => {
+                                                      showOverlay(
+                                                        `Escapin isn't as easy as it looks
+It is living that is the hard part...`,
+                                                        [
+                                                          {
+                                                            label: "Not yet...",
+                                                            onClick: () => {
+                                                              purpleCow.walkingAway = true;
+                                                              hideOverlay();
+                                                              bonusFlashTimer = 180;
+                                                              bonusFlashText = "Try your 44 Leaf Clover";
+                                                            }
+                                                          }
+                                                        ],
+                                                        {
+                                                          speed: 34,
+                                                          requireContinueBeforeButtons: true,
+                                                          imageSrc: "purple-cow-closeup.png"
+                                                        }
+                                                      );
                                                     }
                                                   }
                                                 ],
                                                 {
                                                   speed: 34,
                                                   requireContinueBeforeButtons: true,
-                                                  imageSrc: "purple-cow-closeup.png"
+                                                  imageSrc: "forty-four-leaf-clover.png"
                                                 }
                                               );
 
@@ -2471,6 +2591,72 @@ It is living that is the hard part...`,
       }
     }
 
+    function getPlayerSpeedBoostMultiplier() {
+      return cloverBoostTimer > 0 ? CLOVER_SPEED_MULTIPLIER : 1;
+    }
+
+    function getRandomCloverMessage() {
+      return cloverMessages[Math.floor(Math.random() * cloverMessages.length)];
+    }
+
+    function showInventory() {
+      if (!cloverUnlocked) {
+        bonusFlashTimer = 70;
+        bonusFlashText = "Inventory empty";
+        return;
+      }
+
+      cloverInventoryOpen = !cloverInventoryOpen;
+      bonusFlashTimer = 90;
+      bonusFlashText = cloverInventoryOpen
+        ? "Inventory: 44 Leaf Clover — press X"
+        : "Inventory closed";
+    }
+
+    function useFortyFourLeafClover() {
+      if (!cloverUnlocked) {
+        bonusFlashTimer = 70;
+        bonusFlashText = "No 44 Leaf Clover yet";
+        return;
+      }
+
+      if (!cloverInventoryOpen) {
+        showInventory();
+        return;
+      }
+
+      unlockSounds();
+      cloverBoostTimer = CLOVER_BOOST_FRAMES;
+      bonusFlashTimer = 120;
+      bonusFlashText = "44 Clover speed +20%";
+      playSound(bonusSound);
+
+      showOverlay(
+        getRandomCloverMessage(),
+        [
+          {
+            label: "Moo.",
+            onClick: () => {
+              hideOverlay();
+            }
+          }
+        ],
+        {
+          speed: 30,
+          requireContinueBeforeButtons: true,
+          imageSrc: "forty-four-leaf-clover.png"
+        }
+      );
+    }
+
+    function awardFortyFourLeafClover() {
+      cloverUnlocked = true;
+      cloverInventoryOpen = true;
+      bonusFlashTimer = 120;
+      bonusFlashText = "44 Leaf Clover added to inventory";
+    }
+
+
     window.addEventListener("resize", resizeCanvasToDisplaySize);
 
     function skipToAfterFirstBossFight() {
@@ -2552,6 +2738,14 @@ It is living that is the hard part...`,
         }
       }
 
+      if (e.key === "i" || e.key === "I") {
+        showInventory();
+      }
+
+      if (e.key === "x" || e.key === "X") {
+        useFortyFourLeafClover();
+      }
+
       keys[e.key] = true;
       keys[e.code] = true;
     });
@@ -2559,6 +2753,16 @@ It is living that is the hard part...`,
     document.addEventListener("keyup", (e) => {
       keys[e.key] = false;
       keys[e.code] = false;
+    });
+
+    inventoryButton.addEventListener("click", () => {
+      unlockSounds();
+      showInventory();
+    });
+
+    useCloverButton.addEventListener("click", () => {
+      unlockSounds();
+      useFortyFourLeafClover();
     });
 
     function getTouchPosition(e) {
@@ -2616,7 +2820,7 @@ It is living that is the hard part...`,
 
       player.width = scaleX(72 * 1.5);
       player.height = scaleY(72 * 1.5);
-      player.speed = Math.max(scaleX(11), 4);
+      player.speed = Math.max(scaleX(11), 4) * getPlayerSpeedBoostMultiplier();
       player.x = scaleX(164);
       player.y = canvas.height - player.height - scaleY(28);
       player.invulnerableTimer = 0;
@@ -2658,6 +2862,9 @@ It is living that is the hard part...`,
       mooFlashTimer = 0;
       cheatCodeBuffer = "";
       mooMooSkipUsed = false;
+      cloverUnlocked = false;
+      cloverInventoryOpen = false;
+      cloverBoostTimer = 0;
 
       purpleCow.active = false;
       purpleCow.triggered = false;
@@ -2890,6 +3097,8 @@ It is living that is the hard part...`,
 
       frame++;
 
+      if (cloverBoostTimer > 0) cloverBoostTimer--;
+
       if (!freedomSequenceActive && !heartsCelebrationActive) {
         score++;
       }
@@ -2900,7 +3109,7 @@ It is living that is the hard part...`,
 
       player.width = scaleX(72 * 1.5);
       player.height = scaleY(72 * 1.5);
-      player.speed = Math.max(scaleX(11), 4);
+      player.speed = Math.max(scaleX(11), 4) * getPlayerSpeedBoostMultiplier();
 
       stalkerButcher.width = scaleX(70 * 1.2);
       stalkerButcher.height = scaleY(70 * 1.2);
@@ -3413,6 +3622,23 @@ Final Score: ${score}`,
       );
     }
 
+
+
+    function drawInventoryHUD() {
+      if (!cloverUnlocked) return;
+
+      ctx.save();
+      ctx.textAlign = "right";
+      ctx.fillStyle = cloverBoostTimer > 0 ? "#d8ff9c" : "white";
+      ctx.font = `${Math.max(scaleY(14), 10)}px Arial`;
+
+      const boostSeconds = Math.ceil(cloverBoostTimer / 60);
+      const status = cloverBoostTimer > 0 ? ` +20% speed ${boostSeconds}s` : " press I, then X";
+      const openText = cloverInventoryOpen ? "Inventory open" : "44 Clover";
+      ctx.fillText(`${openText}:${status}`, canvas.width - scaleX(10), scaleY(30));
+      ctx.restore();
+    }
+
     function drawHitFlash() {
       if (hitFlashTimer > 0) {
         ctx.fillStyle = "rgba(255, 0, 0, 0.18)";
@@ -3590,6 +3816,7 @@ Final Score: ${score}`,
       drawBossPitchforks();
       drawMooFlash();
       drawHUD();
+      drawInventoryHUD();
       drawBossHUD();
       drawHitFlash();
       drawBonusFlash();
@@ -3633,6 +3860,7 @@ Final Score: ${score}`,
       drawMooFlash();
       drawHearts();
       drawHUD();
+      drawInventoryHUD();
       drawHitFlash();
       drawBonusFlash();
     }
@@ -3662,6 +3890,7 @@ Final Score: ${score}`,
       drawFallingObjects();
       drawHearts();
       drawHUD();
+      drawInventoryHUD();
       drawHitFlash();
       drawBonusFlash();
       drawCowbellFlash();

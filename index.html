@@ -2362,9 +2362,9 @@ it reminds me of you.`,
                                                 `Inventory unlocked.
 
 Press I to open your inventory.
-Press X to talk to the Lucky Clover.
+Press X to use the 44 Leaf Clover.
 
-Or use below:)`,
+On iPhone, use the Inventory and Use 44 Clover buttons below the game.`,
                                                 [
                                                   {
                                                     label: "Let me try it",
@@ -2379,7 +2379,7 @@ Or use below:)`,
                                                     secondary: true,
                                                     onClick: () => {
                                                       showOverlay(
-                                                        `Escapin isn't as easy as it looks, but really
+                                                        `Escapin isn't as easy as it looks
 It is living that is the hard part...`,
                                                         [
                                                           {
@@ -2388,7 +2388,7 @@ It is living that is the hard part...`,
                                                               purpleCow.walkingAway = true;
                                                               hideOverlay();
                                                               bonusFlashTimer = 180;
-                                                              bonusFlashText = "Talk to your lucky Clover";
+                                                              bonusFlashText = "Try your 44 Leaf Clover";
                                                             }
                                                           }
                                                         ],
@@ -2644,14 +2644,14 @@ It is living that is the hard part...`,
       cloverInventoryOpen = !cloverInventoryOpen;
       bonusFlashTimer = 90;
       bonusFlashText = cloverInventoryOpen
-        ? "Inventory: Lucky Clover — press X"
+        ? "Inventory: 44 Leaf Clover — press X"
         : "Inventory closed";
     }
 
     function useFortyFourLeafClover() {
       if (!cloverUnlocked) {
         bonusFlashTimer = 70;
-        bonusFlashText = "No Item... yet:)";
+        bonusFlashText = "No 44 Leaf Clover yet";
         return;
       }
 
@@ -2675,7 +2675,7 @@ It is living that is the hard part...`,
       cloverUnlocked = true;
       cloverInventoryOpen = true;
       bonusFlashTimer = 120;
-      bonusFlashText = "Lucky Clover added to inventory";
+      bonusFlashText = "44 Leaf Clover added to inventory";
     }
 
 
@@ -3676,7 +3676,7 @@ Final Score: ${score}`,
       const maxTextWidth = bubbleWidth - paddingX * 2;
       const fontSize = Math.max(scaleY(13), 11);
 
-      ctx.font = `${fontSize}px Arial`;
+      ctx.font = `${fontSize}px Papyrus, fantasy`;
       ctx.textAlign = "left";
       ctx.textBaseline = "top";
 
@@ -3707,9 +3707,11 @@ Final Score: ${score}`,
       const alpha = Math.min(1, cloverSpeechTimer / 20);
       ctx.globalAlpha = alpha;
 
-      ctx.fillStyle = "rgba(23, 20, 18, 0.92)";
-      ctx.strokeStyle = "rgba(220, 255, 160, 0.9)";
+      ctx.fillStyle = "rgba(7, 24, 11, 0.88)";
+      ctx.strokeStyle = "rgba(76, 255, 122, 0.95)";
       ctx.lineWidth = Math.max(scaleX(2), 1);
+      ctx.shadowColor = "rgba(76, 255, 122, 0.45)";
+      ctx.shadowBlur = 8;
 
       ctx.beginPath();
       ctx.roundRect(x, y, bubbleWidth, bubbleHeight, radius);
@@ -3726,7 +3728,11 @@ Final Score: ${score}`,
       ctx.fill();
       ctx.stroke();
 
-      ctx.fillStyle = "#f6f0e8";
+      // Keep the glow around the bubble, but make the text crisp and readable.
+      ctx.shadowColor = "rgba(76, 255, 122, 0.7)";
+      ctx.shadowBlur = 6;
+      ctx.fillStyle = "#4cff7a";
+      ctx.font = `${fontSize}px Papyrus, fantasy`;
       lines.forEach((textLine, index) => {
         ctx.fillText(textLine, x + paddingX, y + paddingY + index * lineHeight);
       });

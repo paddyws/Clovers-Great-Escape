@@ -2362,9 +2362,9 @@ it reminds me of you.`,
                                                 `Inventory unlocked.
 
 Press I to open your inventory.
-Press X to use the 44 Leaf Clover.
+Press X to talk to the Lucky Clover.
 
-On iPhone, use the Inventory and Use 44 Clover buttons below the game.`,
+Or use below:)`,
                                                 [
                                                   {
                                                     label: "Let me try it",
@@ -2379,7 +2379,7 @@ On iPhone, use the Inventory and Use 44 Clover buttons below the game.`,
                                                     secondary: true,
                                                     onClick: () => {
                                                       showOverlay(
-                                                        `Escapin isn't as easy as it looks
+                                                        `Escapin isn't as easy as it looks, but really
 It is living that is the hard part...`,
                                                         [
                                                           {
@@ -2388,7 +2388,7 @@ It is living that is the hard part...`,
                                                               purpleCow.walkingAway = true;
                                                               hideOverlay();
                                                               bonusFlashTimer = 180;
-                                                              bonusFlashText = "Try your 44 Leaf Clover";
+                                                              bonusFlashText = "Talk to your lucky Clover";
                                                             }
                                                           }
                                                         ],
@@ -2644,14 +2644,14 @@ It is living that is the hard part...`,
       cloverInventoryOpen = !cloverInventoryOpen;
       bonusFlashTimer = 90;
       bonusFlashText = cloverInventoryOpen
-        ? "Inventory: 44 Leaf Clover — press X"
+        ? "Inventory: Lucky Clover — press X"
         : "Inventory closed";
     }
 
     function useFortyFourLeafClover() {
       if (!cloverUnlocked) {
         bonusFlashTimer = 70;
-        bonusFlashText = "No 44 Leaf Clover yet";
+        bonusFlashText = "No Item... yet:)";
         return;
       }
 
@@ -2675,7 +2675,7 @@ It is living that is the hard part...`,
       cloverUnlocked = true;
       cloverInventoryOpen = true;
       bonusFlashTimer = 120;
-      bonusFlashText = "44 Leaf Clover added to inventory";
+      bonusFlashText = "Lucky Clover added to inventory";
     }
 
 

@@ -448,6 +448,9 @@
     let cloverUnlocked = false;
     let cloverInventoryOpen = false;
     let cloverBoostTimer = 0;
+    let cloverSpeechText = "";
+    let cloverSpeechTimer = 0;
+    const CLOVER_SPEECH_FRAMES = 300; // about 5 seconds at 60fps
     const CLOVER_BOOST_FRAMES = 360; // about 6 seconds at 60fps
     const CLOVER_SPEED_MULTIPLIER = 1.2;
     const cloverMessages = [
@@ -1861,6 +1864,7 @@ Final Score: ${score}`,
     function updateBossFight() {
       frame++;
       if (cloverBoostTimer > 0) cloverBoostTimer--;
+      updateCloverSpeech();
       updateBossPlayerControls();
 
       if (player.invulnerableTimer > 0) player.invulnerableTimer--;
@@ -2599,6 +2603,10 @@ It is living that is the hard part...`,
       return cloverMessages[Math.floor(Math.random() * cloverMessages.length)];
     }
 
+    function updateCloverSpeech() {
+      if (cloverSpeechTimer > 0) cloverSpeechTimer--;
+    }
+
     function showInventory() {
       if (!cloverUnlocked) {
         bonusFlashTimer = 70;
@@ -2627,26 +2635,11 @@ It is living that is the hard part...`,
 
       unlockSounds();
       cloverBoostTimer = CLOVER_BOOST_FRAMES;
-      bonusFlashTimer = 120;
+      cloverSpeechText = getRandomCloverMessage();
+      cloverSpeechTimer = CLOVER_SPEECH_FRAMES;
+      bonusFlashTimer = 80;
       bonusFlashText = "44 Clover speed +20%";
       playSound(bonusSound);
-
-      showOverlay(
-        getRandomCloverMessage(),
-        [
-          {
-            label: "Moo.",
-            onClick: () => {
-              hideOverlay();
-            }
-          }
-        ],
-        {
-          speed: 30,
-          requireContinueBeforeButtons: true,
-          imageSrc: "forty-four-leaf-clover.png"
-        }
-      );
     }
 
     function awardFortyFourLeafClover() {
@@ -3098,6 +3091,7 @@ It is living that is the hard part...`,
       frame++;
 
       if (cloverBoostTimer > 0) cloverBoostTimer--;
+      updateCloverSpeech();
 
       if (!freedomSequenceActive && !heartsCelebrationActive) {
         score++;
@@ -3639,6 +3633,77 @@ Final Score: ${score}`,
       ctx.restore();
     }
 
+
+    function drawCloverSpeechBubble() {
+      if (cloverSpeechTimer <= 0 || !cloverSpeechText) return;
+
+      ctx.save();
+
+      const playerCenterX = player.x + player.width / 2;
+      const bubbleWidth = Math.min(canvas.width - scaleX(28), scaleX(270));
+      const paddingX = scaleX(12);
+      const paddingY = scaleY(9);
+      const lineHeight = Math.max(scaleY(15), 12);
+      const maxTextWidth = bubbleWidth - paddingX * 2;
+      const fontSize = Math.max(scaleY(13), 11);
+
+      ctx.font = `${fontSize}px Arial`;
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+
+      const words = cloverSpeechText.split(" ");
+      const lines = [];
+      let line = "";
+
+      for (const word of words) {
+        const testLine = line ? `${line} ${word}` : word;
+        if (ctx.measureText(testLine).width > maxTextWidth && line) {
+          lines.push(line);
+          line = word;
+        } else {
+          line = testLine;
+        }
+      }
+      if (line) lines.push(line);
+
+      const bubbleHeight = paddingY * 2 + lines.length * lineHeight;
+      let x = playerCenterX - bubbleWidth / 2;
+      let y = player.y - bubbleHeight - scaleY(14);
+
+      x = Math.max(scaleX(8), Math.min(canvas.width - bubbleWidth - scaleX(8), x));
+      y = Math.max(scaleY(8), y);
+
+      const radius = scaleX(12);
+      const alpha = Math.min(1, cloverSpeechTimer / 20);
+      ctx.globalAlpha = alpha;
+
+      ctx.fillStyle = "rgba(23, 20, 18, 0.92)";
+      ctx.strokeStyle = "rgba(220, 255, 160, 0.9)";
+      ctx.lineWidth = Math.max(scaleX(2), 1);
+
+      ctx.beginPath();
+      ctx.roundRect(x, y, bubbleWidth, bubbleHeight, radius);
+      ctx.fill();
+      ctx.stroke();
+
+      const tailX = Math.max(x + scaleX(22), Math.min(x + bubbleWidth - scaleX(22), playerCenterX));
+      const tailY = y + bubbleHeight;
+      ctx.beginPath();
+      ctx.moveTo(tailX - scaleX(8), tailY - 1);
+      ctx.lineTo(tailX + scaleX(8), tailY - 1);
+      ctx.lineTo(playerCenterX, player.y - scaleY(2));
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "#f6f0e8";
+      lines.forEach((textLine, index) => {
+        ctx.fillText(textLine, x + paddingX, y + paddingY + index * lineHeight);
+      });
+
+      ctx.restore();
+    }
+
     function drawHitFlash() {
       if (hitFlashTimer > 0) {
         ctx.fillStyle = "rgba(255, 0, 0, 0.18)";
@@ -3817,6 +3882,7 @@ Final Score: ${score}`,
       drawMooFlash();
       drawHUD();
       drawInventoryHUD();
+      drawCloverSpeechBubble();
       drawBossHUD();
       drawHitFlash();
       drawBonusFlash();
@@ -3861,6 +3927,7 @@ Final Score: ${score}`,
       drawHearts();
       drawHUD();
       drawInventoryHUD();
+      drawCloverSpeechBubble();
       drawHitFlash();
       drawBonusFlash();
     }
@@ -3891,6 +3958,7 @@ Final Score: ${score}`,
       drawHearts();
       drawHUD();
       drawInventoryHUD();
+      drawCloverSpeechBubble();
       drawHitFlash();
       drawBonusFlash();
       drawCowbellFlash();

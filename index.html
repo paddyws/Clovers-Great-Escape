@@ -1,662 +1,4043 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Mackenzie's Underwater Oasis | SeaBnB Beneath the Reef</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
-<style>
-:root{
-  --abyss:#00111d;
-  --deep:#03243a;
-  --ocean:#064f73;
-  --reef:#00a9c7;
-  --aqua:#7ff7ff;
-  --blue:#1fb7ff;
-  --kelp:#67e8a5;
-  --seaweed:#1fbf75;
-  --coral:#ff8f73;
-  --coral2:#ffc46b;
-  --sand:#ffe6a7;
-  --foam:#e9feff;
-  --text:#f5fdff;
-  --muted:#b8dce6;
-  --glass:rgba(255,255,255,.085);
-  --border:rgba(255,255,255,.16);
-  --shadow:0 30px 90px rgba(0,0,0,.55);
-  --glow:0 0 32px rgba(127,247,255,.34),0 0 70px rgba(103,232,165,.14);
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{
-  font-family:Inter,system-ui,sans-serif;
-  color:var(--text);
-  overflow-x:hidden;
-  background:
-    radial-gradient(circle at 18% 7%,rgba(127,247,255,.20),transparent 24%),
-    radial-gradient(circle at 82% 12%,rgba(103,232,165,.18),transparent 26%),
-    radial-gradient(circle at 52% 92%,rgba(31,191,117,.16),transparent 32%),
-    linear-gradient(180deg,#00111d 0%,#03243a 34%,#064f73 72%,#047896 100%);
-  min-height:100vh;
-}
-body::before{
-  content:"";
-  position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:
-    radial-gradient(rgba(255,255,255,.10) 1px,transparent 1px),
-    radial-gradient(circle at 20% 30%,rgba(116,250,255,.08),transparent 18%),
-    linear-gradient(115deg,transparent 0%,rgba(255,255,255,.035) 42%,transparent 55%);
-  background-size:28px 28px,100% 100%,100% 100%;
-  opacity:.48;
-}
-body::after{
-  content:"";
-  position:fixed;left:-20%;right:-20%;bottom:-70px;height:210px;z-index:1;pointer-events:none;
-  background:
-    radial-gradient(ellipse at 20% 45%,rgba(116,250,255,.25),transparent 30%),
-    radial-gradient(ellipse at 70% 50%,rgba(103,232,165,.14),transparent 30%),
-    linear-gradient(180deg,transparent,rgba(3,35,57,.94));
-  filter:blur(4px);
-  animation:tide 7s ease-in-out infinite alternate;
-}
-@keyframes tide{from{transform:translateY(0)}to{transform:translateY(-18px)}}
-a{text-decoration:none;color:inherit}
-.container{width:min(1200px,calc(100% - 32px));margin:auto;position:relative;z-index:3}
-.bubble{position:fixed;bottom:-120px;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(4px);animation:float linear infinite;z-index:1;pointer-events:none}
-@keyframes float{from{transform:translateY(0) translateX(0)}to{transform:translateY(-125vh) translateX(32px)}}
-.sparkle{position:fixed;color:rgba(255,255,255,.75);font-size:18px;animation:spark 4s ease-in-out infinite;z-index:1;pointer-events:none}.sparkle:nth-of-type(even){animation-delay:1.4s;color:var(--kelp)}
-@keyframes spark{0%,100%{opacity:.15;transform:scale(.8)}50%{opacity:1;transform:scale(1.25) rotate(20deg)}}
-.coral-bed{position:fixed;left:0;right:0;bottom:0;height:150px;z-index:2;pointer-events:none;opacity:.82;background:linear-gradient(180deg,transparent,rgba(1,6,17,.25))}
-.coral-bed span{position:absolute;bottom:0;font-size:clamp(2rem,5vw,4.3rem);filter:drop-shadow(0 0 16px rgba(103,232,165,.30));animation:sway 5s ease-in-out infinite alternate;transform-origin:bottom center}.coral-bed span:nth-child(2n){animation-delay:1.2s}.coral-bed span:nth-child(3n){animation-delay:2s}
-@keyframes sway{from{transform:rotate(-3deg)}to{transform:rotate(4deg)}}
-header{position:sticky;top:0;z-index:100;background:rgba(1,6,17,.72);backdrop-filter:blur(22px);border-bottom:1px solid rgba(255,255,255,.09)}
-.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 0;gap:18px}
-.logo{display:flex;align-items:center;gap:14px;min-width:max-content}.logo-mark{width:54px;height:54px;border-radius:18px;background:linear-gradient(135deg,var(--seaweed),var(--aqua));display:grid;place-items:center;font-size:1.8rem;box-shadow:var(--glow)}
-.logo-text{display:grid;line-height:1}.logo-text strong{font-family:Cinzel,serif;font-size:1.5rem;letter-spacing:.02em}.logo-text span{font-family:Pacifico,cursive;color:#bfffe5;font-size:1rem;margin-top:-2px}
-.nav-links{display:flex;gap:22px;color:var(--muted);font-size:.9rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em}.nav-links a:hover{color:white;text-shadow:0 0 18px var(--aqua)}
-.button{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:14px 24px;background:linear-gradient(135deg,var(--seaweed),var(--reef),var(--blue));color:white;font-weight:900;cursor:pointer;box-shadow:0 16px 42px rgba(0,169,199,.28),0 0 25px rgba(103,232,165,.16);transition:.23s ease;text-align:center}.button:hover{transform:translateY(-3px) scale(1.03);filter:saturate(1.18)}
-.button.secondary{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);box-shadow:none}.button.tiny{padding:10px 16px;font-size:.85rem}
-.hero{padding:82px 0 48px}.hero-grid{display:grid;grid-template-columns:1fr 1.02fr;gap:46px;align-items:center}.eyebrow{display:inline-flex;gap:10px;align-items:center;padding:10px 18px;border-radius:999px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.13);color:#bfffff;font-weight:900;box-shadow:0 0 24px rgba(116,250,255,.13);margin-bottom:20px}
-h1{font-family:Cinzel,serif;font-size:clamp(3.25rem,8vw,6.9rem);line-height:.88;letter-spacing:-.06em;margin-bottom:22px;text-shadow:0 0 34px rgba(116,250,255,.22)}
-.script{font-family:Pacifico,cursive;color:#9dffe0;font-size:clamp(1.6rem,3vw,2.35rem);display:block;letter-spacing:0;text-shadow:0 0 22px rgba(103,232,165,.36);margin-bottom:8px}.hero p{font-size:1.14rem;line-height:1.85;color:var(--muted);max-width:660px;margin-bottom:28px}.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px}.trust-row{display:flex;flex-wrap:wrap;gap:10px}.trust-row span{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.11);color:#d5fbff;font-weight:800;font-size:.9rem}
-.hero-card{position:relative;min-height:675px;border-radius:44px;overflow:hidden;background:linear-gradient(90deg,rgba(0,17,29,.03),rgba(0,17,29,.58)),url('seabnb.jpg') center/cover;border:1px solid rgba(255,255,255,.16);box-shadow:var(--shadow)}
-.hero-card::before{content:"🦈";position:absolute;right:36px;top:38px;font-size:5.8rem;filter:drop-shadow(0 18px 20px rgba(0,0,0,.45));animation:shark 4.5s ease-in-out infinite;z-index:2}@keyframes shark{50%{transform:translateX(-16px) translateY(10px) rotate(-5deg)}}
-.hero-card::after{content:"🧜‍♀️";position:absolute;right:62px;bottom:162px;font-size:5.2rem;filter:drop-shadow(0 18px 20px rgba(0,0,0,.45));animation:mermaid 5s ease-in-out infinite;z-index:2}@keyframes mermaid{50%{transform:translateY(-12px) rotate(4deg)}}
-.floating-card{position:absolute;left:24px;right:24px;bottom:24px;z-index:4;background:rgba(2,7,20,.7);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.13);border-radius:30px;padding:24px;display:flex;justify-content:space-between;align-items:center;gap:18px;box-shadow:0 0 35px rgba(116,250,255,.15)}.floating-card strong{display:block;font-size:1.18rem}.floating-card span{color:var(--muted);font-size:.94rem}
-.quote-strip{margin-top:34px;border:1px solid rgba(127,247,255,.34);background:linear-gradient(135deg,rgba(0,169,199,.13),rgba(103,232,165,.08));border-radius:32px;padding:26px;display:grid;grid-template-columns:100px 1fr auto;gap:24px;align-items:center;box-shadow:0 0 45px rgba(127,247,255,.12)}.jelly{width:96px;height:96px;border-radius:28px;overflow:hidden;border:1px solid rgba(255,255,255,.16);box-shadow:0 0 28px rgba(127,247,255,.18);animation:jelly 3.4s ease-in-out infinite}.jelly img{width:100%;height:100%;object-fit:cover;object-position:center}@keyframes jelly{50%{transform:translateY(-10px) scale(1.05)}}.quote-strip blockquote{font-family:Cinzel,serif;font-size:clamp(1.25rem,2.5vw,2rem);line-height:1.35}.quote-strip cite{display:block;color:#bfffe5;margin-top:10px;font-style:normal;font-weight:800}
-section{padding:64px 0}.section-heading{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:28px}.section-heading h2{font-family:Cinzel,serif;font-size:clamp(2.35rem,5vw,4.65rem);line-height:.94;letter-spacing:-.04em;max-width:840px}.section-heading p{color:var(--muted);max-width:430px}
-.feature-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.feature{padding:22px 16px;border-radius:28px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.11);backdrop-filter:blur(14px);text-align:center;box-shadow:0 22px 60px rgba(0,0,0,.24);transition:.24s}.feature:hover{transform:translateY(-6px);box-shadow:var(--glow)}.feature .icon{font-size:2.5rem;margin-bottom:12px}.feature h3{font-size:1rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}.feature p{color:var(--muted);font-size:.9rem;line-height:1.55}
-.coral-garden{position:relative;overflow:hidden;border-radius:42px;padding:34px;background:linear-gradient(135deg,rgba(0,169,199,.14),rgba(127,247,255,.09),rgba(103,232,165,.13));border:1px solid rgba(255,255,255,.13);box-shadow:var(--shadow)}.coral-garden::before{content:"🪸  🐠  🫧  🐚  🪼  🐟  🪸";position:absolute;left:-20px;right:-20px;bottom:8px;font-size:3rem;letter-spacing:18px;opacity:.42;white-space:nowrap;animation:reefDrift 12s linear infinite alternate}@keyframes reefDrift{from{transform:translateX(-35px)}to{transform:translateX(35px)}}.garden-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;position:relative;z-index:2}.garden-card{padding:22px;border-radius:28px;background:rgba(1,6,17,.38);border:1px solid rgba(255,255,255,.11);backdrop-filter:blur(10px)}.garden-card h3{margin-bottom:8px}.garden-card p{color:var(--muted)}
-.suite-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.suite{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:34px;overflow:hidden;backdrop-filter:blur(14px);box-shadow:var(--shadow);transition:.25s}.suite:hover{transform:translateY(-7px)}.suite-photo{height:230px;background-size:cover;background-position:center;position:relative}.suite-photo span{position:absolute;left:16px;bottom:16px;border-radius:999px;padding:8px 12px;background:rgba(2,7,20,.68);border:1px solid rgba(255,255,255,.13);font-weight:900;color:#c8fbff}.suite-content{padding:22px}.suite h3{font-size:1.22rem;margin-bottom:8px}.suite p{color:var(--muted);font-size:.95rem}.suite strong{display:block;margin-top:16px;color:#9ef9ff}.s1{background-image:linear-gradient(rgba(0,0,0,.05),rgba(0,0,0,.38)),url('https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=900&q=80')}.s2{background-image:linear-gradient(rgba(0,0,0,.05),rgba(0,0,0,.38)),url('seabnb.jpg')}.s3{background-image:linear-gradient(rgba(0,0,0,.05),rgba(0,0,0,.38)),url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=900&q=80')}
-.experience-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}.experience-panel{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:36px;padding:30px;backdrop-filter:blur(14px);box-shadow:var(--shadow)}.experience-panel h3{font-family:Cinzel,serif;font-size:2rem;margin-bottom:12px}.experience-panel p,.experience-panel li{color:var(--muted)}.experience-panel ul{display:grid;gap:12px;list-style:none;margin-top:16px}.experience-panel li::before{content:"✦ ";color:var(--aqua);font-weight:900}
-.booking-section{display:grid;grid-template-columns:1fr 430px;gap:28px;align-items:start}.story-box,.booking-card{background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.12);border-radius:36px;padding:30px;backdrop-filter:blur(14px);box-shadow:var(--shadow)}.story{display:grid;gap:16px;color:var(--muted)}.story strong{color:white}.pill-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.pill{border-radius:999px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.12);padding:8px 13px;font-weight:900;color:#c8fbff}.booking-card{position:sticky;top:92px}.price{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:18px}.price strong{font-size:2.35rem;color:#9ef9ff}.price span{color:var(--muted)}.booking-card h3{font-family:Cinzel,serif;font-size:2rem;margin-bottom:8px}.booking-card p{color:var(--muted);margin-bottom:16px}form{display:grid;gap:12px}label{font-size:.82rem;font-weight:900;color:#c8fbff}input,select,textarea{width:100%;padding:15px;border-radius:18px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:white;font:inherit;outline:none}select option{color:#06172d}textarea{min-height:98px;resize:vertical}input::placeholder,textarea::placeholder{color:#aad2dc}input:focus,select:focus,textarea:focus{border-color:var(--aqua);box-shadow:0 0 0 4px rgba(116,250,255,.15)}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.checkbox-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.check-card{display:flex;gap:8px;align-items:center;padding:10px;border-radius:16px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:.9rem}.check-card input{width:auto}.total-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:22px;padding:16px;display:grid;gap:9px;color:var(--muted)}.total-line{display:flex;justify-content:space-between}.total-line.final{color:white;font-weight:900;border-top:1px solid rgba(255,255,255,.1);padding-top:10px;margin-top:4px}
-.reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.review{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:32px;padding:24px;backdrop-filter:blur(14px)}.stars{color:var(--sand);letter-spacing:1px;margin-bottom:12px}.review p{color:var(--muted)}
-footer{padding:44px 0 130px;border-top:1px solid rgba(255,255,255,.09);color:var(--muted)}.footer-grid{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}.footer-brand{font-family:Cinzel,serif;color:white;font-size:1.3rem}.email-box{display:flex;gap:8px;margin-top:12px}.email-box input{max-width:260px}
-@media(max-width:1000px){.nav-links{display:none}.hero-grid,.booking-section,.experience-grid{grid-template-columns:1fr}.feature-grid,.garden-grid{grid-template-columns:repeat(2,1fr)}.suite-grid,.reviews{grid-template-columns:1fr 1fr}.booking-card{position:static}.hero-card{min-height:520px}.quote-strip{grid-template-columns:1fr}.quote-strip .button{width:max-content}}
-@media(max-width:650px){.suite-grid,.reviews,.feature-grid,.garden-grid,.form-row,.checkbox-grid{grid-template-columns:1fr}.section-heading{display:block}.section-heading p{margin-top:10px}.floating-card{flex-direction:column;align-items:flex-start}.logo-text strong{font-size:1.05rem}.logo-text span{font-size:.9rem}.hero-card{min-height:460px}.hero-card::before{font-size:4rem}.hero-card::after{font-size:4rem;right:34px}h1{font-size:3.05rem}.email-box{display:grid}}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clover's Great Escape!</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-/* MOBILE LEGIBILITY PATCH — keeps desktop intact */
-@media(max-width:760px){
-  html,body{
-    max-width:100%;
-    overflow-x:hidden;
-  }
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+    }
 
-  body{
-    background:
-      linear-gradient(
-        180deg,
-        rgba(0,8,18,.86) 0%,
-        rgba(0,14,28,.90) 24%,
-        rgba(0,22,38,.94) 58%,
-        rgba(0,7,15,.98) 100%
-      ),
-      radial-gradient(circle at 50% 8%,rgba(127,247,255,.18),transparent 24%),
-      linear-gradient(180deg,#00111d 0%,#03243a 48%,#064f73 100%);
-    background-attachment:scroll;
-  }
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100dvh;
+      padding: 12px 12px 28px;
+      overflow-y: auto;
+    }
 
-  body::before{
-    opacity:.16;
-    background-image:
-      radial-gradient(rgba(255,255,255,.055) 1px,transparent 1px),
-      linear-gradient(180deg,rgba(0,0,0,.30),rgba(0,0,0,.58));
-  }
+    h1 {
+      margin: 6px 0 8px;
+      text-align: center;
+    }
 
-  body::after{
-    opacity:.42;
-    height:120px;
-    bottom:-48px;
-  }
+    p {
+      margin-top: 0;
+      opacity: 0.85;
+      text-align: center;
+      max-width: 560px;
+      padding: 0 12px;
+      line-height: 1.4;
+    }
 
-  .container{
-    width:min(100% - 22px,1200px);
-  }
+    .game-wrap {
+      position: relative;
+      width: min(100%, 400px);
+      aspect-ratio: 2 / 3;
+      border: 2px solid white;
+      background-image: url("road.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      overflow: hidden;
+      border-radius: 12px;
+    }
 
-  header{
-    background:rgba(0,9,18,.94);
-    backdrop-filter:blur(18px);
-  }
+    .game-wrap.boss-shake {
+      animation: bossScreenShake 1.2s cubic-bezier(.36,.07,.19,.97) both;
+    }
 
-  .nav{
-    padding:10px 0;
-    gap:10px;
-  }
+    @keyframes bossScreenShake {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      10% { transform: translate(-5px, 3px) rotate(-0.6deg); }
+      20% { transform: translate(6px, -4px) rotate(0.7deg); }
+      30% { transform: translate(-7px, 2px) rotate(-0.8deg); }
+      40% { transform: translate(7px, 4px) rotate(0.8deg); }
+      50% { transform: translate(-5px, -5px) rotate(-0.5deg); }
+      60% { transform: translate(5px, 3px) rotate(0.5deg); }
+      70% { transform: translate(-4px, 5px) rotate(-0.4deg); }
+      80% { transform: translate(4px, -3px) rotate(0.4deg); }
+      90% { transform: translate(-2px, 2px) rotate(-0.2deg); }
+    }
 
-  .logo{
-    min-width:0;
-    gap:9px;
-  }
+    .overlay.boss-red-flash::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(180, 0, 0, 0.42);
+      pointer-events: none;
+      animation: bossRedFlash 0.55s ease-out both;
+      z-index: 21;
+    }
 
-  .logo-mark{
-    width:42px;
-    height:42px;
-    border-radius:14px;
-    font-size:1.25rem;
-    flex:0 0 auto;
-  }
+    @keyframes bossRedFlash {
+      0% { opacity: 0; }
+      12% { opacity: 1; }
+      35% { opacity: 0.55; }
+      100% { opacity: 0; }
+    }
 
-  .logo-text strong{
-    font-size:.86rem;
-    line-height:1.05;
-    letter-spacing:.01em;
-    max-width:185px;
-    white-space:normal;
-    display:block;
-  }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+      background: transparent;
+    }
 
-  .logo-text span{
-    font-size:.78rem;
-  }
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 20;
+    }
 
-  .nav>.button{
-    display:none;
-  }
+    .overlay.hidden {
+      display: none;
+    }
 
-  .hero{
-    padding:28px 0 32px;
-  }
+    .overlay-box {
+      width: min(100%, 320px);
+      background: rgba(23, 20, 18, 0.94);
+      color: #f6f0e8;
+      border: 1px solid rgba(255, 240, 220, 0.18);
+      border-radius: 18px;
+      padding: 18px 18px 16px;
+      box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      text-align: center;
+      backdrop-filter: blur(5px);
+      min-height: 150px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
 
-  .hero-grid{
-    grid-template-columns:1fr;
-    gap:20px;
-  }
 
-  .script{
-    color:#caffee;
-    font-size:1.55rem;
-    opacity:1;
-    text-shadow:0 3px 18px rgba(0,0,0,.95),0 0 10px rgba(103,232,165,.22);
-  }
 
-  .eyebrow{
-    display:flex;
-    width:100%;
-    flex-wrap:wrap;
-    border-radius:20px;
-    padding:10px 13px;
-    font-size:.82rem;
-    line-height:1.32;
-    color:#f5fdff;
-    background:rgba(0,18,34,.82);
-    border-color:rgba(127,247,255,.22);
-    text-shadow:0 2px 12px rgba(0,0,0,.9);
-  }
+    .overlay-box.picture-overlay-box {
+      width: min(100%, 372px);
+      padding: 10px;
+      background: rgba(12, 8, 16, 0.96);
+    }
 
-  .hero h1{
-    color:#f7feff;
-    background:none;
-    -webkit-background-clip:initial;
-    background-clip:initial;
-    filter:none;
-    font-size:clamp(2.55rem,13.2vw,3.85rem);
-    line-height:.92;
-    letter-spacing:-.045em;
-    max-width:100%;
-    text-shadow:
-      0 3px 0 rgba(0,22,36,.42),
-      0 9px 22px rgba(0,0,0,.96),
-      0 0 16px rgba(127,247,255,.24);
-  }
+    .dialogue-picture {
+      display: block;
+      width: 100%;
+      max-height: 260px;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 14px 14px 6px 6px;
+      margin: 0 0 10px;
+      image-rendering: pixelated;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
+    }
 
-  .hero h1::after{
-    opacity:.45;
-    height:3px;
-  }
+    .picture-dialogue-box {
+      background: rgba(23, 20, 18, 0.96);
+      border: 1px solid rgba(255, 240, 220, 0.2);
+      border-radius: 12px;
+      padding: 13px 14px;
+      min-height: 92px;
+      text-align: center;
+    }
 
-  .hero h1::before{
-    opacity:.72;
-    right:.05em;
-    top:-.34em;
-  }
+    .overlay-text {
+      font-size: 17px;
+      line-height: 1.45;
+      white-space: pre-line;
+      min-height: 78px;
+    }
 
-  .hero p{
-    color:#ecfeff;
-    font-size:1rem;
-    line-height:1.58;
-    background:rgba(0,15,28,.78);
-    border:1px solid rgba(127,247,255,.18);
-    border-radius:22px;
-    padding:15px;
-    text-shadow:0 2px 12px rgba(0,0,0,.9);
-  }
+    .dialogue-cursor {
+      display: inline-block;
+      width: 0.6ch;
+      animation: blinkCursor 0.9s steps(1) infinite;
+      opacity: 0.8;
+    }
 
-  .hero-actions{
-    display:grid;
-    grid-template-columns:1fr;
-    gap:10px;
-  }
+    @keyframes blinkCursor {
+      50% {
+        opacity: 0;
+      }
+    }
 
-  .button{
-    width:100%;
-    padding:13px 18px;
-    box-shadow:0 12px 28px rgba(0,0,0,.42),0 0 16px rgba(127,247,255,.16);
-  }
+    .overlay-continue {
+      margin-top: 10px;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.75;
+    }
 
-  .trust-row{
-    gap:8px;
-  }
+    .overlay-continue.hidden {
+      visibility: hidden;
+    }
 
-  .trust-row span{
-    color:#f0feff;
-    font-size:.78rem;
-    padding:7px 10px;
-    background:rgba(0,18,34,.76);
-    border-color:rgba(127,247,255,.18);
-  }
+    .overlay-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
 
-  .hero-card{
-    min-height:340px;
-    border-radius:28px;
-    background-position:center;
-  }
+    .overlay-btn {
+      padding: 10px 16px;
+      font-size: 15px;
+      cursor: pointer;
+      border: none;
+      border-radius: 999px;
+      min-width: 110px;
+      background: linear-gradient(180deg, #f6e7d4, #dcc1a0);
+      color: #2a1d14;
+      font-weight: 600;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    }
 
-  .hero-card::before{
-    font-size:3.25rem;
-    right:18px;
-    top:22px;
-  }
+    .overlay-btn.secondary {
+      background: linear-gradient(180deg, #d9d2ca, #b9aea4);
+    }
 
-  .hero-card::after{
-    font-size:3.25rem;
-    right:24px;
-    bottom:130px;
-  }
 
-  .floating-card{
-    left:12px;
-    right:12px;
-    bottom:12px;
-    border-radius:22px;
-    padding:16px;
-    background:rgba(0,10,20,.90);
-    border-color:rgba(127,247,255,.20);
-  }
+    
+/* 🌙 Soft dark Papyrus menu */
 
-  .floating-card strong{
-    font-size:1rem;
-    color:#ffffff;
-    text-shadow:0 2px 12px rgba(0,0,0,.85);
-  }
-
-  .floating-card span{
-    color:#dcfaff;
-    font-size:.84rem;
-    line-height:1.35;
-  }
-
-  .floating-card .button{
-    display:none;
-  }
-
-  section{
-    padding:38px 0;
-  }
-
-  .section-heading{
-    display:block;
-    margin-bottom:18px;
-  }
-
-  .section-heading h2{
-    color:#ffffff;
-    font-size:clamp(2rem,10vw,3rem);
-    line-height:.98;
-    text-shadow:0 4px 18px rgba(0,0,0,.78);
-  }
-
-  .section-heading p{
-    color:#dcfaff;
-    font-size:.98rem;
-    line-height:1.55;
-    margin-top:10px;
-  }
-
-  .feature-grid,
-  .garden-grid,
-  .suite-grid,
-  .experience-grid,
-  .booking-section,
-  .reviews,
-  .form-row,
-  .checkbox-grid{
-    grid-template-columns:1fr;
-  }
-
-  .feature,
-  .story-box,
-  .booking-card,
-  .experience-panel,
-  .review,
-  .garden-card,
-  .suite,
-  .coral-garden{
-    background:rgba(0,16,31,.82);
-    border-color:rgba(127,247,255,.22);
-    box-shadow:0 18px 45px rgba(0,0,0,.46);
-  }
-
-  .feature{
-    padding:18px 14px;
-    border-radius:22px;
-  }
-
-  .feature p,
-  .suite p,
-  .experience-panel p,
-  .experience-panel li,
-  .story,
-  .review p,
-  .garden-card p{
-    color:#d9f8ff;
-  }
-
-  .feature h3,
-  .suite h3,
-  .experience-panel h3,
-  .booking-card h3,
-  .garden-card h3{
-    color:#ffffff;
-    text-shadow:0 2px 14px rgba(0,0,0,.75);
-  }
-
-  .coral-garden,
-  .experience-panel,
-  .story-box,
-  .booking-card{
-    border-radius:26px;
-    padding:20px;
-  }
-
-  .suite-photo{
-    height:210px;
-  }
-
-  .booking-card{
-    position:static;
-    top:auto;
-  }
-
-  .price strong{
-    font-size:2rem;
-  }
-
-  input,
-  select,
-  textarea{
-    font-size:16px;
-    padding:13px;
-    border-radius:15px;
-    background:rgba(0,10,20,.56);
-  }
-
-  .check-card{
-    color:#d9f8ff;
-    font-size:.86rem;
-    line-height:1.3;
-  }
-
-  .total-box{
-    border-radius:18px;
-    padding:14px;
-    background:rgba(0,10,20,.56);
-  }
-
-  .quote-strip{
-    grid-template-columns:76px 1fr;
-    padding:16px;
-    border-radius:24px;
-    gap:14px;
-    background:rgba(0,16,31,.86);
-    border-color:rgba(127,247,255,.24);
-  }
-
-  .quote-strip .jelly{
-    width:74px;
-    height:74px;
-    border-radius:18px;
-  }
-
-  .quote-strip blockquote{
-    color:#f4feff;
-    font-size:.95rem;
-    line-height:1.35;
-    text-shadow:0 2px 14px rgba(0,0,0,.78);
-  }
-
-  .quote-strip cite{
-    margin-top:8px;
-    font-size:.82rem;
-  }
-
-  .quote-strip .button{
-    display:none;
-  }
-
-  .coral-bed{
-    height:86px;
-    opacity:.46;
-  }
-
-  .coral-bed span{
-    font-size:2rem;
-  }
-
-  footer{
-    padding:34px 0 92px;
-  }
-
-  .footer-grid{
-    display:grid;
-    gap:16px;
-  }
-
-  .email-box{
-    display:grid;
-  }
-
-  .email-box input{
-    max-width:100%;
-  }
+.difficulty-menu {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-family: Papyrus, fantasy;
 }
 
-@media(max-width:420px){
-  .container{width:min(100% - 18px,1200px);}
-  .logo-text strong{font-size:.80rem;max-width:154px;}
-  .hero h1{font-size:2.55rem;}
-  .hero p{font-size:.95rem;line-height:1.54;}
-  .quote-strip{grid-template-columns:64px 1fr;}
-  .quote-strip .jelly{width:64px;height:64px;}
-}</style>
+.difficulty-title {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: 0.08em;
+  color: #d9d3b8;
+  text-shadow: 0 0 10px rgba(255, 230, 160, 0.15);
+}
+
+.difficulty-subtitle {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #bfb79c;
+  opacity: 0.85;
+  margin-bottom: 6px;
+}
+
+.difficulty-options {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.difficulty-card {
+  font-family: Papyrus, fantasy;
+  width: 160px;
+  padding: 7px 10px;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid rgba(200, 185, 140, 0.18);
+  background: linear-gradient(
+    180deg,
+    rgba(34, 31, 25, 0.95),
+    rgba(20, 18, 15, 0.95)
+  );
+  color: #dcd5b9;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    0 6px 14px rgba(0,0,0,0.45);
+  transition: all 0.15s ease;
+}
+
+.difficulty-card:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(48, 44, 34, 0.95),
+    rgba(24, 22, 18, 0.95)
+  );
+  transform: translateY(-1px) scale(1.02);
+}
+
+.difficulty-card:active {
+  transform: scale(0.96);
+}
+
+.difficulty-card.cowgirl {
+  color: #e6a98f;
+  border-color: rgba(180, 90, 60, 0.35);
+}
+
+.difficulty-card.cowgirl:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(70, 42, 30, 0.95),
+    rgba(32, 20, 16, 0.95)
+  );
+}
+
+
+    .end-banner {
+      position: absolute;
+      inset: 0;
+      z-index: 15;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(30px, 8vw, 52px);
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: #fff7d6;
+      text-shadow:
+        0 0 12px rgba(255, 230, 150, 0.55),
+        0 6px 20px rgba(0, 0, 0, 0.55);
+      pointer-events: none;
+    }
+
+    .end-banner.hidden {
+      display: none;
+    }
+
+
+    .mobile-controls {
+      width: min(100%, 400px);
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .mobile-control-btn {
+      padding: 10px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      touch-action: manipulation;
+    }
+
+    .mobile-control-btn:active {
+      transform: scale(0.96);
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      p {
+        font-size: 0.95rem;
+      }
+
+      .overlay-text {
+        font-size: 16px;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="bubble" style="left:4%;width:24px;height:24px;animation-duration:14s"></div>
-<div class="bubble" style="left:18%;width:14px;height:14px;animation-duration:10s"></div>
-<div class="bubble" style="left:36%;width:30px;height:30px;animation-duration:18s"></div>
-<div class="bubble" style="left:64%;width:18px;height:18px;animation-duration:12s"></div>
-<div class="bubble" style="left:84%;width:26px;height:26px;animation-duration:16s"></div>
-<div class="sparkle" style="left:12%;top:24%">✧</div><div class="sparkle" style="left:78%;top:18%">✦</div><div class="sparkle" style="left:55%;top:62%">✧</div>
-<div class="coral-bed"><span style="left:1%">🪸</span><span style="left:10%">🌿</span><span style="left:20%">🐚</span><span style="left:33%">🪸</span><span style="left:47%">🌿</span><span style="left:59%">🐠</span><span style="left:72%">🪸</span><span style="left:86%">🐚</span></div>
-<header>
-  <div class="container nav">
-    <a href="#top" class="logo"><span class="logo-mark">🐚</span><span class="logo-text"><strong>Mackenzie's Underwater Oasis</strong><span>SeaBnB ♡</span></span></a>
-    <nav class="nav-links"><a href="#suites">Suites</a><a href="#garden">Coral Garden</a><a href="#experiences">Experiences</a><a href="#booking">Booking</a></nav>
-    <a class="button" href="#booking">Book Your Stay</a>
-  </div>
-</header>
-<main id="top">
-<section class="hero">
-  <div class="container hero-grid">
-    <div>
-      <span class="script">Welcome to</span>
-      <div class="eyebrow">🧜‍♀️ Massages · Vegan food · Mermaid babysitting · Shark watching</div>
-      <h1>Mackenzie's Underwater Oasis</h1>
-      <p>A luxury SeaBnB where ocean magic meets soft sheets, reef-lit massages, vibrant plant-forward meals, mermaid babysitters, seashell listening rituals, PLUR bracelets, and front-row seats to the drama of the deep.</p>
-      <div class="hero-actions"><a class="button" href="#booking">Book Your Sea Adventure 🐚</a><a class="button secondary" href="#garden">Enter the Coral Garden</a></div>
-      <div class="trust-row"><span>✓ Sleeps 6</span><span>✓ Mermaid babysitting</span><span>✓ Vegan-coded meals</span><span>✓ Shark-view lounge</span></div>
-    </div>
-    <div class="hero-card">
-      <div class="floating-card"><div><strong>Where mermaids vacation and kids get storytime.</strong><span>Listen to shells. Wander the reef. Sleep beneath blue light.</span></div><a class="button" href="#booking">Reserve</a></div>
-    </div>
-  </div>
-  <div class="container quote-strip">
-    <div class="jelly"><img src="alison.jpg" alt="Alison Wonderland portrait"></div>
-    <blockquote>“We’re all just looking for something real with someone who gets us.”<cite>— Alison Wonderland</cite></blockquote>
-    <a class="button secondary" href="#booking">Find Your Ocean Moment</a>
-  </div>
-</section>
-<section id="amenities">
-  <div class="container">
-    <div class="section-heading"><h2>More underwater. More wonder. More shell-to-ear magic.</h2><p>Wellness, whimsy, family options, and ocean-floor theatrics in one glowing SeaBnB.</p></div>
-    <div class="feature-grid">
-      <article class="feature"><div class="icon">🪷</div><h3>Reef Massages</h3><p>Ocean-sound relaxation rituals for your mind, body, and suspiciously tense shoulders.</p></article>
-      <article class="feature"><div class="icon">🥗</div><h3>Vegan Food</h3><p>Plant-forward meals styled with color, texture, protein, fiber, and joy without sounding like homework.</p></article>
-      <article class="feature"><div class="icon">🧜‍♀️</div><h3>Mermaid Babysits</h3><p>Kid-friendly story hours, shell crafts, sea songs, and reef games while adults exhale.</p></article>
-      <article class="feature"><div class="icon">🦈</div><h3>Shark Watching</h3><p>Front-row seats to ocean drama, safely behind luxury glass and theatrical lighting.</p></article>
-      <article class="feature"><div class="icon">🐚</div><h3>Listen to the Sea</h3><p>Seashell listening stations tucked into nooks for little moments of hush and wonder.</p></article>
-      <article class="feature"><div class="icon">🌈</div><h3>PLUR Bracelets</h3><p>Peace, love, unity, respect, and tiny glowing bracelets for your underwater rave heart.</p></article>
-      <article class="feature"><div class="icon">🪸</div><h3>Coral Corners</h3><p>Photo-friendly reef alcoves with glowing coral, sea glass, soft blue shadows, and sparkle.</p></article>
-      <article class="feature"><div class="icon">🫧</div><h3>Bubble Hour</h3><p>Mocktails, mineral water, tiny snacks, and a strangely serious commitment to bubbles.</p></article>
-    </div>
-  </div>
-</section>
-<section id="garden">
-  <div class="container">
-    <div class="section-heading"><h2>The Coral Garden.</h2><p>A glowing reef courtyard for wandering, playing, resting, and pretending land was a rumor.</p></div>
-    <div class="coral-garden">
-      <div class="garden-grid">
-        <article class="garden-card"><h3>🪸 Glow Reef Path</h3><p>Soft lights, coral silhouettes, drifting bubbles, and photo-ready ocean magic.</p></article>
-        <article class="garden-card"><h3>🐚 Shell Listening Cove</h3><p>Guests hold oversized seashells to hear waves, whispers, and probably their own inner monologue.</p></article>
-        <article class="garden-card"><h3>🌈 PLUR Bracelet Bar</h3><p>Make bracelets for your group, swap colors, and leave with tiny wearable reef memories.</p></article>
+  <h1>Clover's Great Escape!</h1>
+  <p>
+    Escape the butchers! Eat your veggies!
+    <br>
+  </p>
+
+  <div class="game-wrap">
+    <canvas id="game" width="400" height="600"></canvas>
+
+    <div id="overlay" class="overlay">
+      <div class="overlay-box">
+        <div id="overlayText" class="overlay-text"></div>
+        <div id="overlayContinue" class="overlay-continue hidden">tap to continue</div>
+        <div id="overlayButtons" class="overlay-buttons"></div>
       </div>
     </div>
+
+    <div id="endBanner" class="end-banner hidden">FREEDOM</div>
   </div>
-</section>
-<section id="suites">
-  <div class="container">
-    <div class="section-heading"><h2>Choose your underwater suite.</h2><p>Each room is designed like a different dream the ocean had after midnight.</p></div>
-    <div class="suite-grid">
-      <article class="suite"><div class="suite-photo s1"><span>Most magical</span></div><div class="suite-content"><h3>Mermaid Grotto Suite</h3><p>Velvet blues, shell glow, soft linens, and a bath that looks like a secret cave from a fairy tale.</p><strong>$299 / night</strong></div></article>
-      <article class="suite"><div class="suite-photo s2"><span>Most dramatic</span></div><div class="suite-content"><h3>Shark Observatory</h3><p>Floor-to-ceiling ocean-view drama with apex predator ambiance and cozy lounge seating.</p><strong>$349 / night</strong></div></article>
-      <article class="suite"><div class="suite-photo s3"><span>Most serene</span></div><div class="suite-content"><h3>Bioluminescent Cave</h3><p>A glowing retreat for deep sleep, soft music, shell listening, and pretending your phone does not exist.</p><strong>$329 / night</strong></div></article>
-    </div>
+
+  <div class="mobile-controls" aria-label="Mobile inventory controls">
+    <button id="inventoryButton" class="mobile-control-btn" type="button">Inventory</button>
+    <button id="useCloverButton" class="mobile-control-btn" type="button">Use Item</button>
   </div>
-</section>
-<section id="experiences">
-  <div class="container">
-    <div class="section-heading"><h2>Not just lodging. A whole underwater mood.</h2><p>Pick your level of ocean fantasy, from cozy wellness to shark documentary chaos.</p></div>
-    <div class="experience-grid">
-      <div class="experience-panel"><h3>Signature SeaBnB Experiences</h3><ul><li><strong>Reef Reset Massage:</strong> warm towels, ocean soundscapes, and post-massage herbal tea.</li><li><strong>Vegan Mermaid Breakfast:</strong> colorful plant-based plates built with texture, comfort, and balance.</li><li><strong>Mermaid Babysitting:</strong> crafts, songs, storytime, sea creature games, and supervised reef magic.</li><li><strong>Shell Listening Ritual:</strong> pick a shell, hear the sea, make a wish, pretend it was therapy.</li><li><strong>Shark Watch Hour:</strong> dramatic viewing lounge, mocktails, and educational bite-sized ocean facts.</li></ul></div>
-      <div class="experience-panel"><h3>Styled with food smarts</h3><p>No lecture voice. Just colorful, satisfying vegan food with enough protein, fiber, crunch, creaminess, and fun to make your body feel invited to the party.</p><div class="pill-row"><span class="pill">Plant-forward</span><span class="pill">Colorful plates</span><span class="pill">Cozy snacks</span><span class="pill">Joyful eating</span><span class="pill">Texture magic</span></div></div>
-    </div>
-  </div>
-</section>
-<section id="booking">
-  <div class="container booking-section">
-    <div class="story-box">
-      <div class="section-heading"><h2>Book the SeaBnB <3</h2></div>
-      <div class="story">
-        <p><strong>The vibe:</strong> Mackenzie's Underwater Oasis is a theatrical wellness rental for people who want a stay that feels enchanted, restorative, family-friendly, and mildly unhinged in the best way.</p>
-        <p><strong>The stay:</strong> reef-lit bedrooms, coral garden, shell listening, PLUR bracelets, sea-glass decor, massages, vegan food, mermaid babysitting, and shark-viewing drama.</p>
-        <p><strong>The promise:</strong> You leave moisturized, fed, amused, slightly more mythical, and possibly convinced a seashell gave you advice.</p>
-      </div>
-      <div class="pill-row"><span class="pill">Luxury SeaBnB</span><span class="pill">Massages</span><span class="pill">Mermaid babysitting</span><span class="pill">Vegan food</span><span class="pill">Coral garden</span></div>
-    </div>
-    <aside class="booking-card">
-      <div class="price"><div><strong>$299</strong> <span>/ night</span></div><span>★ 4.98</span></div>
-      <h3>Reserve the Oasis</h3>
-      <p>Request dates, add your ocean extras, then confirm payment after availability is approved.</p>
-      <form id="oasisForm">
-        <div class="form-row"><div><label for="checkin">Check in</label><input id="checkin" type="date" required></div><div><label for="checkout">Check out</label><input id="checkout" type="date" required></div></div>
-        <div><label for="guests">Guests</label><select id="guests"><option>1 guest</option><option>2 guests</option><option>3 guests</option><option>4 guests</option><option>5 guests</option><option>6 guests</option></select></div>
-        <div><label for="suite">Suite fantasy</label><select id="suite"><option>Mermaid Grotto Suite</option><option>Shark Observatory</option><option>Bioluminescent Cave</option><option>Surprise me, sea witch</option></select></div>
-        <div><label>Ocean extras</label><div class="checkbox-grid"><label class="check-card"><input type="checkbox" value="Massage"> Massage</label><label class="check-card"><input type="checkbox" value="Vegan meals"> Vegan meals</label><label class="check-card"><input type="checkbox" value="Mermaid babysitting"> Mermaid babysitting</label><label class="check-card"><input type="checkbox" value="PLUR bracelets"> PLUR bracelets</label><label class="check-card"><input type="checkbox" value="Shell listening"> Shell listening</label><label class="check-card"><input type="checkbox" value="Shark watch"> Shark watch</label></div></div>
-        <div><label for="name">Name</label><input id="name" type="text" placeholder="Captain of the party" required></div>
-        <div><label for="email">Email</label><input id="email" type="email" placeholder="you@oceanmail.com" required></div>
-        <div><label for="notes">Notes</label><textarea id="notes" placeholder="Kids' ages, massage requests, vegan food preferences, mermaid topics, shark fear level, etc."></textarea></div>
-        <div class="total-box"><div class="total-line"><span>Nights</span><span id="nights">0</span></div><div class="total-line"><span>Nightly rate</span><span>$299</span></div><div class="total-line"><span>Cleaning + shell polishing</span><span>$85</span></div><div class="total-line final"><span>Estimated total</span><span id="total">$0</span></div></div>
-        <button class="button" type="submit">Send Booking Request</button>
-        <a class="button secondary" href="https://buy.stripe.com/REPLACE_WITH_YOUR_STRIPE_PAYMENT_LINK" target="_blank" rel="noopener">Pay Deposit</a>
-        <p id="formMessage" style="color:var(--muted);font-size:.9rem"></p>
-      </form>
-    </aside>
-  </div>
-</section>
-<section id="reviews">
-  <div class="container">
-    <div class="section-heading"><h2>Guest notes from the deep.</h2><p>Replace these with real reviews once guests return from the reef.</p></div>
-    <div class="reviews">
-      <article class="review"><div class="stars">★★★★★</div><p>“The kids made bracelets with a mermaid while we got massages. I have never respected a business model more.”</p></article>
-      <article class="review"><div class="stars">★★★★★</div><p>“I listened to a shell for ten minutes and somehow made three life decisions.”</p></article>
-      <article class="review"><div class="stars">★★★★★</div><p>“The vegan breakfast was colorful, filling, and cute. Like my plate had emotional intelligence.”</p></article>
-    </div>
-  </div>
-</section>
-</main>
-<footer id="contact">
-  <div class="container footer-grid">
-    <div><div class="footer-brand">Mackenzie's Underwater Oasis SeaBnB ♡</div><p>© <span id="year"></span> Ocean magic, vegan snacks, shell listening, and tasteful shark drama.</p></div>
-    <div><p>contact@mackenziesunderwateroasis.com</p><div class="email-box"><input type="email" placeholder="Join the ocean list"><button class="button tiny">Join 🐚</button></div></div>
-  </div>
-</footer>
-<script>
-const nightlyRate=299;
-const cleaningFee=85;
-const checkin=document.getElementById('checkin');
-const checkout=document.getElementById('checkout');
-const nightsEl=document.getElementById('nights');
-const totalEl=document.getElementById('total');
-const formMessage=document.getElementById('formMessage');
-document.getElementById('year').textContent=new Date().getFullYear();
-function calculateTotal(){
- const start=new Date(checkin.value);
- const end=new Date(checkout.value);
- const diff=Math.round((end-start)/(1000*60*60*24));
- const nights=diff>0?diff:0;
- const total=nights?nights*nightlyRate+cleaningFee:0;
- nightsEl.textContent=nights;
- totalEl.textContent=`$${total.toLocaleString()}`;
+
+
+  <script>
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+    const gameWrap = document.querySelector(".game-wrap");
+
+    const overlay = document.getElementById("overlay");
+    const overlayBox = document.querySelector(".overlay-box");
+    const overlayText = document.getElementById("overlayText");
+    const overlayButtons = document.getElementById("overlayButtons");
+    const overlayContinue = document.getElementById("overlayContinue");
+    const endBanner = document.getElementById("endBanner");
+    const inventoryButton = document.getElementById("inventoryButton");
+    const useCloverButton = document.getElementById("useCloverButton");
+
+    let gameStarted = false;
+    let gameOver = false;
+    let gamePaused = true;
+    let gameWon = false;
+    let frame = 0;
+    let score = 0;
+    let lives = 3;
+    let awardedLifeThreshold = 0;
+    let hitFlashTimer = 0;
+    let bonusFlashTimer = 0;
+    let bonusFlashText = "";
+    let speedModeActivated = false;
+
+    let checkpoint18000Shown = false;
+    let checkpoint10000Shown = false;
+    let checkpoint22000Shown = false;
+    let freedomSequenceActive = false;
+    let heartsCelebrationActive = false;
+    let finalOverlayShown = false;
+    let exitingMortality = false;
+    let mortalityChoiceTimeout = null;
+    let mortalityChoiceQueued = false;
+    let heartExplosionCount = 0;
+    const MAX_HEART_EXPLOSIONS = 3;
+
+    let cowbellModeActive = false;
+    let canvasFlashPhase = 0;
+
+    let mooPulseActive = false;
+    let mooPulseTimer = 0;
+    let mooCooldownTimer = 0;
+    let lastTapTime = 0;
+    let mooFlashTimer = 0;
+
+    let activeDialogue = null;
+    let dialogueTimeout = null;
+    let overlayTapHandler = null;
+    let introDialoguePlayed = false;
+
+    let cheatCodeBuffer = "";
+    let mooMooSkipUsed = false;
+
+    let cloverUnlocked = false;
+    let cloverInventoryOpen = false;
+    let cloverBoostTimer = 0;
+    let cloverSpeechText = "";
+    let cloverSpeechTypedLength = 0;
+    let cloverSpeechTypeFrame = 0;
+    let cloverSpeechTimer = 0;
+    const CLOVER_SPEECH_FRAMES = 300; // about 5 seconds at 60fps
+    const CLOVER_BOOST_FRAMES = 360; // about 6 seconds at 60fps
+    const CLOVER_SPEED_MULTIPLIER = 1.2;
+    const cloverMessages = [
+      "It is okay to mess up.",
+      "Take care of yourself. LOVE yourself. Give yourself brilliant, intelligent light Clover.",
+      "They know not what they do.",
+      "Listen to your heart.",
+      "Learn all you can, smartypants.",
+      "Be yourself. You're the one I like most.",
+      "I like the way you moo.",
+      "I treasure your friendship.",
+      "You have an amazing voice.  Moog synthesizer",
+      "I like your mind. And your moo00000",
+      "If you listen carefully, you can hear my plant heartbeat.",
+      "Love is the key. I have faith in you",
+      "Everyone could use a friend.  That's why I like you",
+      "Sometimes I watch you when you walk and like the way you hoof around.",
+      "Shhhh. The other clovers may get jealous!",
+      "I like to watch you chomp those other blades of grass. You wouldn't ever eat me would you?",
+      "I am lucky to have you around, mooing at the wind..",
+      "Can I always be in your pocket? It is warm in here.. ooh thats just the milk",
+      "Do you ever miss the farm life? Do you miss the factory?",
+      "I could spend lifetimes in your thoughts, listening to you moo",
+      "I look at the clouds and think of your cute little horns.",
+      "Listen do you hear that? That's the sound of thoughts passing us by, wait a second, or is that just the Mississippi?",
+      "I have to admit you're charming.",
+      "You are SO lucky to have me as a friend!",
+      "I am honored you carry me around.",
+      "Can I hear your heartbeat? Oh. It really is just MOO MOO MOO MOO.",
+      "I love to learn, and I learn so much from you.",
+      "They say I am a rare mutation, just like you.",
+      "You have such a unique timbre, the soft sweet way you moo.",
+      "Let's have some fun shall we! Tag you're it.",
+      "I love the sweet tender way you moo at the moon.",
+      "So cows are good at fractions?",
+      "Yes I have two clover brothers and sisters but we have a tense relationship.",
+      "Cows really used to eat clovers?",
+      "Sometimes I worry about you, but I trust you’ll find your way.",
+      "You don’t have to pretend with me.  I am here to moo with you.",
+      "I notice when you’re not okay, even if you don’t moo your little heart out.",
+      "You’ve been through things you don’t moo about, haven’t you?",
+      "I’m still here, especially when the going gets rough..",
+      "You don’t have to carry everything by yourself. Let me moo a little with you",
+      "I like who you are, even when you don’t see it.",
+      "You’re allowed to change. I’ll learn you again.",
+      "Even when you feel lost, you’re not gone... I'm right here with you",
+      "Not all who wander are lost... but I sure am, and I'm glad I wandered into you!"
+    ];
+
+    let difficultyMultiplier = 1.0;
+    let selectedDifficulty = "normal";
+
+    const BASE_WIDTH = 400;
+    const BASE_HEIGHT = 600;
+
+    const player = {
+      x: 180,
+      y: 500,
+      width: 72,
+      height: 72,
+      speed: 11,
+      invulnerableTimer: 0
+    };
+
+    let keys = {};
+    let fallingObjects = [];
+    let heartBursts = [];
+
+    let touchActive = false;
+    let touchTargetX = null;
+    let touchTargetY = null;
+
+    let playerFacingLeft = false;
+
+    const playerSpriteSheet = new Image();
+    playerSpriteSheet.src = "cow2-walk-v1.png";
+
+    const PLAYER_SPRITE_COLS = 5;
+    const PLAYER_SPRITE_ROWS = 5;
+    const PLAYER_TOTAL_FRAMES = 25;
+    const PLAYER_FRAME_DURATION = 6;
+    let playerAnimationFrame = 0;
+
+    const badImageFiles = ["falling1.png", "falling2.png", "falling3.png"];
+    const badImages = badImageFiles.map(file => {
+      const img = new Image();
+      img.src = file;
+      return img;
+    });
+
+    const butcherSpriteSheet = new Image();
+    butcherSpriteSheet.src = "butcher-walk.png";
+
+    const BUTCHER_SPRITE_COLS = 5;
+    const BUTCHER_SPRITE_ROWS = 5;
+    const BUTCHER_TOTAL_FRAMES = 25;
+    const BUTCHER_FRAME_DURATION = 6;
+
+    const stalkerButcherSpriteSheet = new Image();
+    stalkerButcherSpriteSheet.src = "Pitchfork Butcher-walk.png";
+
+    const STALKER_BUTCHER_SPRITE_COLS = 5;
+    const STALKER_BUTCHER_SPRITE_ROWS = 5;
+    const STALKER_BUTCHER_TOTAL_FRAMES = 25;
+    const STALKER_BUTCHER_FRAME_DURATION = 8;
+
+    const stalkerButcher = {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      speed: 0,
+      active: true,
+      hitCooldown: 0,
+      animationOffset: 0
+    };
+
+
+    const cowgirlIdleSpriteSheet = new Image();
+    cowgirlIdleSpriteSheet.src = "Crazed Cowgirl w. pitchfork_)-idle-v1.png";
+
+    const cowgirlAttackSpriteSheet = new Image();
+    cowgirlAttackSpriteSheet.src = "Crazed Cowgirl w. pitchfork_)-attack-v1.png";
+
+    const cowgirlJumpSpriteSheet = new Image();
+    cowgirlJumpSpriteSheet.src = "Crazed Cowgirl w. pitchfork_)-jump-v1.png";
+
+    const cowgirlRunSpriteSheet = new Image();
+    cowgirlRunSpriteSheet.src = "Crazed Cowgirl w. pitchfork_)-run-v1.png";
+
+    const cowgirlWalkSpriteSheet = new Image();
+    cowgirlWalkSpriteSheet.src = "Crazed Cowgirl w. pitchfork_)-walk-v1.png";
+
+    const COWGIRL_SPRITE_COLS = 5;
+    const COWGIRL_SPRITE_ROWS = 5;
+    const COWGIRL_TOTAL_FRAMES = 25;
+    const COWGIRL_IDLE_FRAME_DURATION = 4;
+    const COWGIRL_RUN_FRAME_DURATION = 5;
+    const COWGIRL_ATTACK_FRAME_DURATION = 4;
+    const COWGIRL_JUMP_FRAME_DURATION = 4;
+    const COWGIRL_WALK_FRAME_DURATION = 7;
+
+    const COWGIRL_MOVE_INTERVAL = 200;   // 10 seconds at about 60fps
+    const COWGIRL_SWIPE_DURATION = 26;
+    const COWGIRL_RESPAWN_TIME = 200;    // 10 seconds
+    const COWGIRL_TRIGGER_SCORE = 4400;
+
+    const cowgirl = {
+      unlocked: false,
+      visible: false,
+      state: "hidden", // hidden, entering, idle, running, fleeing // hidden, idle, running, swiping, fleeing
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      speed: 0,
+      facingLeft: false,
+      currentCorner: 0,
+      targetCorner: 1,
+      moveTimer: COWGIRL_MOVE_INTERVAL,
+      swipeTimer: 0,
+      respawnTimer: 0,
+      damageCooldown: 0,
+      fleeVX: 0,
+      fleeVY: 0,
+      animationOffset: 0
+    };
+
+    const bonus200Img = new Image();
+    bonus200Img.src = "falling4.png";
+
+    const bonus1000Img = new Image();
+    bonus1000Img.src = "falling5.png";
+
+    const pastureImage = new Image();
+    pastureImage.src = "pasture.png";
+
+    const purpleCowIdleSpriteSheet = new Image();
+    purpleCowIdleSpriteSheet.src = "purple cow _3-idle.png";
+
+    const purpleCowWalkSpriteSheet = new Image();
+    purpleCowWalkSpriteSheet.src = "purple cow _3-walk.png";
+
+    const PURPLE_COW_SPRITE_COLS = 5;
+    const PURPLE_COW_SPRITE_ROWS = 5;
+    const PURPLE_COW_TOTAL_FRAMES = 25;
+    const PURPLE_COW_IDLE_FRAME_DURATION = 7;
+    const PURPLE_COW_WALK_FRAME_DURATION = 6;
+
+    const purpleCow = {
+      active: false,
+      triggered: false,
+      entering: false,
+      walkingAway: false,
+      x: 0,
+      y: 0,
+      targetY: 0,
+      width: 0,
+      height: 0,
+      facingLeft: true,
+      animationOffset: 0
+    };
+
+    const MOO_COOLDOWN_FRAMES = 420; // 5 seconds at about 60fps
+    const MOO_BOSS_COOLDOWN_FRAMES = 0;
+    const MOO_PULSE_RADIUS = 140;
+
+    let greenerPasturesActive = false;
+    let greenerPasturesFade = 0;
+    let greenerPasturesTextShown = false;
+
+    let bossFightActive = false;
+    let bossDefeatedPastureActive = false;
+    let bossPoofs = [];
+    let bossGrass = [];
+    let bossPitchforks = [];
+    let bossGrassSpawnTimer = 0;
+    let bossPatternTimer = 0;
+    let bossPatternPhase = "corner"; // corner, throw, fleeing
+    let bossTargetCorner = 0;
+
+    const pitchforkImage = new Image();
+    pitchforkImage.src = "pitchfork.png";
+
+    const cowgirlBoss = {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      speed: 0,
+      health: 4,
+      maxHealth: 4,
+      state: "hidden",
+      facingLeft: false,
+      attackTimer: 0,
+      attackCooldown: 0,
+      damageCooldown: 0,
+      flashTimer: 0,
+      throwCooldown: 0,
+      animationOffset: 0
+    };
+
+    const music = new Audio("music.mp3");
+    music.loop = true;
+    music.volume = 0.5;
+    music.preload = "auto";
+
+    const cowgirlMusic = new Audio("cowgirl.mp3");
+    cowgirlMusic.loop = true;
+    cowgirlMusic.volume = 0.55;
+    cowgirlMusic.preload = "auto";
+
+    const hitSound = new Audio("hit.mp3");
+    hitSound.volume = 0.8;
+    hitSound.preload = "auto";
+
+    const bonusSound = new Audio("bonus.mp3");
+    bonusSound.volume = 1.0;
+    bonusSound.preload = "auto";
+
+    const mooSound = new Audio("moo.m4a");
+    mooSound.volume = 0.9;
+    mooSound.preload = "auto";
+
+    const cosmicCowMusic = new Audio("Cosmic Cow.mp3");
+    cosmicCowMusic.loop = true;
+    cosmicCowMusic.volume = 0.42;
+    cosmicCowMusic.preload = "auto";
+
+    const cloverMusic = new Audio("Clover Clash.mp3");
+    cloverMusic.loop = false;
+    cloverMusic.volume = 0.9;
+    cloverMusic.preload = "auto";
+
+    function stopCloverMusic() {
+      try {
+        cloverMusic.pause();
+        cloverMusic.currentTime = 0;
+      } catch (err) {}
+    }
+
+
+    let isMuted = false;
+    let soundsUnlocked = false;
+
+    let dialogueAudioContext = null;
+
+    function getDialogueAudioContext() {
+      if (!dialogueAudioContext) {
+        dialogueAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+
+      if (dialogueAudioContext.state === "suspended") {
+        dialogueAudioContext.resume().catch(() => {});
+      }
+
+      return dialogueAudioContext;
+    }
+
+    function playDialogueBlip(char) {
+      if (isMuted) return;
+      if (!char || char === " " || char === "\n" || char === "\t") return;
+
+      try {
+        const audioCtx = getDialogueAudioContext();
+        const now = audioCtx.currentTime;
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        // Tiny Undertale-style voice blip. No sound file needed, so it will not freeze.
+        osc.type = "square";
+        osc.frequency.setValueAtTime(520 + Math.random() * 120, now);
+
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(0.045, now + 0.004);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.04);
+      } catch (err) {}
+    }
+
+    function scaleX(value) {
+      return value * (canvas.width / BASE_WIDTH);
+    }
+
+    function scaleY(value) {
+      return value * (canvas.height / BASE_HEIGHT);
+    }
+
+    function resizeCanvasToDisplaySize() {
+      const displayWidth = Math.round(canvas.clientWidth);
+      const displayHeight = Math.round(canvas.clientHeight);
+
+      if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+        const oldWidth = canvas.width || BASE_WIDTH;
+        const oldHeight = canvas.height || BASE_HEIGHT;
+
+        const playerXRatio = player.x / oldWidth;
+        const playerYRatio = player.y / oldHeight;
+
+        canvas.width = displayWidth;
+        canvas.height = displayHeight;
+
+        player.x = playerXRatio * canvas.width;
+        player.y = playerYRatio * canvas.height;
+      }
+    }
+
+    function drawSpriteFrame(img, frameIndex, cols, rows, dx, dy, dWidth, dHeight) {
+      if (!img.complete || img.naturalWidth === 0) return;
+
+      const frameWidth = img.width / cols;
+      const frameHeight = img.height / rows;
+
+      const col = frameIndex % cols;
+      const row = Math.floor(frameIndex / cols);
+
+      const sx = col * frameWidth;
+      const sy = row * frameHeight;
+
+      ctx.drawImage(
+        img,
+        sx, sy, frameWidth, frameHeight,
+        dx, dy, dWidth, dHeight
+      );
+    }
+
+    function getHitbox(obj, insetPercent = 0.18) {
+      const insetX = obj.width * insetPercent;
+      const insetY = obj.height * insetPercent;
+
+      return {
+        x: obj.x + insetX,
+        y: obj.y + insetY,
+        width: obj.width - insetX * 2,
+        height: obj.height - insetY * 2
+      };
+    }
+
+    function getHomingStrength() {
+      const base = score >= 10000 ? 0.015 : 0.010;
+      const extra = score >= 10000 ? 0.015 : 0.012;
+      return base + Math.min(score / 60000, extra);
+    }
+
+    function getStalkerButcherSpeed() {
+      return Math.max(scaleX(0.38), 0.22) * difficultyMultiplier*difficultyMultiplier;
+    }
+
+    function resetStalkerButcherPosition() {
+      stalkerButcher.width = scaleX(70 * 1.2);
+      stalkerButcher.height = scaleY(70 * 1.2);
+      stalkerButcher.speed = getStalkerButcherSpeed();
+      stalkerButcher.x = scaleX(12);
+      stalkerButcher.y = scaleY(16);
+      stalkerButcher.active = true;
+      stalkerButcher.hitCooldown = 0;
+      stalkerButcher.animationOffset = Math.floor(Math.random() * 1000);
+    }
+
+
+    function getCowgirlCorners() {
+      const padX = scaleX(18);
+      const padY = scaleY(18);
+      const usableWidth = canvas.width - cowgirl.width - padX;
+      const usableHeight = canvas.height - cowgirl.height - padY;
+
+      return [
+        { x: padX, y: padY },
+        { x: usableWidth, y: padY },
+        { x: usableWidth, y: usableHeight },
+        { x: padX, y: usableHeight }
+      ];
+    }
+
+    function placeCowgirlAtCorner(cornerIndex) {
+      const corners = getCowgirlCorners();
+      const corner = corners[cornerIndex];
+      cowgirl.x = corner.x;
+      cowgirl.y = corner.y;
+      cowgirl.currentCorner = cornerIndex;
+      cowgirl.facingLeft = cornerIndex === 1 || cornerIndex === 2;
+    }
+
+    function spawnCowgirl() {
+      cowgirl.unlocked = true;
+      cowgirl.visible = true;
+      cowgirl.width = scaleX(76 * 1.2);
+      cowgirl.height = scaleY(76 * 1.2);
+      cowgirl.speed = Math.max(scaleX(3.4), 2.2);
+      cowgirl.moveTimer = COWGIRL_MOVE_INTERVAL;
+      cowgirl.swipeTimer = 0;
+      cowgirl.respawnTimer = 0;
+      cowgirl.damageCooldown = 0;
+      cowgirl.animationOffset = Math.floor(Math.random() * 1000);
+
+      const entryCorner = Math.floor(Math.random() * 4);
+      cowgirl.currentCorner = entryCorner;
+      cowgirl.targetCorner = entryCorner;
+
+      const corners = getCowgirlCorners();
+      const target = corners[entryCorner];
+      const offY = scaleY(140);
+
+      // She now drops in from just outside the chosen corner instead of popping into place.
+      cowgirl.x = target.x;
+      cowgirl.y = entryCorner === 0 || entryCorner === 1
+        ? -cowgirl.height - offY
+        : canvas.height + offY;
+
+      cowgirl.state = "entering";
+      cowgirl.facingLeft = entryCorner === 1 || entryCorner === 2;
+    }
+
+    function awardCowgirlPointsAndFlee() {
+      if (!cowgirl.visible || cowgirl.state === "fleeing") return;
+
+      score += 400;
+      maybeAwardExtraLife();
+      bonusFlashTimer = 36;
+      bonusFlashText = "+400";
+      playSound(bonusSound);
+      sendCowgirlOffscreen();
+    }
+
+    function sendCowgirlOffscreen() {
+      if (!cowgirl.visible) return;
+
+      cowgirl.state = "fleeing";
+      cowgirl.swipeTimer = 0;
+      cowgirl.moveTimer = 0;
+
+      const centerX = cowgirl.x + cowgirl.width / 2;
+      const centerY = cowgirl.y + cowgirl.height / 2;
+
+      const dirX = centerX < canvas.width / 2 ? -1 : 1;
+      const dirY = centerY < canvas.height / 2 ? -1 : 1;
+
+      cowgirl.fleeVX = dirX * Math.max(scaleX(6.5), 4.2);
+      cowgirl.fleeVY = dirY * Math.max(scaleY(5.8), 3.8);
+      cowgirl.facingLeft = cowgirl.fleeVX < 0;
+    }
+
+    function hideCowgirlAndStartRespawn() {
+      cowgirl.visible = false;
+      cowgirl.state = "hidden";
+      cowgirl.respawnTimer = COWGIRL_RESPAWN_TIME;
+      cowgirl.swipeTimer = 0;
+      cowgirl.moveTimer = 0;
+      cowgirl.damageCooldown = 0;
+    }
+
+    function startCowgirlRunToNextCorner() {
+      cowgirl.state = "running";
+      cowgirl.targetCorner = (cowgirl.currentCorner + 1) % 4;
+    }
+
+    function settleCowgirlInCorner() {
+      cowgirl.state = "idle";
+      cowgirl.moveTimer = COWGIRL_MOVE_INTERVAL;
+      cowgirl.facingLeft = cowgirl.currentCorner === 1 || cowgirl.currentCorner === 2;
+    }
+
+    function getCowgirlTouchHitbox() {
+      return getHitbox(cowgirl, 0.18);
+    }
+
+    function isCowgirlNearPlayer() {
+      if (!cowgirl.visible || cowgirl.state === "fleeing") return false;
+
+      const cowgirlCenterX = cowgirl.x + cowgirl.width / 2;
+      const cowgirlCenterY = cowgirl.y + cowgirl.height / 2;
+      const playerCenterX = player.x + player.width / 2;
+      const playerCenterY = player.y + player.height / 2;
+      const distance = Math.hypot(playerCenterX - cowgirlCenterX, playerCenterY - cowgirlCenterY);
+
+      return distance <= scaleX(135);
+    }
+
+    function damagePlayerFromCowgirl() {
+      if (player.invulnerableTimer > 0 || cowgirl.damageCooldown > 0) return;
+
+      lives--;
+      player.invulnerableTimer = 60;
+      cowgirl.damageCooldown = 45;
+      hitFlashTimer = 20;
+      playSound(hitSound);
+
+      if (lives <= 0) {
+        gameOver = true;
+        gamePaused = true;
+        music.pause();
+
+        showOverlay(
+          `You became a steak.\n\nFinal Score: ${score}`,
+          [
+            {
+              label: "Again",
+              onClick: () => {
+                restartGame();
+              }
+            }
+          ],
+          {
+            speed: 28,
+            requireContinueBeforeButtons: true
+          }
+        );
+      }
+    }
+
+    function updateCowgirl() {
+      cowgirl.width = scaleX(76 * 1.2);
+      cowgirl.height = scaleY(76 * 1.2);
+      cowgirl.speed = Math.max(scaleX(3.4), 2.2);
+
+      if (!cowgirl.unlocked && score >= COWGIRL_TRIGGER_SCORE) {
+        spawnCowgirl();
+      }
+
+      if (!cowgirl.unlocked) return;
+
+      if (!cowgirl.visible) {
+        if (cowgirl.respawnTimer > 0) {
+          cowgirl.respawnTimer--;
+        } else {
+          spawnCowgirl();
+        }
+        return;
+      }
+
+      if (cowgirl.damageCooldown > 0) {
+        cowgirl.damageCooldown--;
+      }
+
+      if (cowgirl.state === "idle") {
+        cowgirl.moveTimer--;
+
+        if (cowgirl.moveTimer <= 0) {
+          startCowgirlRunToNextCorner();
+        }
+      } else if (cowgirl.state === "entering" || cowgirl.state === "running") {
+        const corners = getCowgirlCorners();
+        const target = corners[cowgirl.targetCorner];
+
+        const dx = target.x - cowgirl.x;
+        const dy = target.y - cowgirl.y;
+        const distance = Math.hypot(dx, dy) || 1;
+
+        cowgirl.facingLeft = dx < 0 || cowgirl.currentCorner === 1 || cowgirl.currentCorner === 2;
+
+        if (distance <= cowgirl.speed + 1) {
+          cowgirl.x = target.x;
+          cowgirl.y = target.y;
+          cowgirl.currentCorner = cowgirl.targetCorner;
+          settleCowgirlInCorner();
+        } else {
+          cowgirl.x += (dx / distance) * cowgirl.speed;
+          cowgirl.y += (dy / distance) * cowgirl.speed;
+        }
+      } else if (cowgirl.state === "fleeing") {
+        cowgirl.x += cowgirl.fleeVX;
+        cowgirl.y += cowgirl.fleeVY;
+
+        if (
+          cowgirl.x + cowgirl.width < -scaleX(80) ||
+          cowgirl.x > canvas.width + scaleX(80) ||
+          cowgirl.y + cowgirl.height < -scaleY(80) ||
+          cowgirl.y > canvas.height + scaleY(80)
+        ) {
+          hideCowgirlAndStartRespawn();
+        }
+      }
+
+      if (!freedomSequenceActive && !heartsCelebrationActive && cowgirl.visible) {
+        const playerHitbox = getHitbox(player, 0.12);
+        const cowgirlHitbox = getCowgirlTouchHitbox();
+
+        if (rectsIntersect(playerHitbox, cowgirlHitbox)) {
+          if (cowgirl.state === "running" || cowgirl.state === "entering") {
+            damagePlayerFromCowgirl();
+          } else if (cowgirl.state === "idle") {
+            awardCowgirlPointsAndFlee();
+          }
+        }
+      }
+    }
+
+    function unlockSounds() {
+      if (soundsUnlocked) return;
+      soundsUnlocked = true;
+
+      const sounds = [hitSound, bonusSound, mooSound, cowgirlMusic, cosmicCowMusic, cloverMusic];
+
+      sounds.forEach((sound) => {
+        try {
+          sound.load();
+          const playAttempt = sound.play();
+
+          if (playAttempt && typeof playAttempt.then === "function") {
+            playAttempt
+              .then(() => {
+                sound.pause();
+                sound.currentTime = 0;
+              })
+              .catch(() => {});
+          } else {
+            sound.pause();
+            sound.currentTime = 0;
+          }
+        } catch (err) {}
+      });
+    }
+
+    function getMooPulseRadius() {
+      return scaleX(MOO_PULSE_RADIUS);
+    }
+
+    function destroyHostileObjectsInMooPulse() {
+      const pulseCenterX = player.x + player.width / 2;
+      const pulseCenterY = player.y + player.height / 2;
+      const pulseRadius = getMooPulseRadius();
+      let destroyedCount = 0;
+
+      for (let i = fallingObjects.length - 1; i >= 0; i--) {
+        const obj = fallingObjects[i];
+        const isHostile = obj.type === "bad" || obj.type === "butcher";
+        if (!isHostile) continue;
+
+        const objCenterX = obj.x + obj.width / 2;
+        const objCenterY = obj.y + obj.height / 2;
+        const distance = Math.hypot(objCenterX - pulseCenterX, objCenterY - pulseCenterY);
+
+        if (distance <= pulseRadius + obj.width / 2) {
+          fallingObjects.splice(i, 1);
+          destroyedCount++;
+        }
+      }
+
+      if (destroyedCount > 0) {
+        const mooPoints = destroyedCount * destroyedCount * 100;
+        score += mooPoints;
+        maybeShowSpeedModeBanner();
+        maybeAwardExtraLife();
+        bonusFlashTimer = 44;
+        bonusFlashText = `MOO! +${mooPoints}`;
+        playSound(bonusSound);
+      }
+    }
+
+    function activateMooPulse() {
+      if (!gameStarted || gamePaused || gameOver) return;
+      if (freedomSequenceActive || heartsCelebrationActive) return;
+      if (mooCooldownTimer > 0 && !bossFightActive) return;
+
+      unlockSounds();
+
+      mooPulseActive = true;
+      mooPulseTimer = 120;
+      mooCooldownTimer = bossFightActive ? MOO_BOSS_COOLDOWN_FRAMES : MOO_COOLDOWN_FRAMES;
+      mooFlashTimer = 18;
+      bonusFlashTimer = 40;
+      bonusFlashText = "MOO!";
+
+      if (bossFightActive) {
+        hitCowgirlBossWithMoo();
+      } else {
+        destroyHostileObjectsInMooPulse();
+      }
+
+      playSound(mooSound);
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+    }
+
+    function renderDialogueText(text, typedLength, done = false) {
+      const visible = escapeHtml(text.slice(0, typedLength)).replace(/\n/g, "<br>");
+      const typedText = visible + (done ? "" : `<span class="dialogue-cursor">|</span>`);
+
+      if (activeDialogue && activeDialogue.imageSrc) {
+        overlayBox.classList.add("picture-overlay-box");
+        overlayText.innerHTML = `
+          <img class="dialogue-picture" src="${activeDialogue.imageSrc}" alt="Purple cow close-up">
+          <div class="picture-dialogue-box">${typedText}</div>
+        `;
+      } else {
+        overlayBox.classList.remove("picture-overlay-box");
+        overlayText.innerHTML = typedText;
+      }
+    }
+
+    function clearDialogueHandlers() {
+      if (dialogueTimeout) {
+        clearTimeout(dialogueTimeout);
+        dialogueTimeout = null;
+      }
+
+      if (overlayTapHandler) {
+        overlay.removeEventListener("click", overlayTapHandler);
+        overlayTapHandler = null;
+      }
+
+      overlayBox.classList.remove("picture-overlay-box");
+      activeDialogue = null;
+    }
+
+    function finalizeDialogue() {
+      if (!activeDialogue) return;
+
+      activeDialogue.index = activeDialogue.text.length;
+      renderDialogueText(activeDialogue.text, activeDialogue.index, true);
+
+      if (activeDialogue.requireContinueBeforeButtons && activeDialogue.buttons.length > 0) {
+        overlayContinue.classList.remove("hidden");
+
+        overlayTapHandler = (e) => {
+          if (e.target.closest("button")) return;
+          overlay.removeEventListener("click", overlayTapHandler);
+          overlayTapHandler = null;
+          overlayContinue.classList.add("hidden");
+          showDialogueButtons(activeDialogue.buttons);
+        };
+
+        overlay.addEventListener("click", overlayTapHandler);
+      } else {
+        showDialogueButtons(activeDialogue.buttons);
+      }
+    }
+
+    function typeNextCharacter() {
+      if (!activeDialogue) return;
+
+      if (activeDialogue.index >= activeDialogue.text.length) {
+        finalizeDialogue();
+        return;
+      }
+
+      activeDialogue.index++;
+
+      const currentChar = activeDialogue.text[activeDialogue.index - 1];
+      playDialogueBlip(currentChar);
+      renderDialogueText(activeDialogue.text, activeDialogue.index, false);
+
+      let delay = activeDialogue.speed;
+
+      if (currentChar === "." || currentChar === "?" || currentChar === "!") {
+        delay += 120;
+      } else if (currentChar === ",") {
+        delay += 70;
+      } else if (currentChar === "\n") {
+        delay += 120;
+      } else if (currentChar === " ") {
+        delay -= 5;
+      }
+
+      dialogueTimeout = setTimeout(typeNextCharacter, Math.max(15, delay));
+    }
+
+    function showDialogueButtons(buttons = []) {
+      overlayButtons.innerHTML = "";
+
+      buttons.forEach((btn) => {
+        const button = document.createElement("button");
+        button.className = `overlay-btn${btn.secondary ? " secondary" : ""}`;
+        button.textContent = btn.label;
+        button.addEventListener("click", btn.onClick);
+        overlayButtons.appendChild(button);
+      });
+    }
+
+    function showOverlay(text, buttons = [], options = {}) {
+      clearDialogueHandlers();
+
+      gamePaused = true;
+      overlay.classList.remove("hidden");
+      overlayButtons.innerHTML = "";
+      overlayContinue.classList.add("hidden");
+
+      const speed = options.speed ?? 28;
+      const requireContinueBeforeButtons = options.requireContinueBeforeButtons ?? false;
+
+      activeDialogue = {
+        text,
+        buttons,
+        index: 0,
+        speed,
+        requireContinueBeforeButtons,
+        imageSrc: options.imageSrc || null
+      };
+
+      renderDialogueText(text, 0, false);
+
+      overlayTapHandler = (e) => {
+        if (e.target.closest("button")) return;
+        if (!activeDialogue) return;
+
+        if (activeDialogue.index < activeDialogue.text.length) {
+          finalizeDialogue();
+        }
+      };
+
+      overlay.addEventListener("click", overlayTapHandler);
+      typeNextCharacter();
+    }
+
+    function hideOverlay() {
+      clearDialogueHandlers();
+      overlay.classList.add("hidden");
+      overlayContinue.classList.add("hidden");
+
+      if (!gameOver && !gameWon && !exitingMortality) {
+        gamePaused = false;
+      }
+    }
+
+    function showCowDialogueOverlay() {
+      showOverlay(
+        `Moo.\n\nMoo mooo mooo moo.\n\nUnderstood?`,
+        [
+          {
+            label: "Moo.",
+            onClick: async () => {
+              gameStarted = true;
+              hideOverlay();
+
+              if (!isMuted && !gameOver) {
+                try {
+                  music.currentTime = 0;
+                  await music.play();
+                } catch (err) {
+                  console.log("Music could not start yet:", err);
+                }
+              }
+            }
+          }
+        ],
+        {
+          speed: 34,
+          requireContinueBeforeButtons: true
+        }
+      );
+    }
+
+    function showStartOverlay() {
+      clearDialogueHandlers();
+      gamePaused = true;
+      overlay.classList.remove("hidden");
+      overlayContinue.classList.add("hidden");
+      overlayButtons.innerHTML = "";
+      overlayBox.classList.remove("picture-overlay-box");
+
+      overlayText.innerHTML = `
+        <div class="difficulty-menu">
+          <div class="difficulty-title">Choose Difficulty</div>
+          <div class="difficulty-subtitle">
+            WASD to move<br>
+            SPACE or double-tap to MOOOOOOO
+          </div>
+          <div class="difficulty-options">
+            <button class="difficulty-card" type="button" data-difficulty="easy">New</button>
+            <button class="difficulty-card" type="button" data-difficulty="normal">Experienced</button>
+            <button class="difficulty-card cowgirl" type="button" data-difficulty="cowgirl">Cowgirl</button>
+          </div>
+        </div>
+      `;
+
+      overlayText.querySelectorAll(".difficulty-card").forEach((button) => {
+        button.addEventListener("click", () => {
+          const difficulty = button.dataset.difficulty;
+
+          if (difficulty === "easy") {
+            startGameWithDifficulty("easy", 0.7);
+          } else if (difficulty === "cowgirl") {
+            startGameWithDifficulty("cowgirl", 1.3);
+          } else {
+            startGameWithDifficulty("normal", 1.0);
+          }
+        });
+      });
+    }
+
+    function startGameWithDifficulty(name, multiplier) {
+      selectedDifficulty = name;
+      difficultyMultiplier = multiplier;
+
+      unlockSounds();
+
+      if (!introDialoguePlayed) {
+        introDialoguePlayed = true;
+        playDialogueSound();
+      }
+
+      showCowDialogueOverlay();
+    }
+
+    function showCheckpoint18000() {
+      if (checkpoint18000Shown) return;
+      checkpoint18000Shown = true;
+
+      showOverlay(
+        `UH OH MAD COW DISEASE\n\nUH OH SOMEONE CALLED FOR MORE COWBELL`,
+        [
+          {
+            label: "Mooooo",
+            onClick: () => {
+              cowbellModeActive = true;
+              bonusFlashTimer = 90;
+              bonusFlashText = "UH OH MAD COW DISEASE UH OH SOMEONE CALLED FOR MORE COWBELL";
+              hideOverlay();
+            }
+          }
+        ],
+        {
+          speed: 26,
+          requireContinueBeforeButtons: true
+        }
+      );
+    }
+
+    function showCheckpoint10000() {
+      if (checkpoint10000Shown) return;
+      checkpoint10000Shown = true;
+
+      showOverlay(
+        `The people want grass fed beef, and your stomachs are full of grass.\n\n Do you go on ?`,
+        [
+          {
+            label: "Mooooo",
+            onClick: () => {
+              hideOverlay();
+            }
+          },
+          {
+            label: "Noooo",
+            secondary: true,
+            onClick: () => {
+              gameOver = true;
+              gamePaused = true;
+              music.pause();
+
+              showOverlay(
+                `Clover lowers her head.\n\nShe will not go on.`,
+                [
+                  {
+                    label: "Again",
+                    onClick: () => {
+                      restartGame();
+                    }
+                  }
+                ],
+                {
+                  speed: 28,
+                  requireContinueBeforeButtons: true
+                }
+              );
+            }
+          }
+        ],
+        {
+          speed: 28,
+          requireContinueBeforeButtons: true
+        }
+      );
+    }
+
+    function showCheckpoint22000() {
+      if (checkpoint22000Shown) return;
+      checkpoint22000Shown = true;
+      gameWon = true;
+      gamePaused = true;
+      music.pause();
+
+      showOverlay(
+        `Whew.
+
+That was close.
+
+Will there ever be...greener pastures?`,
+        [
+          {
+            label: "Mooooo",
+            onClick: () => {
+              startGreenerPasturesSequence();
+            }
+          }
+        ],
+        {
+          speed: 30,
+          requireContinueBeforeButtons: true
+        }
+      );
+    }
+
+    function startGreenerPasturesSequence() {
+      clearDialogueHandlers();
+      overlay.classList.add("hidden");
+      overlayContinue.classList.add("hidden");
+      overlayButtons.innerHTML = "";
+
+      greenerPasturesActive = true;
+      greenerPasturesFade = 0;
+      greenerPasturesTextShown = false;
+      bossFightActive = false;
+      bossDefeatedPastureActive = false;
+      bossPoofs = [];
+      gamePaused = false;
+
+      fallingObjects = [];
+      cowgirl.visible = false;
+      cowgirl.unlocked = true;
+      stalkerButcher.active = false;
+
+      player.invulnerableTimer = 999999;
+      player.width = scaleX(72 * 1.5);
+      player.height = scaleY(72 * 1.5);
+      player.x = scaleX(40);
+      player.y = canvas.height - player.height - scaleY(32);
+      playerFacingLeft = false;
+    }
+
+    function updateGreenerPasturesSequence() {
+      frame++;
+
+      if (greenerPasturesFade < 1) {
+        greenerPasturesFade = Math.min(1, greenerPasturesFade + 0.012);
+      }
+
+      const paceSpeed = scaleX(1.4);
+      player.x += playerFacingLeft ? -paceSpeed : paceSpeed;
+
+      if (player.x < scaleX(28)) {
+        playerFacingLeft = false;
+      }
+      if (player.x + player.width > canvas.width - scaleX(28)) {
+        playerFacingLeft = true;
+      }
+
+      playerAnimationFrame = Math.floor(frame / PLAYER_FRAME_DURATION) % PLAYER_TOTAL_FRAMES;
+
+      if (greenerPasturesFade >= 1 && !greenerPasturesTextShown) {
+        greenerPasturesTextShown = true;
+        gamePaused = true;
+
+        showOverlay(
+          `What is this place?...`,
+          [
+            {
+              label: "Continue",
+              onClick: () => {
+                showPastureSuspiciousMoo();
+              }
+            }
+          ],
+          { speed: 30, requireContinueBeforeButtons: true }
+        );
+      }
+    }
+
+    function showPastureSuspiciousMoo() {
+      playSound(mooSound);
+
+      showOverlay(
+        `You moo suspiciously....
+
+Is this free range?`,
+        [
+          {
+            label: "Continue",
+            onClick: () => {
+              showCowgirlBossIntro();
+            }
+          }
+        ],
+        { speed: 30, requireContinueBeforeButtons: true }
+      );
+    }
+
+    function triggerBossAngerEffect() {
+      gameWrap.classList.remove("boss-shake");
+      overlay.classList.remove("boss-red-flash");
+
+      // Force the browser to restart the animations even if they just played.
+      void gameWrap.offsetWidth;
+
+      gameWrap.classList.add("boss-shake");
+      overlay.classList.add("boss-red-flash");
+
+      setTimeout(() => {
+        gameWrap.classList.remove("boss-shake");
+        overlay.classList.remove("boss-red-flash");
+      }, 650);
+    }
+
+    function showCowgirlBossIntro() {
+      music.pause();
+
+      if (!isMuted) {
+        try {
+          cowgirlMusic.currentTime = 0;
+          cowgirlMusic.play().catch(() => {});
+        } catch (err) {}
+      }
+
+      triggerBossAngerEffect();
+
+      showOverlay(
+        `NO MORE MOOING.
+
+STOP THAT $#&@ING SOUND.`,
+        [
+          {
+            label: "...",
+            onClick: () => {
+              try {
+                mooSound.pause();
+                mooSound.currentTime = 0;
+              } catch (err) {}
+
+              showCornbreadDialogue();
+            }
+          }
+        ],
+        { speed: 28, requireContinueBeforeButtons: true }
+      );
+    }
+
+    function showCornbreadDialogue() {
+      showOverlay(
+        `You leave me no choice.
+
+Cowtow... or I'll turn you into cornbread.`,
+        [
+          {
+            label: "MOOOO",
+            onClick: () => {
+              startCowgirlBossFight();
+            }
+          }
+        ],
+        { speed: 30, requireContinueBeforeButtons: true }
+      );
+    }
+
+    function startCowgirlBossFight() {
+      clearDialogueHandlers();
+      overlay.classList.add("hidden");
+      overlayContinue.classList.add("hidden");
+      overlayButtons.innerHTML = "";
+
+      greenerPasturesActive = false;
+      bossFightActive = true;
+      bossDefeatedPastureActive = false;
+      bossPoofs = [];
+      gamePaused = false;
+      gameWon = false;
+
+      lives = 4;
+      player.invulnerableTimer = 90;
+      mooPulseActive = false;
+      mooPulseTimer = 0;
+      mooCooldownTimer = 0;
+      hitFlashTimer = 0;
+      bonusFlashTimer = 80;
+      bonusFlashText = "CLOVER MOO MOO CLOVER MOO YOUR LITTLE HEART OUT";
+
+      player.x = canvas.width / 2 - player.width / 2;
+      player.y = canvas.height - player.height - scaleY(34);
+      playerFacingLeft = false;
+
+      music.pause();
+
+      cowgirlBoss.width = scaleX(112 * 1.5);
+      cowgirlBoss.height = scaleY(112 * 1.5);
+      cowgirlBoss.x = canvas.width / 2 - cowgirlBoss.width / 2;
+      cowgirlBoss.y = scaleY(34);
+      cowgirlBoss.speed = Math.max(scaleX(4.8), 3.2) * difficultyMultiplier;
+      cowgirlBoss.health = 60;
+      cowgirlBoss.maxHealth = 60;
+      cowgirlBoss.state = "running";
+      cowgirlBoss.facingLeft = false;
+      cowgirlBoss.attackTimer = 0;
+      cowgirlBoss.attackCooldown = 0;
+      cowgirlBoss.damageCooldown = 0;
+      cowgirlBoss.flashTimer = 0;
+      cowgirlBoss.throwCooldown = 55;
+      cowgirlBoss.animationOffset = Math.floor(Math.random() * 1000);
+
+      bossPatternTimer = 0;
+      bossPatternPhase = "corner";
+      bossTargetCorner = 0;
+
+      bossGrass = [];
+      bossPitchforks = [];
+      bossGrassSpawnTimer = 0;
+      spawnBossGrass();
+    }
+
+    function getBossCorners() {
+      const pad = scaleX(18);
+      const topPad = scaleY(54);
+      const bottomPad = scaleY(18);
+      return [
+        { x: pad, y: topPad },
+        { x: canvas.width - cowgirlBoss.width - pad, y: topPad },
+        { x: canvas.width - cowgirlBoss.width - pad, y: canvas.height - cowgirlBoss.height - bottomPad },
+        { x: pad, y: canvas.height - cowgirlBoss.height - bottomPad }
+      ];
+    }
+
+    function pickDifferentBossCorner() {
+      let next = Math.floor(Math.random() * 4);
+      if (next === bossTargetCorner) next = (next + 1 + Math.floor(Math.random() * 3)) % 4;
+      bossTargetCorner = next;
+      bossPatternTimer = 0;
+      bossPatternPhase = "corner";
+      cowgirlBoss.state = "running";
+    }
+
+    function spawnBossGrass() {
+      const size = scaleX(78);
+      const minY = canvas.height / 2;
+      const maxY = canvas.height - size;
+
+      bossGrass.push({
+        x: Math.random() * Math.max(1, canvas.width - size),
+        y: minY + Math.random() * Math.max(1, maxY - minY),
+        width: size,
+        height: size,
+        pulse: Math.floor(Math.random() * 1000)
+      });
+    }
+
+    function throwBossPitchfork() {
+      const bossCenterX = cowgirlBoss.x + cowgirlBoss.width / 2;
+      const bossCenterY = cowgirlBoss.y + cowgirlBoss.height / 2;
+      const playerCenterX = player.x + player.width / 2;
+      const playerCenterY = player.y + player.height / 2;
+
+      const dx = playerCenterX - bossCenterX;
+      const dy = playerCenterY - bossCenterY;
+      const distance = Math.hypot(dx, dy) || 1;
+      const speed = Math.max(scaleX(7.2), 4.6) * difficultyMultiplier;
+
+      bossPitchforks.push({
+        x: bossCenterX,
+        y: bossCenterY,
+        vx: (dx / distance) * speed,
+        vy: (dy / distance) * speed,
+        width: scaleX(92),
+        height: scaleY(24),
+
+        // This angle points the pitchfork toward Clover, whether she is
+        // left, right, above, below, or diagonal from the cowgirl.
+        angle: Math.atan2(dy, dx),
+
+        life: 150
+      });
+
+      bonusFlashTimer = 48;
+      bonusFlashText = "Bullseye";
+    }
+
+    function getRotatedPitchforkHitbox(pitchfork) {
+      // The drawn image is rotated toward Clover. This places the damage box
+      // out near the front/spiky side instead of the wooden handle side.
+      const contraction = 0.07;
+      const tipOffset = pitchfork.width * 0.50;
+
+      const hitboxWidth = pitchfork.width * 0.44 * (1 - contraction);
+      const hitboxHeight = pitchfork.height * 1.1 * (1 - contraction);
+
+      return {
+        x: pitchfork.x + Math.cos(pitchfork.angle) * tipOffset - hitboxWidth / 2,
+        y: pitchfork.y + Math.sin(pitchfork.angle) * tipOffset - hitboxHeight / 2,
+        width: hitboxWidth,
+        height: hitboxHeight
+      };
+    }
+
+    function damagePlayerInBossFight() {
+      if (player.invulnerableTimer > 0) return false;
+      lives--;
+      player.invulnerableTimer = 80;
+      hitFlashTimer = 22;
+      playSound(hitSound);
+
+      if (lives <= 0) {
+        gameOver = true;
+        gamePaused = true;
+        bossFightActive = false;
+        cowgirlMusic.pause();
+        showOverlay(
+          `Clover became cornbread.
+
+Final Score: ${score}`,
+          [
+            {
+              label: "Again",
+              onClick: () => { restartGame(); }
+            }
+          ],
+          { speed: 28, requireContinueBeforeButtons: true }
+        );
+        return true;
+      }
+      return false;
+    }
+
+    function updateBossPlayerControls() {
+      let isMoving = false;
+      player.width = scaleX(72 * 1.5);
+      player.height = scaleY(72 * 1.5);
+      player.speed = Math.max(scaleX(11), 4) * getPlayerSpeedBoostMultiplier();
+
+      if (keys["ArrowLeft"] || keys["a"] || keys["A"]) {
+        player.x -= player.speed;
+        playerFacingLeft = true;
+        isMoving = true;
+      }
+      if (keys["ArrowRight"] || keys["d"] || keys["D"]) {
+        player.x += player.speed;
+        playerFacingLeft = false;
+        isMoving = true;
+      }
+      if (keys["ArrowUp"] || keys["w"] || keys["W"]) {
+        player.y -= player.speed;
+        isMoving = true;
+      }
+      if (keys["ArrowDown"] || keys["s"] || keys["S"]) {
+        player.y += player.speed;
+        isMoving = true;
+      }
+
+      if (touchActive && touchTargetX !== null && touchTargetY !== null) {
+        const dx = touchTargetX - player.x;
+        const dy = touchTargetY - player.y;
+
+        if (Math.abs(dx) > player.speed) {
+          player.x += Math.sign(dx) * player.speed;
+          playerFacingLeft = dx < 0;
+          isMoving = true;
+        } else if (Math.abs(dx) > 1) {
+          player.x = touchTargetX;
+          playerFacingLeft = dx < 0;
+          isMoving = true;
+        }
+
+        if (Math.abs(dy) > player.speed) {
+          player.y += Math.sign(dy) * player.speed;
+          isMoving = true;
+        } else if (Math.abs(dy) > 1) {
+          player.y = touchTargetY;
+          isMoving = true;
+        }
+      }
+
+      if (player.x < 0) player.x = 0;
+      if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+      const bossPlayerTopLimit = canvas.height / 2;
+      if (player.y < bossPlayerTopLimit) player.y = bossPlayerTopLimit;
+      if (player.y + player.height > canvas.height) player.y = canvas.height - player.height;
+
+      playerAnimationFrame = isMoving
+        ? Math.floor(frame / PLAYER_FRAME_DURATION) % PLAYER_TOTAL_FRAMES
+        : 0;
+    }
+
+    function updateBossFight() {
+      frame++;
+      if (cloverBoostTimer > 0) cloverBoostTimer--;
+      updateCloverSpeech();
+      updateBossPlayerControls();
+
+      if (player.invulnerableTimer > 0) player.invulnerableTimer--;
+      if (hitFlashTimer > 0) hitFlashTimer--;
+      if (bonusFlashTimer > 0) bonusFlashTimer--;
+      if (mooFlashTimer > 0) mooFlashTimer--;
+
+      if (mooPulseTimer > 0) {
+        mooPulseTimer--;
+      } else {
+        mooPulseActive = false;
+      }
+
+      if (mooCooldownTimer > 0) {
+        mooCooldownTimer--;
+      }
+
+      if (cowgirlBoss.damageCooldown > 0) cowgirlBoss.damageCooldown--;
+      if (cowgirlBoss.flashTimer > 0) cowgirlBoss.flashTimer--;
+      if (cowgirlBoss.throwCooldown > 0) cowgirlBoss.throwCooldown--;
+
+      bossGrassSpawnTimer++;
+      if (bossGrassSpawnTimer >= 60) {
+        bossGrassSpawnTimer = 0;
+        if (bossGrass.length < 2) {
+          spawnBossGrass();
+        }
+      }
+
+      const playerHitbox = getHitbox(player, 0.14);
+      const corners = getBossCorners();
+      const target = corners[bossTargetCorner];
+      const dx = target.x - cowgirlBoss.x;
+      const dy = target.y - cowgirlBoss.y;
+      const distance = Math.hypot(dx, dy) || 1;
+
+      bossPatternTimer++;
+      cowgirlBoss.facingLeft = dx < 0;
+
+      if (bossPatternPhase === "corner") {
+        cowgirlBoss.state = "running";
+        cowgirlBoss.x += (dx / distance) * cowgirlBoss.speed;
+        cowgirlBoss.y += (dy / distance) * cowgirlBoss.speed;
+
+        if (distance <= cowgirlBoss.speed + 2) {
+          cowgirlBoss.x = target.x;
+          cowgirlBoss.y = target.y;
+          bossPatternPhase = "throw";
+          bossPatternTimer = 0;
+          cowgirlBoss.throwCooldown = 20;
+        }
+      } else if (bossPatternPhase === "throw") {
+        cowgirlBoss.state = "attacking";
+        cowgirlBoss.facingLeft = (player.x + player.width / 2) < (cowgirlBoss.x + cowgirlBoss.width / 2);
+
+        if (cowgirlBoss.throwCooldown <= 0) {
+          throwBossPitchfork();
+          cowgirlBoss.throwCooldown = 55;
+        }
+
+        if (bossPatternTimer >= 95) {
+          pickDifferentBossCorner();
+        }
+      }
+
+      if (cowgirlBoss.x < 0) cowgirlBoss.x = 0;
+      if (cowgirlBoss.x + cowgirlBoss.width > canvas.width) cowgirlBoss.x = canvas.width - cowgirlBoss.width;
+      if (cowgirlBoss.y < 0) cowgirlBoss.y = 0;
+      if (cowgirlBoss.y + cowgirlBoss.height > canvas.height) cowgirlBoss.y = canvas.height - cowgirlBoss.height;
+
+      const bossHitbox = getHitbox(cowgirlBoss, 0.24);
+      if (rectsIntersect(playerHitbox, bossHitbox) && cowgirlBoss.damageCooldown <= 0) {
+        cowgirlBoss.damageCooldown = 45;
+        pickDifferentBossCorner();
+      }
+
+      for (let i = bossPitchforks.length - 1; i >= 0; i--) {
+        const pitchfork = bossPitchforks[i];
+        pitchfork.x += pitchfork.vx;
+        pitchfork.y += pitchfork.vy;
+        pitchfork.life--;
+
+        const pitchforkHitbox = getRotatedPitchforkHitbox(pitchfork);
+        if (rectsIntersect(playerHitbox, pitchforkHitbox)) {
+          bossPitchforks.splice(i, 1);
+          if (damagePlayerInBossFight()) return;
+          continue;
+        }
+
+        if (
+          pitchfork.life <= 0 ||
+          pitchfork.x < -pitchfork.width ||
+          pitchfork.x > canvas.width + pitchfork.width ||
+          pitchfork.y < -pitchfork.width ||
+          pitchfork.y > canvas.height + pitchfork.width
+        ) {
+          bossPitchforks.splice(i, 1);
+        }
+      }
+
+      for (let i = bossGrass.length - 1; i >= 0; i--) {
+        const grass = bossGrass[i];
+        if (rectsIntersect(playerHitbox, getHitbox(grass, 0.08))) {
+          score += 200;
+          maybeAwardExtraLife();
+          bonusFlashTimer = 28;
+          bonusFlashText = "+200 grass";
+          playSound(bonusSound);
+          bossGrass.splice(i, 1);
+        }
+      }
+    }
+
+    function hitCowgirlBossWithMoo() {
+  if (!bossFightActive || cowgirlBoss.health <= 0) return;
+
+  // centers
+  const pulseCenterX = player.x + player.width / 2;
+  const pulseCenterY = player.y + player.height / 2;
+
+  const bossCenterX = cowgirlBoss.x + cowgirlBoss.width / 2;
+  const bossCenterY = cowgirlBoss.y + cowgirlBoss.height / 2;
+
+  // distance check
+  const distance = Math.hypot(
+    bossCenterX - pulseCenterX,
+    bossCenterY - pulseCenterY
+  );
+
+  const pulseRadius = getMooPulseRadius();
+
+  // ❌ outside radius → do nothing
+  if (distance > pulseRadius + cowgirlBoss.width / 2) {
+    return;
+  }
+
+  // ✅ inside radius → hit
+  cowgirlBoss.health--;
+  cowgirlBoss.flashTimer = 12;
+
+  // knockback (away from player)
+  const pushDir = bossCenterX < pulseCenterX ? -1 : 1;
+  cowgirlBoss.x += pushDir * scaleX(22);
+
+  // keep her on screen
+  if (cowgirlBoss.x < 0) cowgirlBoss.x = 0;
+  if (cowgirlBoss.x + cowgirlBoss.width > canvas.width) {
+    cowgirlBoss.x = canvas.width - cowgirlBoss.width;
+  }
+
+  // defeat check
+  if (cowgirlBoss.health <= 0) {
+    defeatCowgirlBoss();
+  }
 }
-checkin.addEventListener('change',calculateTotal);
-checkout.addEventListener('change',calculateTotal);
-document.getElementById('oasisForm').addEventListener('submit',function(e){
- e.preventDefault();
- const name=document.getElementById('name').value.trim();
- const email=document.getElementById('email').value.trim();
- const guests=document.getElementById('guests').value;
- const suite=document.getElementById('suite').value;
- const notes=document.getElementById('notes').value.trim();
- const extras=[...document.querySelectorAll('.check-card input:checked')].map(x=>x.value).join(', ') || 'None selected';
- const nights=nightsEl.textContent;
- const total=totalEl.textContent;
- if(!checkin.value||!checkout.value||Number(nights)<=0){formMessage.textContent='Please choose valid check-in and check-out dates.';return;}
- const subject=encodeURIComponent("Booking Request for Mackenzie's Underwater Oasis SeaBnB");
- const body=encodeURIComponent(`Hi Mackenzie! I would like to request a stay at Mackenzie's Underwater Oasis.\n\nName: ${name}\nEmail: ${email}\nCheck in: ${checkin.value}\nCheck out: ${checkout.value}\nGuests: ${guests}\nSuite: ${suite}\nOcean extras: ${extras}\nNights: ${nights}\nEstimated total: ${total}\nNotes: ${notes}\n\nThank you!`);
- window.location.href=`mailto:contact@mackenziesunderwateroasis.com?subject=${subject}&body=${body}`;
- formMessage.textContent='Opening your email app with the SeaBnB booking request.';
-});
-</script>
+
+    function createBossPoof() {
+      bossPoofs = [];
+
+      const cx = cowgirlBoss.x + cowgirlBoss.width / 2;
+      const cy = cowgirlBoss.y + cowgirlBoss.height / 2;
+
+      for (let i = 0; i < 42; i++) {
+        bossPoofs.push({
+          x: cx,
+          y: cy,
+          vx: (Math.random() - 0.5) * scaleX(5.6),
+          vy: (Math.random() - 0.5) * scaleY(5.6) - scaleY(0.4),
+          size: Math.random() * scaleX(18) + scaleX(12),
+          life: Math.random() * 48 + 48,
+          maxLife: 96
+        });
+      }
+    }
+
+    function updateBossPoofs() {
+      for (let i = bossPoofs.length - 1; i >= 0; i--) {
+        const poof = bossPoofs[i];
+
+        poof.x += poof.vx;
+        poof.y += poof.vy;
+        poof.vx *= 0.97;
+        poof.vy *= 0.97;
+        poof.size *= 1.008;
+        poof.life--;
+
+        if (poof.life <= 0) {
+          bossPoofs.splice(i, 1);
+        }
+      }
+    }
+
+    function drawBossPoofs() {
+      ctx.save();
+
+      for (const poof of bossPoofs) {
+        const alpha = Math.max(0, poof.life / poof.maxLife);
+
+        ctx.globalAlpha = alpha * 0.85;
+        ctx.fillStyle = "rgba(225, 225, 225, 0.75)";
+        ctx.beginPath();
+        ctx.arc(poof.x, poof.y, poof.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.globalAlpha = alpha * 0.35;
+        ctx.fillStyle = "rgba(120, 120, 120, 0.65)";
+        ctx.beginPath();
+        ctx.arc(poof.x - poof.size * 0.2, poof.y + poof.size * 0.15, poof.size * 0.7, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    function defeatCowgirlBoss() {
+      bossFightActive = false;
+      bossDefeatedPastureActive = true;
+      cowgirlMusic.pause();
+
+      gameWon = true;
+      gamePaused = true;
+
+      bossPitchforks = [];
+      bossGrass = [];
+      createBossPoof();
+
+      score += 1000;
+      bonusFlashTimer = 80;
+      bonusFlashText = "+1000";
+      playSound(bonusSound);
+
+      showOverlay(
+        `Clover you did it!
+
+The cowgirl went to go nurse her migraine.
+
+Thank you Clover...`,
+        [
+          {
+            label: "Mooo",
+            onClick: () => {
+              showOverlay(
+                `Clover, you've been through a lot...
+
+Would you like to be milked?..`,
+                [
+                  {
+                    label: "Mooooo",
+                    onClick: () => { startWarmAndFuzzyEnding(); }
+                  },
+                  {
+                    label: "Noooooo",
+                    secondary: true,
+                    onClick: () => { startFreedomEnding(); }
+                  }
+                ],
+                { speed: 34, requireContinueBeforeButtons: true }
+              );
+            }
+          }
+        ],
+        { speed: 30, requireContinueBeforeButtons: true }
+      );
+    }
+
+    function startFreedomEnding() {
+      hideOverlay();
+      bossFightActive = false;
+      bossDefeatedPastureActive = true;
+      freedomSequenceActive = true;
+      gamePaused = false;
+      playerFacingLeft = false;
+      player.invulnerableTimer = 999999;
+      endBanner.classList.add("hidden");
+    }
+
+    function startWarmAndFuzzyEnding() {
+      bossFightActive = false;
+      bossDefeatedPastureActive = true;
+      heartsCelebrationActive = true;
+      finalOverlayShown = false;
+      heartExplosionCount = 0;
+      hideOverlay();
+      makeHeartsExplode();
+      heartExplosionCount++;
+    }
+
+    function makeHeartsExplode() {
+      heartBursts = [];
+
+      for (let i = 0; i < 44; i++) {
+        heartBursts.push({
+          x: player.x + player.width / 2,
+          y: player.y + player.height / 2,
+          vx: (Math.random() - 0.5) * scaleX(5.5),
+          vy: (Math.random() - 0.5) * scaleY(5.5) - scaleY(1.5),
+          size: Math.random() * scaleX(14) + scaleX(14),
+          life: Math.random() * 80 + 90
+        });
+      }
+    }
+
+    function showFinalWarmOverlay() {
+      if (finalOverlayShown) return;
+      finalOverlayShown = true;
+      gamePaused = true;
+
+      showOverlay(
+        `You feel warm and fuzzy inside.\n\nCLOVER YOU ESCAPED!!!  CONGRATULATIONS!!!\n\nWait... who's that off in the distance?`,
+        [
+          {
+            label: "...",
+            onClick: () => {
+              startPurpleCowEncounter();
+            }
+          }
+        ],
+        {
+          speed: 26,
+          requireContinueBeforeButtons: true
+        }
+      );
+    }
+
+    function startPurpleCowEncounter() {
+      gameWon = false;
+      heartsCelebrationActive = false;
+      bossDefeatedPastureActive = true;
+      freedomSequenceActive = false;
+      gameStarted = true;
+      gameOver = false;
+      heartBursts = [];
+
+      purpleCow.active = true;
+      purpleCow.triggered = false;
+      purpleCow.entering = true;
+      purpleCow.walkingAway = false;
+      purpleCow.width = scaleX(92);
+      purpleCow.height = scaleY(92);
+      purpleCow.x = canvas.width / 2 - purpleCow.width / 2;
+
+      // Start offscreen, then walk toward Clover instead of popping in.
+      purpleCow.y = -purpleCow.height - scaleY(20);
+      purpleCow.targetY = scaleY(58);
+
+      purpleCow.facingLeft = true;
+      purpleCow.animationOffset = Math.floor(Math.random() * 1000);
+
+      player.invulnerableTimer = 999999;
+      player.width = scaleX(72 * 1.5);
+      player.height = scaleY(72 * 1.5);
+      player.x = canvas.width / 2 - player.width / 2;
+      player.y = canvas.height - player.height - scaleY(32);
+      playerFacingLeft = false;
+
+      try {
+        cowgirlMusic.pause();
+        music.pause();
+        if (!isMuted) {
+          cosmicCowMusic.currentTime = 0;
+          cosmicCowMusic.play().catch(() => {});
+        }
+      } catch (err) {}
+
+      hideOverlay();
+      gamePaused = false;
+    }
+
+    function updatePurpleCowEncounter() {
+      if (!purpleCow.active) return;
+
+      purpleCow.width = scaleX(92);
+      purpleCow.height = scaleY(92);
+
+      if (purpleCow.entering) {
+        purpleCow.y += scaleY(0.75);
+        purpleCow.x += Math.sin(frame * 0.03) * scaleX(0.18);
+
+        if (purpleCow.y >= purpleCow.targetY) {
+          purpleCow.y = purpleCow.targetY;
+          purpleCow.entering = false;
+        }
+
+        return;
+      }
+
+      if (purpleCow.walkingAway) {
+        purpleCow.y -= scaleY(0.55);
+        purpleCow.x += Math.sin(frame * 0.03) * scaleX(0.25);
+        if (purpleCow.y + purpleCow.height < -scaleY(20)) {
+          purpleCow.active = false;
+          purpleCow.walkingAway = false;
+        }
+        return;
+      }
+
+      if (purpleCow.triggered) return;
+
+      const playerCenterX = player.x + player.width / 2;
+      const playerCenterY = player.y + player.height / 2;
+      const cowCenterX = purpleCow.x + purpleCow.width / 2;
+      const cowCenterY = purpleCow.y + purpleCow.height / 2;
+      const distance = Math.hypot(playerCenterX - cowCenterX, playerCenterY - cowCenterY);
+
+      if (distance <= scaleX(135)) {
+        purpleCow.triggered = true;
+        triggerPurpleCowDialogue();
+      }
+    }
+
+    function triggerPurpleCowDialogue() {
+      gamePaused = true;
+
+      // First dialogue: original purple cow image.
+      showOverlay(
+        `I've been waiting a long time for you,
+Longer than I can remember...
+
+Moo.`,
+        [
+          {
+            label: "...",
+            onClick: () => {
+
+              // Second dialogue: two-cow eyelash image.
+              showOverlay(
+                `You have a beautiful eyelash,
+Hoof there it is...
+And now its gone...
+Gone with the wind...`,
+                [
+                  {
+                    label: "...",
+                    onClick: () => {
+
+                      // Third dialogue, part one: back to the original purple cow image.
+                      showOverlay(
+                        `No matter, you are wonderful Clover
+
+You know a four leaf clover?
+You are more special than that.
+
+All clover's have made this journey
+Clover's after you will make this journey... but you are one of a kind`,
+                        [
+                          {
+                            label: "...",
+                            onClick: () => {
+
+                              // Clover gift dialogue.
+                              showOverlay(
+                                `Here let me give you something...
+
+What is it?
+
+You remind me of this clover,
+it reminds me of you.`,
+                                [
+                                  {
+                                    label: "...",
+                                    onClick: () => {
+
+                                      // 44 leaf clover received screen.
+                                      if (!isMuted) {
+                                        try {
+                                          music.pause();
+                                          cowgirlMusic.pause();
+                                          cosmicCowMusic.pause();
+                                          cloverMusic.currentTime = 0;
+                                          cloverMusic.play().catch(() => {});
+                                        } catch (err) {}
+                                      }
+
+                                      awardFortyFourLeafClover();
+
+                                      showOverlay(
+                                        `You just received a 44 leaf clover!!!`,
+                                        [
+                                          {
+                                            label: "...",
+                                            onClick: () => {
+                                              stopCloverMusic();
+
+                                              // Inventory tutorial. Mortality choice is intentionally not shown yet.
+                                              showOverlay(
+                                                `Inventory unlocked.
+
+Press I to open your inventory.
+Press X to talk to the 44 Leaf Clover.
+
+Or use these buttons:)`,
+                                                [
+                                                  {
+                                                    label: "Let me try it",
+                                                    onClick: () => {
+                                                      hideOverlay();
+                                                      bonusFlashTimer = 180;
+                                                      bonusFlashText = "Inventory: press I, then X";
+                                                      queueFinalMortalityChoice();
+                                                    }
+                                                  },
+                                                  {
+                                                    label: "One more thing...",
+                                                    secondary: true,
+                                                    onClick: () => {
+                                                      showOverlay(
+                                                        `Escapin isn't as easy as it looks, but
+It is living that is the real hard part...`,
+                                                        [
+                                                          {
+                                                            label: "Not yet...",
+                                                            onClick: () => {
+                                                              purpleCow.walkingAway = true;
+                                                              hideOverlay();
+                                                              bonusFlashTimer = 180;
+                                                              bonusFlashText = "Talk to your Lucky Clover";
+                                                              queueFinalMortalityChoice();
+                                                            }
+                                                          }
+                                                        ],
+                                                        {
+                                                          speed: 34,
+                                                          requireContinueBeforeButtons: true,
+                                                          imageSrc: "purple-cow-closeup.png"
+                                                        }
+                                                      );
+                                                    }
+                                                  }
+                                                ],
+                                                {
+                                                  speed: 34,
+                                                  requireContinueBeforeButtons: true,
+                                                  imageSrc: "forty-four-leaf-clover.png"
+                                                }
+                                              );
+
+                                            }
+                                          }
+                                        ],
+                                        {
+                                          speed: 34,
+                                          requireContinueBeforeButtons: true,
+                                          imageSrc: "forty-four-leaf-clover.png"
+                                        }
+                                      );
+
+                                    }
+                                  }
+                                ],
+                                {
+                                  speed: 34,
+                                  requireContinueBeforeButtons: true,
+                                  imageSrc: "purple-cow-clover-gift.png"
+                                }
+                              );
+
+                            }
+                          }
+                        ],
+                        {
+                          speed: 34,
+                          requireContinueBeforeButtons: true,
+                          imageSrc: "purple-cow-closeup.png"
+                        }
+                      );
+
+                    }
+                  }
+                ],
+                {
+                  speed: 34,
+                  requireContinueBeforeButtons: true,
+                  imageSrc: "purple-cow-eyelash.png"
+                }
+              );
+
+            }
+          }
+        ],
+        {
+          speed: 34,
+          requireContinueBeforeButtons: true,
+          imageSrc: "purple-cow-closeup.png"
+        }
+      );
+    }
+
+    function clearFinalMortalityChoiceTimer() {
+      if (mortalityChoiceTimeout) {
+        clearTimeout(mortalityChoiceTimeout);
+        mortalityChoiceTimeout = null;
+      }
+      mortalityChoiceQueued = false;
+    }
+
+    function queueFinalMortalityChoice() {
+      if (mortalityChoiceQueued || exitingMortality || gameOver) return;
+
+      mortalityChoiceQueued = true;
+      mortalityChoiceTimeout = setTimeout(() => {
+        mortalityChoiceTimeout = null;
+
+        if (exitingMortality || gameOver || activeDialogue) return;
+        showFinalMortalityChoice();
+      }, 20000);
+    }
+
+    function showFinalMortalityChoice() {
+      clearFinalMortalityChoiceTimer();
+
+      try {
+        cosmicCowMusic.pause();
+      } catch (err) {}
+
+      showOverlay(
+        `Do you wish to enter mortality?`,
+        [
+          {
+            label: "Mooooo Again.",
+            onClick: () => {
+              exitToMortality();
+            }
+          },
+          {
+            label: "Noooooo.",
+            secondary: true,
+            onClick: () => {
+              triggerCosmicCowEnding();
+            }
+          }
+        ],
+        {
+          speed: 26,
+          requireContinueBeforeButtons: true
+        }
+      );
+    }
+
+    function triggerCosmicCowEnding() {
+      gamePaused = true;
+      try { cosmicCowMusic.pause(); } catch (err) {}
+      clearDialogueHandlers();
+      overlay.classList.add("hidden");
+      overlayContinue.classList.add("hidden");
+      overlayButtons.innerHTML = "";
+
+      const cosmicOverlay = document.createElement("div");
+      cosmicOverlay.style.position = "fixed";
+      cosmicOverlay.style.inset = "0";
+      cosmicOverlay.style.display = "flex";
+      cosmicOverlay.style.alignItems = "center";
+      cosmicOverlay.style.justifyContent = "center";
+      cosmicOverlay.style.background = "rgba(0, 0, 0, 1)";
+      cosmicOverlay.style.color = "white";
+      cosmicOverlay.style.fontFamily = "Arial, sans-serif";
+      cosmicOverlay.style.fontSize = "clamp(28px, 4vw, 42px)";
+      cosmicOverlay.style.textAlign = "center";
+      cosmicOverlay.style.padding = "32px";
+      cosmicOverlay.style.opacity = "0";
+      cosmicOverlay.style.transition = "opacity 3s ease";
+      cosmicOverlay.style.zIndex = "9999";
+
+      const cosmicText = document.createElement("div");
+      cosmicText.style.whiteSpace = "pre-line";
+      cosmicText.style.textShadow = "0 0 14px rgba(255,255,255,0.22)";
+      cosmicText.textContent = "Clover hesitates...";
+      cosmicOverlay.appendChild(cosmicText);
+      document.body.appendChild(cosmicOverlay);
+
+      requestAnimationFrame(() => {
+        cosmicOverlay.style.opacity = "1";
+      });
+
+      try {
+        if (!isMuted) {
+          const ghostMoo = mooSound.cloneNode();
+          ghostMoo.volume = 0.25;
+          setTimeout(() => {
+            ghostMoo.play().catch(() => {});
+          }, 9600);
+        }
+      } catch (err) {}
+
+      setTimeout(() => {
+        cosmicText.textContent = "The warmth lingers.";
+      }, 2500);
+
+      setTimeout(() => {
+        cosmicText.textContent = "The world fades.";
+      }, 5000);
+
+      setTimeout(() => {
+        cosmicText.textContent = "But Clover remains.";
+      }, 7500);
+
+      setTimeout(() => {
+        cosmicText.textContent = "Moooo...";
+      }, 10000);
+
+      setTimeout(() => {
+        cosmicOverlay.style.transition = "opacity 5s ease";
+        cosmicOverlay.style.opacity = "0";
+
+        setTimeout(() => {
+          document.body.innerHTML = "";
+          document.body.style.background = "black";
+        }, 5000);
+      }, 13000);
+    }
+
+    function exitToMortality() {
+      exitingMortality = true;
+      try { cosmicCowMusic.pause(); } catch (err) {}
+      clearDialogueHandlers();
+      overlayText.innerHTML = `Entering mortality<span class="dialogue-cursor">|</span>`;
+      overlayButtons.innerHTML = "";
+      overlayContinue.classList.add("hidden");
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 900);
+    }
+
+    function restartGame() {
+      resetGameState();
+      gameStarted = true;
+      hideOverlay();
+      showStartOverlay();
+    }
+
+    function playSound(sound) {
+      if (isMuted) return;
+
+      try {
+        const s = sound.cloneNode();
+        s.volume = sound.volume;
+        s.play().catch(() => {});
+      } catch (err) {
+        try {
+          sound.currentTime = 0;
+          sound.play().catch(() => {});
+        } catch (err2) {}
+      }
+    }
+
+    function playDialogueSound() {
+      if (isMuted) return;
+
+      try {
+        getDialogueAudioContext();
+      } catch (err) {
+        console.log("Dialogue sound error:", err);
+      }
+    }
+
+    function getPlayerSpeedBoostMultiplier() {
+      return cloverBoostTimer > 0 ? CLOVER_SPEED_MULTIPLIER : 1;
+    }
+
+    function getRandomCloverMessage() {
+      return cloverMessages[Math.floor(Math.random() * cloverMessages.length)];
+    }
+
+    function updateCloverSpeech() {
+      if (cloverSpeechTimer <= 0) {
+        cloverSpeechText = "";
+        cloverSpeechTypedLength = 0;
+        cloverSpeechTypeFrame = 0;
+        return;
+      }
+
+      cloverSpeechTimer--;
+
+      if (cloverSpeechTypedLength < cloverSpeechText.length) {
+        cloverSpeechTypeFrame++;
+
+        // Type the 44 Clover messages out visually, but do NOT play writing sounds.
+        if (cloverSpeechTypeFrame >= 2) {
+          cloverSpeechTypeFrame = 0;
+          cloverSpeechTypedLength++;
+        }
+      }
+    }
+
+    function showInventory() {
+      if (!cloverUnlocked) {
+        bonusFlashTimer = 70;
+        bonusFlashText = "Inventory empty";
+        return;
+      }
+
+      cloverInventoryOpen = !cloverInventoryOpen;
+      bonusFlashTimer = 90;
+      bonusFlashText = cloverInventoryOpen
+        ? "Inventory: 44 Leaf Clover — press X"
+        : "Inventory closed";
+    }
+
+    function useFortyFourLeafClover() {
+      if (!cloverUnlocked) {
+        bonusFlashTimer = 70;
+        bonusFlashText = "No 44 Leaf Clover yet";
+        return;
+      }
+
+      if (!cloverInventoryOpen) {
+        showInventory();
+        return;
+      }
+
+      unlockSounds();
+      cloverBoostTimer = CLOVER_BOOST_FRAMES;
+      cloverSpeechText = getRandomCloverMessage();
+      cloverSpeechTypedLength = 0;
+      cloverSpeechTypeFrame = 0;
+      cloverSpeechTimer = CLOVER_SPEECH_FRAMES;
+      bonusFlashTimer = 80;
+      bonusFlashText = "Lucky Clover speed +20%";
+      playSound(bonusSound);
+    }
+
+    function awardFortyFourLeafClover() {
+      cloverUnlocked = true;
+      cloverInventoryOpen = true;
+      bonusFlashTimer = 120;
+      bonusFlashText = "44 Leaf Clover added to inventory";
+    }
+
+
+    window.addEventListener("resize", resizeCanvasToDisplaySize);
+
+    function skipToAfterFirstBossFight() {
+      if (mooMooSkipUsed || exitingMortality) return;
+      mooMooSkipUsed = true;
+      clearFinalMortalityChoiceTimer();
+
+      unlockSounds();
+      clearDialogueHandlers();
+      overlay.classList.add("hidden");
+      overlayContinue.classList.add("hidden");
+      overlayButtons.innerHTML = "";
+
+      gameStarted = true;
+      gameOver = false;
+      gamePaused = false;
+      greenerPasturesActive = false;
+      bossFightActive = true;
+      bossDefeatedPastureActive = false;
+      freedomSequenceActive = false;
+      heartsCelebrationActive = false;
+      finalOverlayShown = false;
+      purpleCow.active = false;
+      purpleCow.triggered = false;
+      purpleCow.entering = false;
+      purpleCow.walkingAway = false;
+
+      music.pause();
+      cowgirlMusic.pause();
+      fallingObjects = [];
+      bossGrass = [];
+      bossPitchforks = [];
+
+      player.width = scaleX(72 * 1.5);
+      player.height = scaleY(72 * 1.5);
+      player.x = canvas.width / 2 - player.width / 2;
+      player.y = canvas.height - player.height - scaleY(34);
+      player.invulnerableTimer = 999999;
+      playerFacingLeft = false;
+
+      cowgirl.visible = false;
+      cowgirl.unlocked = true;
+      stalkerButcher.active = false;
+
+      cowgirlBoss.width = scaleX(112 * 1.5);
+      cowgirlBoss.height = scaleY(112 * 1.5);
+      cowgirlBoss.x = canvas.width / 2 - cowgirlBoss.width / 2;
+      cowgirlBoss.y = scaleY(76);
+      cowgirlBoss.health = 1;
+      cowgirlBoss.maxHealth = 60;
+      cowgirlBoss.state = "running";
+      cowgirlBoss.facingLeft = false;
+      cowgirlBoss.flashTimer = 0;
+
+      bonusFlashTimer = 80;
+      bonusFlashText = "MOO MOO SKIP";
+
+      defeatCowgirlBoss();
+    }
+
+    function updateCheatCodeBuffer(e) {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.key.length !== 1) return;
+
+      cheatCodeBuffer = (cheatCodeBuffer + e.key.toLowerCase()).slice(-6);
+
+      if (cheatCodeBuffer === "moomoo") {
+        cheatCodeBuffer = "";
+        skipToAfterFirstBossFight();
+      }
+    }
+
+    document.addEventListener("keydown", (e) => {
+      updateCheatCodeBuffer(e);
+
+      if (e.code === "Space") {
+        e.preventDefault();
+        if (!keys[e.code]) {
+          activateMooPulse();
+        }
+      }
+
+      if (e.key === "i" || e.key === "I") {
+        showInventory();
+      }
+
+      if (e.key === "x" || e.key === "X") {
+        useFortyFourLeafClover();
+      }
+
+      keys[e.key] = true;
+      keys[e.code] = true;
+    });
+
+    document.addEventListener("keyup", (e) => {
+      keys[e.key] = false;
+      keys[e.code] = false;
+    });
+
+    inventoryButton.addEventListener("click", () => {
+      unlockSounds();
+      showInventory();
+    });
+
+    useCloverButton.addEventListener("click", () => {
+      unlockSounds();
+      useFortyFourLeafClover();
+    });
+
+    function getTouchPosition(e) {
+      const rect = canvas.getBoundingClientRect();
+      const touch = e.touches[0];
+
+      return {
+        x: touch.clientX - rect.left,
+        y: touch.clientY - rect.top
+      };
+    }
+
+    canvas.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      unlockSounds();
+
+      const now = Date.now();
+      if (now - lastTapTime < 300) {
+        activateMooPulse();
+      }
+      lastTapTime = now;
+
+      if (!gameStarted || gamePaused || gameOver) return;
+
+      const pos = getTouchPosition(e);
+      touchActive = true;
+      touchTargetX = pos.x - player.width / 2;
+      touchTargetY = pos.y - player.height / 2;
+    }, { passive: false });
+
+    canvas.addEventListener("touchmove", (e) => {
+      if (!gameStarted || gamePaused || gameOver) return;
+      e.preventDefault();
+
+      const pos = getTouchPosition(e);
+      touchTargetX = pos.x - player.width / 2;
+      touchTargetY = pos.y - player.height / 2;
+    }, { passive: false });
+
+    canvas.addEventListener("touchend", (e) => {
+      if (!gameStarted) return;
+      e.preventDefault();
+
+      touchActive = false;
+      touchTargetX = null;
+      touchTargetY = null;
+    }, { passive: false });
+
+    function resetGameState() {
+      resizeCanvasToDisplaySize();
+      cowgirlMusic.pause();
+      cowgirlMusic.currentTime = 0;
+      cosmicCowMusic.pause();
+      cosmicCowMusic.currentTime = 0;
+
+      player.width = scaleX(72 * 1.5);
+      player.height = scaleY(72 * 1.5);
+      player.speed = Math.max(scaleX(11), 4) * getPlayerSpeedBoostMultiplier();
+      player.x = scaleX(164);
+      player.y = canvas.height - player.height - scaleY(28);
+      player.invulnerableTimer = 0;
+      playerAnimationFrame = 0;
+      playerFacingLeft = false;
+      difficultyMultiplier = 1.0;
+      selectedDifficulty = "normal";
+
+      fallingObjects = [];
+      heartBursts = [];
+      gameOver = false;
+      gamePaused = true;
+      gameWon = false;
+      frame = 0;
+      score = 0;
+      lives = 3;
+      awardedLifeThreshold = 0;
+      hitFlashTimer = 0;
+      bonusFlashTimer = 0;
+      bonusFlashText = "";
+      speedModeActivated = false;
+
+      checkpoint18000Shown = false;
+      checkpoint10000Shown = false;
+      checkpoint22000Shown = false;
+      freedomSequenceActive = false;
+      heartsCelebrationActive = false;
+      finalOverlayShown = false;
+      exitingMortality = false;
+      clearFinalMortalityChoiceTimer();
+      heartExplosionCount = 0;
+
+      cowbellModeActive = false;
+      canvasFlashPhase = 0;
+
+      mooPulseActive = false;
+      mooPulseTimer = 0;
+      mooCooldownTimer = 0;
+      lastTapTime = 0;
+      mooFlashTimer = 0;
+      cheatCodeBuffer = "";
+      mooMooSkipUsed = false;
+      cloverUnlocked = false;
+      cloverInventoryOpen = false;
+      cloverBoostTimer = 0;
+
+      purpleCow.active = false;
+      purpleCow.triggered = false;
+      purpleCow.entering = false;
+      purpleCow.walkingAway = false;
+      purpleCow.x = 0;
+      purpleCow.y = 0;
+      purpleCow.targetY = 0;
+      purpleCow.width = 0;
+      purpleCow.height = 0;
+      purpleCow.facingLeft = true;
+      purpleCow.animationOffset = 0;
+
+      touchActive = false;
+      touchTargetX = null;
+      touchTargetY = null;
+
+      resetStalkerButcherPosition();
+
+      cowgirl.unlocked = false;
+      cowgirl.visible = false;
+      cowgirl.state = "hidden";
+      cowgirl.x = 0;
+      cowgirl.y = 0;
+      cowgirl.width = scaleX(76 * 1.2);
+      cowgirl.height = scaleY(76 * 1.2);
+      cowgirl.speed = Math.max(scaleX(3.8), 2.4);
+      cowgirl.facingLeft = false;
+      cowgirl.currentCorner = 0;
+      cowgirl.targetCorner = 1;
+      cowgirl.moveTimer = COWGIRL_MOVE_INTERVAL;
+      cowgirl.swipeTimer = 0;
+      cowgirl.respawnTimer = 0;
+      cowgirl.damageCooldown = 0;
+      cowgirl.fleeVX = 0;
+      cowgirl.fleeVY = 0;
+      cowgirl.animationOffset = 0;
+
+      greenerPasturesActive = false;
+      greenerPasturesFade = 0;
+      greenerPasturesTextShown = false;
+      bossFightActive = false;
+      bossDefeatedPastureActive = false;
+      bossPoofs = [];
+      bossGrass = [];
+      bossPitchforks = [];
+      bossGrassSpawnTimer = 0;
+      cowgirlBoss.health = 60;
+      cowgirlBoss.maxHealth = 60;
+      cowgirlBoss.state = "hidden";
+      cowgirlBoss.attackTimer = 0;
+      cowgirlBoss.attackCooldown = 0;
+      cowgirlBoss.damageCooldown = 0;
+      cowgirlBoss.flashTimer = 0;
+      bossPatternTimer = 0;
+      bossPatternPhase = "chase";
+
+      clearDialogueHandlers();
+      endBanner.classList.add("hidden");
+    }
+
+    function getSpeedMultiplier() {
+      const base = score >= 180000 ? 1.3 * 1.5 : 1.3;
+      return base * difficultyMultiplier;
+    }
+
+    function getBonusMultiplier() {
+      return 1;
+    }
+
+    function maybeShowSpeedModeBanner() {
+      if (score >= 180000 && !speedModeActivated) {
+        speedModeActivated = true;
+        bonusFlashTimer = 90;
+        bonusFlashText = "UH OH MAD COW DISEASE SOMEONE CALLED FOR MORE COWBELL";
+      }
+    }
+
+    function maybeAwardExtraLife() {
+      const currentThreshold = Math.floor(score / 2000);
+      if (currentThreshold > awardedLifeThreshold) {
+        const gainedLives = currentThreshold - awardedLifeThreshold;
+        lives += gainedLives;
+        awardedLifeThreshold = currentThreshold;
+        bonusFlashTimer = 45;
+        bonusFlashText = `+${gainedLives} Life${gainedLives > 1 ? "s" : ""}!`;
+      }
+    }
+
+    function spawnObject() {
+      const postCowbell = score >= 10000;
+
+      let type = "bad";
+      let image = badImages[Math.floor(Math.random() * badImages.length)];
+      let basePoints = 0;
+      let speedMultiplier = 1;
+      let usesSpriteSheet = false;
+      let spriteCols = 1;
+      let spriteRows = 1;
+      let totalFrames = 1;
+      let frameDuration = 1;
+      let canHome = false;
+
+      const roll = Math.random();
+
+      if (postCowbell) {
+        if (roll < 0.4) {
+          type = "butcher";
+          image = butcherSpriteSheet;
+          usesSpriteSheet = true;
+          spriteCols = BUTCHER_SPRITE_COLS;
+          spriteRows = BUTCHER_SPRITE_ROWS;
+          totalFrames = BUTCHER_TOTAL_FRAMES;
+          frameDuration = BUTCHER_FRAME_DURATION;
+          canHome = true;
+          speedMultiplier = cowbellModeActive ? .8 : 1.2;
+        } else if (roll < 0.50) {
+          type = "bonus1000";
+          image = bonus1000Img;
+          basePoints = 1000;
+          speedMultiplier = 2.2;
+        } else if (roll < 0.75) {
+          type = "bonus200";
+          image = bonus200Img;
+          basePoints = 200;
+          speedMultiplier = 1.0;
+        } else {
+          type = "bad";
+          image = badImages[Math.floor(Math.random() * badImages.length)];
+        }
+      } else {
+        if (roll < 0.15) {
+          type = "bonus1000";
+          image = bonus1000Img;
+          basePoints = 1000;
+          speedMultiplier = 1.9;
+        } else if (roll < 0.40) {
+          type = "bonus200";
+          image = bonus200Img;
+          basePoints = 200;
+          speedMultiplier = 0.9;
+        } else {
+          type = "bad";
+          image = badImages[Math.floor(Math.random() * badImages.length)];
+        }
+      }
+
+      const size =
+        type === "bonus1000"
+          ? scaleX(Math.random() * 20 + 35) * 1.25
+          : type === "butcher"
+          ? scaleX(Math.random() * 28 + 52) * 1.15
+          : scaleX(Math.random() * 25 + 40) * 1.25;
+
+      const x = Math.random() * (canvas.width - size);
+      const scoreSpeedRamp = Math.min(score * 0.001, 2.2);
+      const baseSpeed = scaleY(Math.random() * 2.0 + 2 + scoreSpeedRamp);
+      const speed = baseSpeed * speedMultiplier * getSpeedMultiplier();
+
+      fallingObjects.push({
+        x,
+        y: -size,
+        width: size,
+        height: size,
+        speed,
+        image,
+        type,
+        basePoints,
+        usesSpriteSheet,
+        spriteCols,
+        spriteRows,
+        totalFrames,
+        frameDuration,
+        canHome,
+        animationOffset: Math.floor(Math.random() * 1000)
+      });
+    }
+
+    function rectsIntersect(a, b) {
+      return (
+        a.x < b.x + b.width &&
+        a.x + a.width > b.x &&
+        a.y < b.y + b.height &&
+        a.y + a.height > b.y
+      );
+    }
+
+    function updateHearts() {
+      for (let i = heartBursts.length - 1; i >= 0; i--) {
+        const heart = heartBursts[i];
+        heart.x += heart.vx;
+        heart.y += heart.vy;
+        heart.vy += scaleY(0.04);
+        heart.life--;
+
+        if (heart.life <= 0) {
+          heartBursts.splice(i, 1);
+        }
+      }
+
+      if (heartsCelebrationActive && heartBursts.length === 0) {
+        if (heartExplosionCount < MAX_HEART_EXPLOSIONS) {
+          makeHeartsExplode();
+          heartExplosionCount++;
+        } else if (!finalOverlayShown) {
+          heartsCelebrationActive = false;
+          showFinalWarmOverlay();
+        }
+      }
+    }
+
+    function update() {
+      updateHearts();
+
+      if (bossDefeatedPastureActive) {
+        updateBossPoofs();
+      }
+
+      if (greenerPasturesActive && !gamePaused) {
+        updateGreenerPasturesSequence();
+        return;
+      }
+
+      if (bossFightActive && !gamePaused) {
+        updateBossFight();
+        return;
+      }
+
+      if (!gameStarted || gameOver || gamePaused) return;
+
+      frame++;
+
+      if (cloverBoostTimer > 0) cloverBoostTimer--;
+      updateCloverSpeech();
+
+      if (!freedomSequenceActive && !heartsCelebrationActive) {
+        score++;
+      }
+
+      if (cowbellModeActive) {
+        canvasFlashPhase++;
+      }
+
+      player.width = scaleX(72 * 1.5);
+      player.height = scaleY(72 * 1.5);
+      player.speed = Math.max(scaleX(11), 4) * getPlayerSpeedBoostMultiplier();
+
+      stalkerButcher.width = scaleX(70 * 1.2);
+      stalkerButcher.height = scaleY(70 * 1.2);
+      stalkerButcher.speed = getStalkerButcherSpeed();
+
+      let isMoving = false;
+
+      if (heartsCelebrationActive) {
+        playerAnimationFrame = 0;
+      } else if (freedomSequenceActive) {
+        player.x += scaleX(2.6);
+        playerFacingLeft = false;
+
+        if (player.x > canvas.width + player.width) {
+          gamePaused = true;
+          freedomSequenceActive = false;
+          endBanner.classList.remove("hidden");
+
+          showOverlay(
+            `FREEDOM`,
+            [
+              {
+                label: "Mooooo.",
+                onClick: () => {
+                  exitToMortality();
+                }
+              }
+            ],
+            {
+              speed: 44,
+              requireContinueBeforeButtons: true
+            }
+          );
+        }
+      } else {
+        if (keys["ArrowLeft"] || keys["a"] || keys["A"]) {
+          player.x -= player.speed;
+          playerFacingLeft = true;
+          isMoving = true;
+        }
+        if (keys["ArrowRight"] || keys["d"] || keys["D"]) {
+          player.x += player.speed;
+          playerFacingLeft = false;
+          isMoving = true;
+        }
+        if (keys["ArrowUp"] || keys["w"] || keys["W"]) {
+          player.y -= player.speed;
+          isMoving = true;
+        }
+        if (keys["ArrowDown"] || keys["s"] || keys["S"]) {
+          player.y += player.speed;
+          isMoving = true;
+        }
+
+        if (touchActive && touchTargetX !== null && touchTargetY !== null) {
+          const dx = touchTargetX - player.x;
+          const dy = touchTargetY - player.y;
+
+          if (Math.abs(dx) > player.speed) {
+            player.x += Math.sign(dx) * player.speed;
+            playerFacingLeft = dx < 0;
+            isMoving = true;
+          } else if (Math.abs(dx) > 1) {
+            player.x = touchTargetX;
+            playerFacingLeft = dx < 0;
+            isMoving = true;
+          }
+
+          if (Math.abs(dy) > player.speed) {
+            player.y += Math.sign(dy) * player.speed;
+            isMoving = true;
+          } else if (Math.abs(dy) > 1) {
+            player.y = touchTargetY;
+            isMoving = true;
+          }
+        }
+      }
+
+      if (isMoving || freedomSequenceActive) {
+        playerAnimationFrame = Math.floor(frame / PLAYER_FRAME_DURATION) % PLAYER_TOTAL_FRAMES;
+      } else {
+        playerAnimationFrame = 0;
+      }
+
+      if (player.x < 0) player.x = 0;
+      if (!freedomSequenceActive && player.x + player.width > canvas.width) {
+        player.x = canvas.width - player.width;
+      }
+      if (player.y < 0) player.y = 0;
+      if (player.y + player.height > canvas.height) {
+        player.y = canvas.height - player.height;
+      }
+
+      if (purpleCow.active) {
+        updatePurpleCowEncounter();
+      }
+
+      if (stalkerButcher.active && !freedomSequenceActive && !heartsCelebrationActive && !purpleCow.active) {
+        const stalkerCenterX = stalkerButcher.x + stalkerButcher.width / 2;
+        const stalkerCenterY = stalkerButcher.y + stalkerButcher.height / 2;
+        const playerCenterX = player.x + player.width / 2;
+        const playerCenterY = player.y + player.height / 2;
+        const dx = playerCenterX - stalkerCenterX;
+        const dy = playerCenterY - stalkerCenterY;
+        const distance = Math.hypot(dx, dy) || 1;
+
+        if (mooPulseActive) {
+          stalkerButcher.x -= (dx / distance) * scaleX(0.9);
+          stalkerButcher.y -= (dy / distance) * scaleY(0.9);
+        } else {
+          stalkerButcher.x += (dx / distance) * stalkerButcher.speed;
+          stalkerButcher.y += (dy / distance) * stalkerButcher.speed;
+        }
+
+        if (stalkerButcher.x < 0) stalkerButcher.x = 0;
+        if (stalkerButcher.x + stalkerButcher.width > canvas.width) {
+          stalkerButcher.x = canvas.width - stalkerButcher.width;
+        }
+        if (stalkerButcher.y < 0) stalkerButcher.y = 0;
+        if (stalkerButcher.y + stalkerButcher.height > canvas.height) {
+          stalkerButcher.y = canvas.height - stalkerButcher.height;
+        }
+      }
+
+      if (stalkerButcher.hitCooldown > 0) {
+        stalkerButcher.hitCooldown--;
+      }
+
+      updateCowgirl();
+
+      if (player.invulnerableTimer > 0) {
+        player.invulnerableTimer--;
+      }
+
+      if (hitFlashTimer > 0) hitFlashTimer--;
+      if (bonusFlashTimer > 0) bonusFlashTimer--;
+      if (mooFlashTimer > 0) mooFlashTimer--;
+
+      if (mooPulseTimer > 0) {
+        mooPulseTimer--;
+      } else {
+        mooPulseActive = false;
+      }
+
+      if (mooCooldownTimer > 0) {
+        mooCooldownTimer--;
+      }
+
+      if (!freedomSequenceActive && !heartsCelebrationActive) {
+        let spawnInterval = Math.max(16, 30 - Math.floor(score / 1800));
+
+        if (cowbellModeActive) {
+          spawnInterval = Math.max(4, Math.floor(spawnInterval / 3));
+        }
+
+        if (frame % spawnInterval === 0) {
+          spawnObject();
+        }
+      }
+
+      if (!freedomSequenceActive && stalkerButcher.active && stalkerButcher.hitCooldown <= 0 && player.invulnerableTimer <= 0) {
+        const playerHitbox = getHitbox(player, 0.12);
+        const stalkerHitbox = getHitbox(stalkerButcher, 0.28);
+
+        if (rectsIntersect(playerHitbox, stalkerHitbox)) {
+          lives -= 2;
+          player.invulnerableTimer = 90;
+          stalkerButcher.hitCooldown = 150;
+          hitFlashTimer = 28;
+          playSound(hitSound);
+          resetStalkerButcherPosition();
+          stalkerButcher.hitCooldown = 150;
+
+          if (lives <= 0) {
+            gameOver = true;
+            gamePaused = true;
+            music.pause();
+
+            showOverlay(
+              `You became a steak.
+
+Final Score: ${score}`,
+              [
+                {
+                  label: "Again",
+                  onClick: () => {
+                    restartGame();
+                  }
+                }
+              ],
+              {
+                speed: 28,
+                requireContinueBeforeButtons: true
+              }
+            );
+          }
+        }
+      }
+
+      for (let i = fallingObjects.length - 1; i >= 0; i--) {
+        const obj = fallingObjects[i];
+        obj.y += obj.speed;
+
+        if (obj.canHome && !freedomSequenceActive && !heartsCelebrationActive) {
+          const playerCenterX = player.x + player.width / 2;
+          const playerCenterY = player.y + player.height / 2;
+          const objCenterX = obj.x + obj.width / 2;
+          const objCenterY = obj.y + obj.height / 2;
+
+          const dx = playerCenterX - objCenterX;
+          const dy = playerCenterY - objCenterY;
+
+          const homingMultiplier = score >= 10000 ? 1.18 : 1.08;
+          const homing = dx * getHomingStrength() * homingMultiplier;
+          const maxSideSpeed = scaleX(score >= 10000 ? 1.5 : 1.35);
+
+          obj.x += Math.max(-maxSideSpeed, Math.min(maxSideSpeed, homing));
+        }
+
+        if (obj.x < -obj.width * 0.25) obj.x = -obj.width * 0.25;
+        if (obj.x + obj.width > canvas.width + obj.width * 0.25) {
+          obj.x = canvas.width - obj.width * 0.75;
+        }
+
+        const playerHitbox = getHitbox(player, 0.12);
+        const objectHitbox =
+          obj.type === "butcher"
+            ? getHitbox(obj, 0.38)
+            : obj.type === "bad"
+            ? getHitbox(obj, 0.31)
+            : getHitbox(obj, 0.25);
+
+        const hit = rectsIntersect(playerHitbox, objectHitbox);
+
+        if (hit) {
+          if (obj.type === "bonus200" || obj.type === "bonus1000") {
+            const pointsEarned = obj.basePoints * getBonusMultiplier();
+            score += pointsEarned;
+            maybeShowSpeedModeBanner();
+            maybeAwardExtraLife();
+
+            bonusFlashTimer = 30;
+            bonusFlashText = `+${pointsEarned}`;
+            playSound(bonusSound);
+
+            fallingObjects.splice(i, 1);
+            continue;
+          }
+
+          if (!freedomSequenceActive && (obj.type === "bad" || obj.type === "butcher") && player.invulnerableTimer <= 0) {
+            lives--;
+            player.invulnerableTimer = 90;
+            hitFlashTimer = 20;
+            fallingObjects.splice(i, 1);
+
+            playSound(hitSound);
+
+            if (lives <= 0) {
+              gameOver = true;
+              gamePaused = true;
+              music.pause();
+
+              showOverlay(
+                `You became a steak.\n\nFinal Score: ${score}`,
+                [
+                  {
+                    label: "Again",
+                    onClick: () => {
+                      restartGame();
+                    }
+                  }
+                ],
+                {
+                  speed: 28,
+                  requireContinueBeforeButtons: true
+                }
+              );
+            }
+
+            continue;
+          }
+        }
+
+        if (obj.y > canvas.height + scaleY(100)) {
+          fallingObjects.splice(i, 1);
+        }
+      }
+
+      if (!freedomSequenceActive && !heartsCelebrationActive) {
+        maybeShowSpeedModeBanner();
+        maybeAwardExtraLife();
+
+        if (score >= 18000) {
+          showCheckpoint18000();
+        }
+
+        if (score >= 10000) {
+          showCheckpoint10000();
+        }
+
+        if (score >= 22000) {
+          showCheckpoint22000();
+        }
+      }
+    }
+
+    function drawPlayer() {
+      const blinking =
+        player.invulnerableTimer > 0 &&
+        Math.floor(player.invulnerableTimer / 5) % 2 === 0;
+
+      if (blinking && !heartsCelebrationActive) return;
+
+      if (playerSpriteSheet.complete && playerSpriteSheet.naturalWidth > 0) {
+        ctx.save();
+
+        if (playerFacingLeft) {
+          ctx.translate(player.x + player.width, player.y);
+          ctx.scale(-1, 1);
+
+          drawSpriteFrame(
+            playerSpriteSheet,
+            playerAnimationFrame,
+            PLAYER_SPRITE_COLS,
+            PLAYER_SPRITE_ROWS,
+            0,
+            0,
+            player.width,
+            player.height
+          );
+        } else {
+          drawSpriteFrame(
+            playerSpriteSheet,
+            playerAnimationFrame,
+            PLAYER_SPRITE_COLS,
+            PLAYER_SPRITE_ROWS,
+            player.x,
+            player.y,
+            player.width,
+            player.height
+          );
+        }
+
+        ctx.restore();
+      } else {
+        ctx.fillStyle = "#4da6ff";
+        ctx.fillRect(player.x, player.y, player.width, player.height);
+      }
+    }
+
+    function drawMooFlash() {
+      if (mooFlashTimer > 0) {
+        ctx.save();
+        ctx.fillStyle = "rgba(255,255,255,0.10)";
+        ctx.beginPath();
+        ctx.arc(
+          player.x + player.width / 2,
+          player.y + player.height / 2,
+          getMooPulseRadius() * (1 - mooFlashTimer / 36),
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function drawStalkerButcher() {
+      if (!stalkerButcher.active) return;
+
+      if (stalkerButcherSpriteSheet.complete && stalkerButcherSpriteSheet.naturalWidth > 0) {
+        const animFrame =
+          Math.floor((frame + stalkerButcher.animationOffset) / STALKER_BUTCHER_FRAME_DURATION) % STALKER_BUTCHER_TOTAL_FRAMES;
+
+        drawSpriteFrame(
+          stalkerButcherSpriteSheet,
+          animFrame,
+          STALKER_BUTCHER_SPRITE_COLS,
+          STALKER_BUTCHER_SPRITE_ROWS,
+          stalkerButcher.x,
+          stalkerButcher.y,
+          stalkerButcher.width,
+          stalkerButcher.height
+        );
+      } else {
+        ctx.fillStyle = "#aa3333";
+        ctx.fillRect(stalkerButcher.x, stalkerButcher.y, stalkerButcher.width, stalkerButcher.height);
+      }
+    }
+
+
+
+    function drawCowgirl() {
+      if (!cowgirl.visible) return;
+
+      let sprite = cowgirlWalkSpriteSheet;
+      let animFrame = 0;
+
+      if (cowgirl.state === "running" || cowgirl.state === "entering") {
+        sprite = cowgirlRunSpriteSheet;
+        animFrame = Math.floor((frame + cowgirl.animationOffset) / COWGIRL_RUN_FRAME_DURATION) % COWGIRL_TOTAL_FRAMES;
+      } else if (cowgirl.state === "fleeing") {
+        sprite = cowgirlJumpSpriteSheet;
+        animFrame = Math.floor((frame + cowgirl.animationOffset) / COWGIRL_JUMP_FRAME_DURATION) % COWGIRL_TOTAL_FRAMES;
+      } else if (cowgirl.state === "idle") {
+        // Stand completely still in the corner; do not use the idle animation sprite.
+        sprite = cowgirlWalkSpriteSheet;
+        animFrame = 0;
+      }
+
+      if (sprite.complete && sprite.naturalWidth > 0) {
+        ctx.save();
+
+        if (cowgirl.facingLeft) {
+          ctx.translate(cowgirl.x + cowgirl.width, cowgirl.y);
+          ctx.scale(-1, 1);
+
+          drawSpriteFrame(
+            sprite,
+            animFrame,
+            COWGIRL_SPRITE_COLS,
+            COWGIRL_SPRITE_ROWS,
+            0,
+            0,
+            cowgirl.width,
+            cowgirl.height
+          );
+        } else {
+          drawSpriteFrame(
+            sprite,
+            animFrame,
+            COWGIRL_SPRITE_COLS,
+            COWGIRL_SPRITE_ROWS,
+            cowgirl.x,
+            cowgirl.y,
+            cowgirl.width,
+            cowgirl.height
+          );
+        }
+
+        ctx.restore();
+      } else {
+        ctx.fillStyle = "#d67b7b";
+        ctx.fillRect(cowgirl.x, cowgirl.y, cowgirl.width, cowgirl.height);
+      }
+    }
+
+    function drawFallingObjects() {
+      for (const obj of fallingObjects) {
+        if (obj.usesSpriteSheet && obj.image.complete && obj.image.naturalWidth > 0) {
+          const animFrame =
+            Math.floor((frame + obj.animationOffset) / obj.frameDuration) % obj.totalFrames;
+
+          drawSpriteFrame(
+            obj.image,
+            animFrame,
+            obj.spriteCols,
+            obj.spriteRows,
+            obj.x,
+            obj.y,
+            obj.width,
+            obj.height
+          );
+        } else if (obj.image && obj.image.complete && obj.image.naturalWidth > 0) {
+          ctx.drawImage(obj.image, obj.x, obj.y, obj.width, obj.height);
+        } else {
+          if (obj.type === "bonus200") ctx.fillStyle = "#66ff99";
+          else if (obj.type === "bonus1000") ctx.fillStyle = "#ffd700";
+          else ctx.fillStyle = "#ff4d4d";
+
+          ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
+        }
+      }
+    }
+
+    function drawHearts() {
+      ctx.save();
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      for (const heart of heartBursts) {
+        ctx.font = `${Math.max(heart.size, 12)}px Arial`;
+        ctx.fillText("💖", heart.x, heart.y);
+      }
+
+      ctx.restore();
+    }
+
+    function drawHUD() {
+      ctx.fillStyle = "white";
+      ctx.font = `${  Math.max(scaleY(20), 14)}px Arial`;
+      ctx.fillText(`  Score: ${score}`, scaleX(12), scaleY(30));
+      ctx.fillText(`  Lives: ${lives}`, scaleX(12), scaleY(58));
+      ctx.font = `${Math.max(scaleY(13), 10)}px Arial`;
+
+      const nextLifeAt = (Math.floor(score / 2000) + 1) * 2000;
+      const remaining = nextLifeAt - score;
+      ctx.font = `${Math.max(scaleY(16), 12)}px Arial`;
+      ctx.fillText(`  Next life in: ${remaining > 0 ? remaining : 0}`, scaleX(12), scaleY(100));
+
+      const mooReady = mooCooldownTimer <= 0;
+      const mooSeconds = (mooCooldownTimer / 60).toFixed(1);
+
+      ctx.fillStyle = mooReady ? "#9cffb0" : "#ffffff";
+      ctx.font = `${Math.max(scaleY(15), 11)}px Arial`;
+      ctx.fillText(
+        mooReady ? "  Moo ready: SPACE / double tap" : `  Moo cooldown: ${mooSeconds}s`,
+        scaleX(12),
+        scaleY(126)
+      );
+    }
+
+
+
+    function drawInventoryHUD() {
+      if (!cloverUnlocked) return;
+
+      ctx.save();
+      ctx.textAlign = "right";
+      ctx.fillStyle = cloverBoostTimer > 0 ? "#d8ff9c" : "white";
+      ctx.font = `${Math.max(scaleY(14), 10)}px Arial`;
+
+      const boostSeconds = Math.ceil(cloverBoostTimer / 60);
+      const status = cloverBoostTimer > 0 ? ` +20% speed ${boostSeconds}s` : " press I, then X";
+      const openText = cloverInventoryOpen ? "Inventory open" : "44 Clover";
+      ctx.fillText(`${openText}:${status}`, canvas.width - scaleX(10), scaleY(30));
+      ctx.restore();
+    }
+
+
+    function drawCloverSpeechBubble() {
+      if (cloverSpeechTimer <= 0 || !cloverSpeechText) return;
+
+      ctx.save();
+
+      const playerCenterX = player.x + player.width / 2;
+      const bubbleWidth = Math.min(canvas.width - scaleX(28), scaleX(270));
+      const paddingX = scaleX(12);
+      const paddingY = scaleY(9);
+      const lineHeight = Math.max(scaleY(15), 12);
+      const maxTextWidth = bubbleWidth - paddingX * 2;
+      const fontSize = Math.max(scaleY(13), 11);
+
+      ctx.font = `${fontSize}px Papyrus, fantasy`;
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+
+      const visibleCloverSpeechText = cloverSpeechText.slice(0, cloverSpeechTypedLength);
+      const words = visibleCloverSpeechText.split(" ");
+      const lines = [];
+      let line = "";
+
+      for (const word of words) {
+        const testLine = line ? `${line} ${word}` : word;
+        if (ctx.measureText(testLine).width > maxTextWidth && line) {
+          lines.push(line);
+          line = word;
+        } else {
+          line = testLine;
+        }
+      }
+      if (line) lines.push(line);
+
+      const bubbleHeight = paddingY * 2 + lines.length * lineHeight;
+      let x = playerCenterX - bubbleWidth / 2;
+      let y = player.y - bubbleHeight - scaleY(14);
+
+      x = Math.max(scaleX(8), Math.min(canvas.width - bubbleWidth - scaleX(8), x));
+      y = Math.max(scaleY(8), y);
+
+      const radius = scaleX(12);
+      const alpha = Math.min(1, cloverSpeechTimer / 20);
+      ctx.globalAlpha = alpha;
+
+      ctx.fillStyle = "rgba(7, 24, 11, 0.88)";
+      ctx.strokeStyle = "rgba(76, 255, 122, 0.95)";
+      ctx.lineWidth = Math.max(scaleX(2), 1);
+      ctx.shadowColor = "rgba(76, 255, 122, 0.45)";
+      ctx.shadowBlur = 8;
+
+      ctx.beginPath();
+      ctx.roundRect(x, y, bubbleWidth, bubbleHeight, radius);
+      ctx.fill();
+      ctx.stroke();
+
+      const tailX = Math.max(x + scaleX(22), Math.min(x + bubbleWidth - scaleX(22), playerCenterX));
+      const tailY = y + bubbleHeight;
+      ctx.beginPath();
+      ctx.moveTo(tailX - scaleX(8), tailY - 1);
+      ctx.lineTo(tailX + scaleX(8), tailY - 1);
+      ctx.lineTo(playerCenterX, player.y - scaleY(2));
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Keep the glow around the bubble, but make the text crisp and readable.
+      ctx.shadowColor = "rgba(76, 255, 122, 0.7)";
+      ctx.shadowBlur = 6;
+      ctx.fillStyle = "#4cff7a";
+      ctx.font = `${fontSize}px Papyrus, fantasy`;
+      lines.forEach((textLine, index) => {
+        ctx.fillText(textLine, x + paddingX, y + paddingY + index * lineHeight);
+      });
+
+      ctx.restore();
+    }
+
+    function drawHitFlash() {
+      if (hitFlashTimer > 0) {
+        ctx.fillStyle = "rgba(255, 0, 0, 0.18)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function drawBonusFlash() {
+      if (bonusFlashTimer > 0 && bonusFlashText) {
+        ctx.fillStyle = "white";
+        ctx.font = `${Math.max(scaleY(28), 18)}px Arial`;
+        ctx.textAlign = "center";
+        ctx.fillText(bonusFlashText, canvas.width / 2, scaleY(140));
+        ctx.textAlign = "left";
+      }
+    }
+
+    function drawCowbellFlash() {
+      if (!cowbellModeActive) return;
+
+      const alpha = 0.08 + ((Math.sin(canvasFlashPhase * 0.35) + 1) / 2) * 0.18;
+
+      ctx.save();
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
+    }
+
+    function drawPastureBackground() {
+      if (pastureImage.complete && pastureImage.naturalWidth > 0) {
+        ctx.drawImage(pastureImage, 0, 0, canvas.width, canvas.height);
+      } else {
+        const sky = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        sky.addColorStop(0, "#54b6ff");
+        sky.addColorStop(0.55, "#a7dcff");
+        sky.addColorStop(0.56, "#62a932");
+        sky.addColorStop(1, "#2e751f");
+        ctx.fillStyle = sky;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function drawGreenerPasturesSequence() {
+      ctx.save();
+      ctx.globalAlpha = greenerPasturesFade;
+      drawPastureBackground();
+      ctx.restore();
+
+      if (greenerPasturesFade < 1) {
+        ctx.save();
+        ctx.globalAlpha = 1 - greenerPasturesFade;
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.restore();
+      }
+
+      drawPlayer();
+    }
+
+    function drawBossGrass() {
+      for (const grass of bossGrass) {
+        const pulse = 1 + Math.sin((frame + grass.pulse) * 0.08) * 0.05;
+        const w = grass.width * pulse;
+        const h = grass.height * pulse;
+        const x = grass.x + (grass.width - w) / 2;
+        const y = grass.y + (grass.height - h) / 2;
+
+        if (bonus200Img.complete && bonus200Img.naturalWidth > 0) {
+          ctx.drawImage(bonus200Img, x, y, w, h);
+        } else {
+          ctx.fillStyle = "#61d957";
+          ctx.fillRect(x, y, w, h);
+        }
+      }
+    }
+
+    function drawCowgirlBoss() {
+      let sprite = cowgirlRunSpriteSheet;
+      let frameDuration = COWGIRL_RUN_FRAME_DURATION;
+
+      if (cowgirlBoss.state === "attacking") {
+        sprite = cowgirlAttackSpriteSheet;
+        frameDuration = COWGIRL_ATTACK_FRAME_DURATION;
+      } else if (cowgirlBoss.state === "jumping") {
+        sprite = cowgirlJumpSpriteSheet;
+        frameDuration = COWGIRL_JUMP_FRAME_DURATION;
+      }
+
+      const animFrame = Math.floor((frame + cowgirlBoss.animationOffset) / frameDuration) % COWGIRL_TOTAL_FRAMES;
+
+      if (sprite.complete && sprite.naturalWidth > 0) {
+        ctx.save();
+        if (cowgirlBoss.flashTimer > 0) {
+          ctx.filter = cowgirlBoss.flashTimer % 4 < 2 ? "brightness(3) saturate(0)" : "brightness(1.8)";
+        }
+
+        if (cowgirlBoss.facingLeft) {
+          ctx.translate(cowgirlBoss.x + cowgirlBoss.width, cowgirlBoss.y);
+          ctx.scale(-1, 1);
+          drawSpriteFrame(sprite, animFrame, COWGIRL_SPRITE_COLS, COWGIRL_SPRITE_ROWS, 0, 0, cowgirlBoss.width, cowgirlBoss.height);
+        } else {
+          drawSpriteFrame(sprite, animFrame, COWGIRL_SPRITE_COLS, COWGIRL_SPRITE_ROWS, cowgirlBoss.x, cowgirlBoss.y, cowgirlBoss.width, cowgirlBoss.height);
+        }
+
+        ctx.restore();
+      } else {
+        ctx.fillStyle = cowgirlBoss.flashTimer > 0 ? "#ffffff" : "#b74747";
+        ctx.fillRect(cowgirlBoss.x, cowgirlBoss.y, cowgirlBoss.width, cowgirlBoss.height);
+      }
+    }
+
+
+    function drawBossPitchforks() {
+      for (const pitchfork of bossPitchforks) {
+        ctx.save();
+        ctx.translate(pitchfork.x, pitchfork.y);
+
+        // Assumes pitchfork.png has the spikes pointing to the right.
+        // Math.atan2 above rotates that right-facing spike side toward Clover.
+        ctx.rotate(pitchfork.angle + Math.PI/4);;
+
+        if (pitchforkImage.complete && pitchforkImage.naturalWidth > 0) {
+          ctx.drawImage(
+            pitchforkImage,
+            -pitchfork.width / 2,
+            -pitchfork.height / 2,
+            pitchfork.width,
+            pitchfork.height
+          );
+        } else {
+          ctx.fillStyle = "#9a6a3a";
+          ctx.fillRect(-pitchfork.width / 2, -pitchfork.height * 0.18, pitchfork.width, pitchfork.height * 0.36);
+          ctx.fillStyle = "#bfc3c7";
+          ctx.fillRect(pitchfork.width * 0.15, -pitchfork.height / 2, pitchfork.width * 0.35, pitchfork.height);
+        }
+
+        ctx.restore();
+      }
+    }
+
+    function drawBossHUD() {
+      const barWidth = scaleX(250);
+      const barHeight = scaleY(16);
+      const x = canvas.width / 2 - barWidth / 2;
+      const y = scaleY(18);
+
+      ctx.save();
+      ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
+      ctx.fillRect(x - scaleX(4), y - scaleY(4), barWidth + scaleX(8), barHeight + scaleY(8));
+
+      ctx.fillStyle = "#3b1010";
+      ctx.fillRect(x, y, barWidth, barHeight);
+
+      ctx.fillStyle = "#ff4d4d";
+      ctx.fillRect(x, y, barWidth * Math.max(0, cowgirlBoss.health / cowgirlBoss.maxHealth), barHeight);
+
+      ctx.strokeStyle = "white";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x, y, barWidth, barHeight);
+
+      ctx.fillStyle = "white";
+      ctx.font = `${Math.max(scaleY(14), 11)}px Arial`;
+      ctx.textAlign = "center";
+      ctx.fillText(`Cowgirl Moos Left: ${Math.max(0, cowgirlBoss.health)}`, canvas.width / 2, y + scaleY(34));
+      ctx.font = `${Math.max(scaleY(11), 9)}px Arial`;
+      ctx.fillText("CLOVER MOO MOO CLOVER MOO YOUR LITTLE HEART OUT", canvas.width / 2, y + scaleY(50));
+      ctx.restore();
+    }
+
+    function drawBossFight() {
+      drawPastureBackground();
+      drawBossGrass();
+      drawPlayer();
+      drawCowgirlBoss();
+      drawBossPitchforks();
+      drawMooFlash();
+      drawHUD();
+      drawInventoryHUD();
+      drawCloverSpeechBubble();
+      drawBossHUD();
+      drawHitFlash();
+      drawBonusFlash();
+    }
+
+    function drawPurpleCow() {
+      if (!purpleCow.active) return;
+
+      const purpleCowIsWalking = purpleCow.entering || purpleCow.walkingAway;
+      const sprite = purpleCowIsWalking ? purpleCowWalkSpriteSheet : purpleCowIdleSpriteSheet;
+      const frameDuration = purpleCowIsWalking ? PURPLE_COW_WALK_FRAME_DURATION : PURPLE_COW_IDLE_FRAME_DURATION;
+      const animFrame = Math.floor((frame + purpleCow.animationOffset) / frameDuration) % PURPLE_COW_TOTAL_FRAMES;
+      const bob = Math.sin((frame + purpleCow.animationOffset) * 0.045) * scaleY(2.5);
+
+      ctx.save();
+      ctx.globalAlpha = purpleCow.triggered ? 1 : 0.72 + Math.sin(frame * 0.04) * 0.14;
+      ctx.shadowColor = "rgba(170, 90, 255, 0.75)";
+      ctx.shadowBlur = scaleX(16);
+
+      if (sprite.complete && sprite.naturalWidth > 0) {
+        if (purpleCow.facingLeft) {
+          ctx.translate(purpleCow.x + purpleCow.width, purpleCow.y + bob);
+          ctx.scale(-1, 1);
+          drawSpriteFrame(sprite, animFrame, PURPLE_COW_SPRITE_COLS, PURPLE_COW_SPRITE_ROWS, 0, 0, purpleCow.width, purpleCow.height);
+        } else {
+          drawSpriteFrame(sprite, animFrame, PURPLE_COW_SPRITE_COLS, PURPLE_COW_SPRITE_ROWS, purpleCow.x, purpleCow.y + bob, purpleCow.width, purpleCow.height);
+        }
+      } else {
+        ctx.fillStyle = "#8d50ff";
+        ctx.fillRect(purpleCow.x, purpleCow.y + bob, purpleCow.width, purpleCow.height);
+      }
+
+      ctx.restore();
+    }
+
+    function drawBossDefeatedPasture() {
+      drawPastureBackground();
+      drawPurpleCow();
+      drawPlayer();
+      drawBossPoofs();
+      drawMooFlash();
+      drawHearts();
+      drawHUD();
+      drawInventoryHUD();
+      drawCloverSpeechBubble();
+      drawHitFlash();
+      drawBonusFlash();
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (greenerPasturesActive) {
+        drawGreenerPasturesSequence();
+        return;
+      }
+
+      if (bossFightActive) {
+        drawBossFight();
+        return;
+      }
+
+      if (bossDefeatedPastureActive) {
+        drawBossDefeatedPasture();
+        return;
+      }
+
+      drawPlayer();
+      drawStalkerButcher();
+      drawCowgirl();
+      drawMooFlash();
+      drawFallingObjects();
+      drawHearts();
+      drawHUD();
+      drawInventoryHUD();
+      drawCloverSpeechBubble();
+      drawHitFlash();
+      drawBonusFlash();
+      drawCowbellFlash();
+    }
+
+    function loop() {
+      resizeCanvasToDisplaySize();
+      update();
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    resetGameState();
+    showStartOverlay();
+    loop();
+  </script>
 </body>
 </html>

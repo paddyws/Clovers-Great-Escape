@@ -3,1868 +3,4041 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Graham Gem | Private Pool Retreat</title>
-
+  <title>Clover's Great Escape!</title>
   <style>
-    :root {
-      --cream: #f7efe3;
-      --warm: #efe0c8;
-      --ink: #16242b;
-      --muted: #6e6258;
-      --teal: #1faaa6;
-      --gold: #c99b4a;
-      --white: #fffaf1;
-      --danger: #b54b3a;
-      --success: #2d7a5f;
-      --shadow: 0 24px 70px rgba(0,0,0,.18);
-      --radius: 28px;
-      --airbnb-border: #ded8cf;
-      --airbnb-booked: #f5d8d2;
-      --airbnb-booked-border: #e2aba1;
-      --airbnb-range: #ddeeed;
+    * {
+      box-sizing: border-box;
     }
 
-    * { box-sizing: border-box; }
-
-    html { scroll-behavior: smooth; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+    }
 
     body {
-      margin: 0;
-      font-family: Inter, system-ui, sans-serif;
-      color: var(--ink);
-      background: var(--cream);
-    }
-
-    h1, h2, h3, .brand {
-      font-family: Georgia, "Times New Roman", serif;
-      font-weight: 500;
-    }
-
-    a { color: inherit; text-decoration: none; }
-
-    nav {
-      position: fixed;
-      z-index: 10;
-      width: 100%;
-      padding: 22px 8vw;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: center;
-      color: var(--white);
-      background: linear-gradient(to bottom, rgba(0,0,0,.55), transparent);
-    }
-
-    .brand {
-      font-size: 2rem;
-      letter-spacing: .03em;
-    }
-
-    .brand span { color: var(--gold); }
-
-    .nav-links {
-      display: flex;
-      gap: 28px;
-      font-weight: 700;
-      font-size: .9rem;
-    }
-
-    .hero {
-      min-height: 92vh;
-      display: flex;
-      align-items: center;
-      padding: 120px 8vw 80px;
-      background:
-        linear-gradient(90deg, rgba(12,20,22,.78), rgba(12,20,22,.42), rgba(12,20,22,.12)),
-        url("cozy.jpg") center/cover no-repeat;
-      color: var(--white);
-    }
-
-    .hero-content { max-width: 780px; }
-
-    .eyebrow {
-      color: #f3cf86;
-      text-transform: uppercase;
-      letter-spacing: .22em;
-      font-weight: 800;
-      font-size: .82rem;
-      margin-bottom: 18px;
+      justify-content: flex-start;
+      min-height: 100dvh;
+      padding: 12px 12px 28px;
+      overflow-y: auto;
     }
 
     h1 {
-      font-size: clamp(3.2rem, 7vw, 7.5rem);
-      line-height: .9;
-      margin: 0 0 24px;
-    }
-
-    .hero p {
-      font-size: 1.2rem;
-      line-height: 1.75;
-      max-width: 650px;
-      color: #fff3db;
-    }
-
-    .buttons {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-top: 34px;
-    }
-
-    .btn {
-      padding: 16px 24px;
-      border-radius: 999px;
-      font-weight: 900;
-      box-shadow: 0 14px 35px rgba(0,0,0,.2);
-    }
-
-    .primary { background: var(--teal); color: white; }
-    .secondary { background: rgba(255,250,241,.92); color: var(--ink); }
-
-    .stats {
-      width: min(1100px, 86vw);
-      margin: -54px auto 80px;
-      background: rgba(255,250,241,.94);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      overflow: hidden;
-    }
-
-    .stat {
-      padding: 28px;
+      margin: 6px 0 8px;
       text-align: center;
-      border-right: 1px solid #e4d2b7;
     }
 
-    .stat:last-child { border-right: 0; }
-
-    .stat strong {
-      display: block;
-      font-family: Georgia, serif;
-      font-size: 2.4rem;
-      color: var(--ink);
+    p {
+      margin-top: 0;
+      opacity: 0.85;
+      text-align: center;
+      max-width: 560px;
+      padding: 0 12px;
+      line-height: 1.4;
     }
 
-    .stat span {
-      color: var(--muted);
-      font-size: .95rem;
-    }
-
-    section { padding: 80px 8vw; }
-
-    .intro {
-      display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 56px;
-      align-items: center;
-    }
-
-    .intro h2, .section-title {
-      font-size: clamp(2.3rem, 4vw, 4rem);
-      line-height: 1;
-      margin: 0 0 22px;
-    }
-
-    .intro p, .section-text {
-      color: var(--muted);
-      font-size: 1.08rem;
-      line-height: 1.75;
-    }
-
-    .note-card {
-      background: #fffaf1;
-      padding: 34px;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      border: 1px solid #ead8bd;
-    }
-
-    .features {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 22px;
-      margin-top: 34px;
-    }
-
-    .feature {
-      background: #fffaf1;
-      padding: 28px;
-      border-radius: 24px;
-      border: 1px solid #ead8bd;
-    }
-
-    .feature h3 {
-      font-size: 1.5rem;
-      margin: 0 0 10px;
-    }
-
-    .feature p {
-      color: var(--muted);
-      line-height: 1.6;
-      margin: 0;
-    }
-
-    .gallery { background: #efe0c8; }
-
-    .photo-grid {
-      display: grid;
-      grid-template-columns: 1.3fr 1fr 1fr;
-      gap: 18px;
-      margin-top: 34px;
-    }
-
-    .photo-grid img {
-      width: 100%;
-      height: 280px;
-      object-fit: cover;
-      border-radius: 26px;
-      box-shadow: 0 18px 40px rgba(0,0,0,.12);
-    }
-
-    .photo-grid img:first-child {
-      grid-row: span 2;
-      height: 578px;
-    }
-
-    .booking {
-      display: grid;
-      grid-template-columns: .82fr 1.18fr;
-      gap: 40px;
-      align-items: start;
-    }
-
-    .booking-stack {
-      display: grid;
-      gap: 22px;
-    }
-
-    form, .availability-card {
-      background: #fffaf1;
-      padding: 34px;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      border: 1px solid #ead8bd;
-    }
-
-    input, textarea {
-      width: 100%;
-      padding: 15px;
-      margin-bottom: 14px;
-      border-radius: 14px;
-      border: 1px solid #d8c5a9;
-      font: inherit;
-      background: white;
-    }
-
-    textarea { min-height: 120px; }
-
-    button {
-      border: 0;
-      cursor: pointer;
-      font: inherit;
-    }
-
-    .submit-btn {
-      width: 100%;
-      padding: 16px;
-      border-radius: 999px;
-      background: var(--teal);
-      color: white;
-      font-weight: 900;
-    }
-
-    .submit-btn:hover { filter: brightness(.96); }
-
-    .submit-btn:disabled {
-      opacity: .65;
-      cursor: not-allowed;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    .availability-card { padding: 28px; }
-
-    .availability-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-      gap: 18px;
-      margin-bottom: 18px;
-    }
-
-    .availability-top h3 {
-      font-size: 1.9rem;
-      margin: 4px 0 0;
-    }
-
-    .availability-label {
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      font-size: .75rem;
-      font-weight: 800;
-      color: var(--muted);
-    }
-
-    .availability-status {
-      font-size: .92rem;
-      color: var(--muted);
-      line-height: 1.45;
-      margin: 0;
-      text-align: right;
-      max-width: 260px;
-    }
-
-    .booking-fields {
-      border: 1px solid var(--airbnb-border);
-      border-radius: 22px;
-      background: white;
-      box-shadow: 0 14px 34px rgba(0,0,0,.08);
-      margin-bottom: 22px;
-      padding: 14px;
+    .game-wrap {
       position: relative;
-      overflow: visible;
+      width: min(100%, 400px);
+      aspect-ratio: 2 / 3;
+      border: 2px solid white;
+      background-image: url("road.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      overflow: hidden;
+      border-radius: 12px;
     }
 
-    .booking-box-inner {
-      display: grid;
-      grid-template-columns: 1.05fr 1fr 1fr 1.15fr auto;
-      align-items: stretch;
-      border: 1px solid var(--airbnb-border);
-      border-radius: 18px;
-      background: white;
-      overflow: visible;
+    .game-wrap.boss-shake {
+      animation: bossScreenShake 1.2s cubic-bezier(.36,.07,.19,.97) both;
     }
 
-    .booking-box-heading {
-      padding: 16px 18px;
-      background: #fffaf1;
-      border-right: 1px solid var(--airbnb-border);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 4px;
+    @keyframes bossScreenShake {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      10% { transform: translate(-5px, 3px) rotate(-0.6deg); }
+      20% { transform: translate(6px, -4px) rotate(0.7deg); }
+      30% { transform: translate(-7px, 2px) rotate(-0.8deg); }
+      40% { transform: translate(7px, 4px) rotate(0.8deg); }
+      50% { transform: translate(-5px, -5px) rotate(-0.5deg); }
+      60% { transform: translate(5px, 3px) rotate(0.5deg); }
+      70% { transform: translate(-4px, 5px) rotate(-0.4deg); }
+      80% { transform: translate(4px, -3px) rotate(0.4deg); }
+      90% { transform: translate(-2px, 2px) rotate(-0.2deg); }
     }
 
-    .booking-box-heading small {
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      font-size: .68rem;
-      font-weight: 900;
-      color: var(--muted);
+    .overlay.boss-red-flash::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(180, 0, 0, 0.42);
+      pointer-events: none;
+      animation: bossRedFlash 0.55s ease-out both;
+      z-index: 21;
     }
 
-    .booking-box-heading strong {
-      font-family: Georgia, serif;
-      font-size: 1.45rem;
-      font-weight: 500;
-      color: var(--ink);
-      line-height: 1;
+    @keyframes bossRedFlash {
+      0% { opacity: 0; }
+      12% { opacity: 1; }
+      35% { opacity: 0.55; }
+      100% { opacity: 0; }
     }
 
-    .field-block {
-      padding: 14px 16px;
-      border-right: 1px solid var(--airbnb-border);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      min-width: 0;
-      background: white;
-    }
-
-    .field-block label {
+    canvas {
       display: block;
-      font-size: .68rem;
-      font-weight: 900;
-      letter-spacing: .08em;
-      color: #000;
-      margin-bottom: 6px;
-      text-transform: uppercase;
-    }
-
-    .field-block input {
-      margin: 0;
-      padding: 0;
-      border: 0;
-      border-radius: 0;
-      background: transparent;
-      font-size: .96rem;
-      color: var(--ink);
-      outline: none;
-      min-width: 0;
-    }
-
-    .guest-field-wrap {
-      position: relative;
-      min-width: 0;
-      background: white;
-      border-right: 1px solid var(--airbnb-border);
-    }
-
-    .guest-button {
       width: 100%;
       height: 100%;
-      text-align: left;
-      padding: 14px 16px;
-      background: white;
+      touch-action: none;
+      background: transparent;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      border-radius: 0;
-    }
-
-    .guest-button .guest-copy {
-      display: flex;
-      flex-direction: column;
       justify-content: center;
-      gap: 6px;
-      min-width: 0;
+      padding: 18px;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 20;
     }
 
-    .guest-button .guest-label {
-      font-size: .68rem;
-      font-weight: 900;
-      letter-spacing: .08em;
-      color: #000;
-      text-transform: uppercase;
-    }
-
-    .guest-button .guest-value {
-      font-size: .96rem;
-      color: var(--ink);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 150px;
-    }
-
-    .guest-chevron {
-      font-size: 1rem;
-      color: var(--muted);
-      transition: transform .18s ease;
-      flex: 0 0 auto;
-    }
-
-    .guest-field-wrap.open .guest-chevron {
-      transform: rotate(180deg);
-    }
-
-    .guest-popover {
-      position: absolute;
-      top: calc(100% + 10px);
-      right: 0;
-      z-index: 30;
-      width: min(360px, calc(100vw - 48px));
-      background: white;
-      border: 1px solid var(--airbnb-border);
-      border-radius: 24px;
-      box-shadow: 0 16px 36px rgba(0,0,0,.12);
-      padding: 12px 18px;
+    .overlay.hidden {
       display: none;
     }
 
-    .guest-field-wrap.open .guest-popover {
-      display: block;
-    }
-
-    .guest-row {
+    .overlay-box {
+      width: min(100%, 320px);
+      background: rgba(23, 20, 18, 0.94);
+      color: #f6f0e8;
+      border: 1px solid rgba(255, 240, 220, 0.18);
+      border-radius: 18px;
+      padding: 18px 18px 16px;
+      box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      text-align: center;
+      backdrop-filter: blur(5px);
+      min-height: 150px;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 14px;
-      padding: 14px 0;
-      border-bottom: 1px solid #f0ece6;
+      flex-direction: column;
+      justify-content: center;
     }
 
-    .guest-row:last-child { border-bottom: 0; }
 
-    .guest-row strong {
+
+    .overlay-box.picture-overlay-box {
+      width: min(100%, 372px);
+      padding: 10px;
+      background: rgba(12, 8, 16, 0.96);
+    }
+
+    .dialogue-picture {
       display: block;
-      font-size: 1rem;
-      margin-bottom: 2px;
+      width: 100%;
+      max-height: 260px;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 14px 14px 6px 6px;
+      margin: 0 0 10px;
+      image-rendering: pixelated;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
     }
 
-    .guest-row span {
-      color: var(--muted);
-      font-size: .9rem;
+    .picture-dialogue-box {
+      background: rgba(23, 20, 18, 0.96);
+      border: 1px solid rgba(255, 240, 220, 0.2);
+      border-radius: 12px;
+      padding: 13px 14px;
+      min-height: 92px;
+      text-align: center;
     }
 
-    .guest-controls {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .counter-btn {
-      width: 34px;
-      height: 34px;
-      border-radius: 999px;
-      border: 1px solid #cbbba5;
-      background: white;
-      color: var(--ink);
-      font-size: 1.1rem;
-      display: grid;
-      place-items: center;
-    }
-
-    .counter-btn:disabled {
-      opacity: .45;
-      cursor: not-allowed;
-    }
-
-    .guest-note {
-      margin-top: 10px;
-      font-size: .84rem;
-      color: var(--muted);
+    .overlay-text {
+      font-size: 17px;
       line-height: 1.45;
+      white-space: pre-line;
+      min-height: 78px;
     }
 
-    .quick-request-btn {
-      min-height: 70px;
-      padding: 0 24px;
-      background: var(--teal);
-      color: white;
-      font-weight: 900;
+    .dialogue-cursor {
+      display: inline-block;
+      width: 0.6ch;
+      animation: blinkCursor 0.9s steps(1) infinite;
+      opacity: 0.8;
+    }
+
+    @keyframes blinkCursor {
+      50% {
+        opacity: 0;
+      }
+    }
+
+    .overlay-continue {
+      margin-top: 10px;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.75;
+    }
+
+    .overlay-continue.hidden {
+      visibility: hidden;
+    }
+
+    .overlay-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .overlay-btn {
+      padding: 10px 16px;
+      font-size: 15px;
+      cursor: pointer;
+      border: none;
+      border-radius: 999px;
+      min-width: 110px;
+      background: linear-gradient(180deg, #f6e7d4, #dcc1a0);
+      color: #2a1d14;
+      font-weight: 600;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    .overlay-btn.secondary {
+      background: linear-gradient(180deg, #d9d2ca, #b9aea4);
+    }
+
+
+    
+/* 🌙 Soft dark Papyrus menu */
+
+.difficulty-menu {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-family: Papyrus, fantasy;
+}
+
+.difficulty-title {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: 0.08em;
+  color: #d9d3b8;
+  text-shadow: 0 0 10px rgba(255, 230, 160, 0.15);
+}
+
+.difficulty-subtitle {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #bfb79c;
+  opacity: 0.85;
+  margin-bottom: 6px;
+}
+
+.difficulty-options {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.difficulty-card {
+  font-family: Papyrus, fantasy;
+  width: 160px;
+  padding: 7px 10px;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid rgba(200, 185, 140, 0.18);
+  background: linear-gradient(
+    180deg,
+    rgba(34, 31, 25, 0.95),
+    rgba(20, 18, 15, 0.95)
+  );
+  color: #dcd5b9;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    0 6px 14px rgba(0,0,0,0.45);
+  transition: all 0.15s ease;
+}
+
+.difficulty-card:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(48, 44, 34, 0.95),
+    rgba(24, 22, 18, 0.95)
+  );
+  transform: translateY(-1px) scale(1.02);
+}
+
+.difficulty-card:active {
+  transform: scale(0.96);
+}
+
+.difficulty-card.cowgirl {
+  color: #e6a98f;
+  border-color: rgba(180, 90, 60, 0.35);
+}
+
+.difficulty-card.cowgirl:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(70, 42, 30, 0.95),
+    rgba(32, 20, 16, 0.95)
+  );
+}
+
+
+    .end-banner {
+      position: absolute;
+      inset: 0;
+      z-index: 15;
       display: flex;
       align-items: center;
       justify-content: center;
-      white-space: nowrap;
-      border-radius: 0 17px 17px 0;
+      font-size: clamp(30px, 8vw, 52px);
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: #fff7d6;
+      text-shadow:
+        0 0 12px rgba(255, 230, 150, 0.55),
+        0 6px 20px rgba(0, 0, 0, 0.55);
+      pointer-events: none;
     }
 
-    .quick-request-btn:hover {
-      filter: brightness(.96);
+    .end-banner.hidden {
+      display: none;
     }
 
-    .calendar-controls {
+
+    .mobile-controls {
+      width: min(100%, 400px);
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .calendar-controls button {
-      min-width: 44px;
-      height: 44px;
-      border-radius: 999px;
-      background: #ead8bd;
-      color: var(--ink);
-      font-size: 1.15rem;
-    }
-
-    .calendar-range-title {
-      text-align: center;
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--muted);
-    }
-
-    .calendar-months {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-
-    .calendar-month {
-      padding: 4px 0 0;
-    }
-
-    .calendar-title {
-      text-align: center;
-      font-family: Georgia, serif;
-      font-size: 1.45rem;
-      margin-bottom: 14px;
-    }
-
-    .month-weekdays,
-    .month-days {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 8px;
-    }
-
-    .weekday {
-      text-align: center;
-      font-size: .72rem;
-      font-weight: 900;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      padding-bottom: 2px;
-    }
-
-    .day {
-      aspect-ratio: 1;
-      border-radius: 16px;
-      border: 1px solid transparent;
-      background: white;
-      display: grid;
-      place-items: center;
-      font-weight: 700;
-      font-size: .95rem;
-      position: relative;
-      cursor: pointer;
-      transition: all .15s ease;
-    }
-
-    .day.empty {
-      background: transparent;
-      border: 0;
-      cursor: default;
-    }
-
-    .day.past {
-      color: #c3b6a3;
-      background: #f3eadc;
-      cursor: not-allowed;
-    }
-
-    .day.booked {
-      background: var(--airbnb-booked);
-      border-color: var(--airbnb-booked-border);
-      color: var(--danger);
-      cursor: not-allowed;
-      text-decoration: line-through;
-    }
-
-    .day.checkout-only {
-      background: white;
-      color: var(--ink);
-      border-color: #ead8bd;
-      cursor: pointer;
-      text-decoration: none;
-    }
-
-    .day.checkout-only:hover {
-      border-color: var(--gold);
-      box-shadow: 0 8px 18px rgba(201,155,74,.15);
-    }
-
-    .day.available:hover {
-      border-color: var(--teal);
-      box-shadow: 0 8px 18px rgba(31,170,166,.14);
-    }
-
-    .day.in-range {
-      background: var(--airbnb-range);
-      border-color: #c8dfdc;
-      color: var(--ink);
-    }
-
-    .day.selected {
-      background: var(--teal);
-      color: white;
-      border-color: var(--teal);
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 18px;
-      color: var(--muted);
-      font-size: .9rem;
-    }
-
-    .legend-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-    }
-
-    .swatch {
-      width: 14px;
-      height: 14px;
-      border-radius: 5px;
-      border: 1px solid #d8c5a9;
-      background: white;
-    }
-
-    .swatch.booked {
-      background: var(--airbnb-booked);
-      border-color: var(--airbnb-booked-border);
-    }
-
-    .swatch.selected {
-      background: var(--teal);
-      border-color: var(--teal);
-    }
-
-    .availability-message {
-      margin-top: 18px;
-      padding: 14px 16px;
-      border-radius: 16px;
-      background: #f3eadc;
-      color: var(--muted);
-      line-height: 1.5;
-      font-size: .95rem;
-    }
-
-    .availability-message.inline {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 28px;
-      align-items: center;
-    }
-
-    .availability-message .message-main,
-    .availability-message .message-savings {
-      display: inline-block;
-      font: inherit;
-      color: inherit;
-    }
-
-    .availability-message.good {
-      background: #dff3e9;
-      color: var(--success);
-    }
-
-    .availability-message.bad {
-      background: #f5d8d2;
-      color: var(--danger);
-    }
-
-    .quote-card {
-      margin-top: 16px;
-      border: 1px solid var(--airbnb-border);
-      border-radius: 18px;
-      background: white;
-      padding: 18px 18px 14px;
-    }
-
-    .quote-placeholder {
-      color: var(--muted);
-      line-height: 1.55;
-      font-size: .95rem;
-    }
-
-    .quote-row,
-    .quote-total {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      padding: 7px 0;
-      font-size: 1rem;
-    }
-
-    .quote-row span { color: var(--muted); }
-
-    .quote-total {
-      margin-top: 8px;
-      padding-top: 14px;
-      border-top: 1px solid #ebe5dc;
-      font-size: 1.14rem;
-      font-weight: 900;
-      color: var(--ink);
-    }
-
-    .quote-footnote {
+      gap: 10px;
+      justify-content: center;
       margin-top: 10px;
-      color: var(--muted);
-      font-size: .86rem;
-      line-height: 1.45;
+      flex-wrap: wrap;
     }
 
-    .form-card-title {
-      margin: 0 0 8px;
-      font-size: 1.6rem;
+    .mobile-control-btn {
+      padding: 10px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      touch-action: manipulation;
     }
 
-    .form-card-subtitle {
-      margin: 0 0 20px;
-      color: var(--muted);
-      line-height: 1.6;
+    .mobile-control-btn:active {
+      transform: scale(0.96);
+      background: rgba(255, 255, 255, 0.18);
     }
 
-    .reviews {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 22px;
-    }
-
-    .review {
-      background: #fffaf1;
-      padding: 28px;
-      border-radius: 24px;
-      border: 1px solid #ead8bd;
-    }
-
-    .stars { color: var(--gold); letter-spacing: .08em; }
-
-    footer {
-      padding: 36px 8vw;
-      text-align: center;
-      color: var(--muted);
-      background: #ead8bd;
-    }
-
-    @media (max-width: 1100px) {
-      .calendar-months {
-        grid-template-columns: 1fr;
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.5rem;
       }
 
-      .booking-box-inner {
-        grid-template-columns: 1fr 1fr;
+      p {
+        font-size: 0.95rem;
       }
 
-      .booking-box-heading {
-        grid-column: 1 / -1;
-        border-right: 0;
-        border-bottom: 1px solid var(--airbnb-border);
-      }
-
-      .field-block:nth-of-type(3) {
-        border-right: 0;
-      }
-
-      .guest-field-wrap {
-        border-top: 1px solid var(--airbnb-border);
-      }
-
-      .quick-request-btn {
-        border-radius: 0 0 17px 0;
-      }
-    }
-
-    @media (max-width: 850px) {
-      nav { position: absolute; }
-      .nav-links { display: none; }
-
-      .stats,
-      .features,
-      .reviews,
-      .intro,
-      .booking,
-      .photo-grid,
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-
-      .stat {
-        border-right: 0;
-        border-bottom: 1px solid #e4d2b7;
-      }
-
-      .photo-grid img,
-      .photo-grid img:first-child {
-        height: 260px;
-      }
-
-      .availability-top {
-        flex-direction: column;
-      }
-
-      .availability-status {
-        text-align: left;
-        max-width: none;
-      }
-
-      .booking-box-inner {
-        grid-template-columns: 1fr;
-      }
-
-      .field-block,
-      .guest-field-wrap {
-        border-right: 0;
-        border-bottom: 1px solid var(--airbnb-border);
-      }
-
-      .quick-request-btn {
-        min-height: auto;
-        padding: 16px;
-        border-radius: 0 0 17px 17px;
-      }
-
-      .guest-popover {
-        left: 0;
-        right: auto;
-        width: 100%;
-      }
-
-      .day {
-        border-radius: 12px;
-        font-size: .86rem;
+      .overlay-text {
+        font-size: 16px;
       }
     }
   </style>
 </head>
-
 <body>
-  <nav>
-    <div class="brand">Graham <span>Gem</span></div>
-    <div class="nav-links">
-      <a href="#gallery">Gallery</a>
-      <a href="#amenities">Amenities</a>
-      <a href="#book">Book</a>
-      <a href="#location">Location</a>
-    </div>
-  </nav>
+  <h1>Clover's Great Escape!</h1>
+  <p>
+    Escape the butchers! Eat your veggies!
+    <br>
+  </p>
 
-  <header class="hero">
-    <div class="hero-content">
-      <div class="eyebrow">Private pool • space for 16! • Graham, NC</div>
-      <h1>Our Diamond, your getaway.</h1>
-      <p>
-        Welcome to Graham Gem — our hidden gem for family and friends, smack-dab in Graham!
-        Tour Duke and UNC in the Durham area or stroll through the Greensboro Botanical Gardens. 
-        When stomachs start to growl, grab a bite to eat in town or cook up a meal before an evening around the fire pit. Your adventure awaits!
-      </p>
-      <div class="buttons">
-        <a class="btn primary" href="#book">Check Availability</a>
-        <a class="btn secondary" href="#gallery">View Photos</a>
+  <div class="game-wrap">
+    <canvas id="game" width="400" height="600"></canvas>
+
+    <div id="overlay" class="overlay">
+      <div class="overlay-box">
+        <div id="overlayText" class="overlay-text"></div>
+        <div id="overlayContinue" class="overlay-continue hidden">tap to continue</div>
+        <div id="overlayButtons" class="overlay-buttons"></div>
       </div>
     </div>
-  </header>
 
-  <div class="stats">
-    <div class="stat"><strong>16</strong><span>Room for the whole crew</span></div>
-    <div class="stat"><strong>5</strong><span>Bedrooms to spread out</span></div>
-    <div class="stat"><strong>2.5</strong><span>Bathrooms</span></div>
-    <div class="stat"><strong>4.8★</strong><span>Loved by guests</span></div>
+    <div id="endBanner" class="end-banner hidden">FREEDOM</div>
   </div>
 
-  <section class="intro">
-    <div>
-      <h2>Made for slow mornings, long dinners, and easy weekends.</h2>
-      <p>
-        Tucked between Greensboro and Durham, Graham Gem gives you the best of both worlds:
-        close to Elon, parks, restaurants, and day trips — with a private backyard escape waiting
-        when you get home.
-      </p>
-    </div>
-    <div class="note-card">
-      <p>
-        This is the kind of house where people drift between the pool, the kitchen, the game room,
-        and the patio — where the kids have space, the adults can breathe, and nobody has to rush.
-      </p>
-    </div>
-  </section>
+  <div class="mobile-controls" aria-label="Mobile inventory controls">
+    <button id="inventoryButton" class="mobile-control-btn" type="button">Inventory</button>
+    <button id="useCloverButton" class="mobile-control-btn" type="button">Use Item</button>
+  </div>
 
-  <section id="amenities">
-    <h2 class="section-title">Guest favorites</h2>
-    <div class="features">
-      <div class="feature">
-        <h3>Private seasonal pool</h3>
-        <p>Stretch out by the water, eat outside, and enjoy the fenced backyard after a day exploring.</p>
-      </div>
-      <div class="feature">
-        <h3>Room for everyone</h3>
-        <p>Five bedrooms, multiple sleeping spaces, and generous common areas for family and friends.</p>
-      </div>
-      <div class="feature">
-        <h3>Game-friendly stay</h3>
-        <p>Arcade table, ping-pong, smart TV, WiFi, and cozy spaces for both kids and adults.</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="gallery" class="gallery">
-    <h2 class="section-title">A look inside Graham Gem</h2>
-    <p class="section-text">Bright interiors, comfortable gathering spaces, and a backyard built for making memories.</p>
-
-    <div class="photo-grid">
-      <img src="living-room.jpg" alt="Bright living room with vaulted ceiling">
-      <img src="cozy.jpg" alt="Private backyard pool">
-      <img src="office.jpg" alt="Home office">
-      <img src="arcade.jpg" alt="Arcade game table">
-      <img src="bedroom.jpg" alt="Bedroom">
-    </div>
-  </section>
-
-  <section id="book" class="booking">
-    <div>
-      <h2 class="section-title">Request your stay</h2>
-      <p class="section-text">
-        Check the live availability calendar, then request a temporary date hold.
-        Your dates will be held on this website immediately, but final booking is confirmed manually.
-      </p>
-      <p class="section-text">
-        The calendar below combines our current Evolve availability feed with direct website holds.
-      </p>
-    </div>
-
-    <div class="booking-stack">
-      <div class="availability-card">
-        <div class="availability-top">
-          <div>
-            <div class="availability-label">Live availability</div>
-            <h3>Select your stay</h3>
-          </div>
-
-          <p id="availabilityStatus" class="availability-status">
-            Loading current availability...
-          </p>
-        </div>
-
-        <div class="booking-fields">
-          <div class="booking-box-inner">
-            <div class="booking-box-heading">
-              <small>Book Now</small>
-              <strong>Check your dates</strong>
-            </div>
-
-            <div class="field-block">
-              <label for="checkIn">Check-in</label>
-              <input id="checkIn" type="date" required>
-            </div>
-
-            <div class="field-block">
-              <label for="checkOut">Check-out</label>
-              <input id="checkOut" type="date" required>
-            </div>
-
-            <div class="guest-field-wrap" id="guestFieldWrap">
-              <button type="button" class="guest-button" id="guestButton">
-                <div class="guest-copy">
-                  <span class="guest-label">Guests</span>
-                  <span class="guest-value" id="guestButtonText">1 guest</span>
-                </div>
-                <span class="guest-chevron">⌄</span>
-              </button>
-
-              <div class="guest-popover" id="guestPopover">
-                <div class="guest-row">
-                  <div>
-                    <strong>Adults</strong>
-                    <span>Ages 13+</span>
-                  </div>
-                  <div class="guest-controls">
-                    <button type="button" class="counter-btn" data-type="adults" data-delta="-1">−</button>
-                    <span id="adultsCount">1</span>
-                    <button type="button" class="counter-btn" data-type="adults" data-delta="1">+</button>
-                  </div>
-                </div>
-
-                <div class="guest-row">
-                  <div>
-                    <strong>Children</strong>
-                    <span>Ages 2–12</span>
-                  </div>
-                  <div class="guest-controls">
-                    <button type="button" class="counter-btn" data-type="children" data-delta="-1">−</button>
-                    <span id="childrenCount">0</span>
-                    <button type="button" class="counter-btn" data-type="children" data-delta="1">+</button>
-                  </div>
-                </div>
-
-                <div class="guest-row">
-                  <div>
-                    <strong>Infants</strong>
-                    <span>Under 2</span>
-                  </div>
-                  <div class="guest-controls">
-                    <button type="button" class="counter-btn" data-type="infants" data-delta="-1">−</button>
-                    <span id="infantsCount">0</span>
-                    <button type="button" class="counter-btn" data-type="infants" data-delta="1">+</button>
-                  </div>
-                </div>
-
-                <div class="guest-note">
-                  Maximum 16 guests. Infants are not counted toward the 16-guest limit.
-                </div>
-              </div>
-            </div>
-
-            <button type="button" class="quick-request-btn" id="quickRequestButton">
-              Request Hold
-            </button>
-          </div>
-        </div>
-
-        <div class="calendar-controls">
-          <button type="button" id="prevMonth" aria-label="Previous month">‹</button>
-          <div class="calendar-range-title">Click your check-in, then your check-out</div>
-          <button type="button" id="nextMonth" aria-label="Next month">›</button>
-        </div>
-
-        <div id="calendarMonths" class="calendar-months"></div>
-
-        <div class="legend">
-          <span class="legend-item"><span class="swatch"></span> Available</span>
-          <span class="legend-item"><span class="swatch booked"></span> Unavailable</span>
-          <span class="legend-item"><span class="swatch selected"></span> Selected</span>
-        </div>
-
-        <div id="availabilityMessage" class="availability-message">
-          Select your dates below or click available dates on the calendar.
-        </div>
-
-        <div id="quoteCard" class="quote-card">
-          <div id="quoteSummary" class="quote-placeholder">
-            Select dates to see your total!
-          </div>
-        </div>
-      </div>
-
-      <form id="bookingForm">
-        <h3 class="form-card-title">Request a temporary hold</h3>
-        <p class="form-card-subtitle">
-          We’ll receive your request right away and confirm the booking manually.
-        </p>
-
-        <input id="guestName" type="text" placeholder="Name" required>
-        <input id="guestEmail" type="email" placeholder="Email" required>
-        <input id="guestPhone" type="tel" placeholder="Phone">
-
-        <div class="form-row">
-          <input id="checkInMirror" type="text" placeholder="Check-in" readonly>
-          <input id="checkOutMirror" type="text" placeholder="Check-out" readonly>
-        </div>
-
-        <input id="guestCount" type="text" placeholder="Guests" readonly>
-
-        <textarea id="guestMessage" placeholder="Anything we should know?"></textarea>
-
-        <button class="submit-btn" type="submit">Request Date Hold</button>
-
-        <p class="section-text" style="font-size:.9rem; margin-top: 14px;">
-          Your dates will be temporarily held on this website. Final booking is confirmed manually.
-        </p>
-      </form>
-    </div>
-  </section>
-
-  <section id="location">
-    <h2 class="section-title">Close to Elon, Greensboro, Durham, and local favorites.</h2>
-    <div class="features">
-      <div class="feature">
-        <h3>Elon University</h3>
-        <p>About 7 miles away — ideal for graduation, move-in weekends, family visits, and campus events.</p>
-      </div>
-      <div class="feature">
-        <h3>Outdoor fun</h3>
-        <p>Minutes from Graham Paddle Access, Swepsonville River Park, Long Meadow Trailhead, and local parks.</p>
-      </div>
-      <div class="feature">
-        <h3>Easy day trips</h3>
-        <p>Roughly between Greensboro and Durham, with access to museums, gardens, restaurants, and universities.</p>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <h2 class="section-title">What guests remember</h2>
-    <div class="reviews">
-      <div class="review"><div class="stars">★★★★★</div><p>“The pool was perfect.”</p></div>
-      <div class="review"><div class="stars">★★★★★</div><p>“Large, comfy living room and pool area that is nicer than the photos.”</p></div>
-      <div class="review"><div class="stars">★★★★★</div><p>“Great house, amazing outdoor space, perfect for the extended family.”</p></div>
-    </div>
-  </section>
-
-  <footer>
-    Graham Gem • Graham, North Carolina<br>
-    Direct booking inquiries only. Final availability confirmed manually.
-  </footer>
 
   <script>
-    const AVAILABILITY_API = 'https://script.google.com/macros/s/AKfycbxlH7T940c-i0fcDXOhWbuVaN3a9USs0wTWOTVoB3La_zAq1dwRwZSRr1MYVxRwxwwGCQ/exec';
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+    const gameWrap = document.querySelector(".game-wrap");
 
-    let blockedDateSet = new Set();
-    let currentMonthDate = new Date();
-    currentMonthDate.setDate(1);
+    const overlay = document.getElementById("overlay");
+    const overlayBox = document.querySelector(".overlay-box");
+    const overlayText = document.getElementById("overlayText");
+    const overlayButtons = document.getElementById("overlayButtons");
+    const overlayContinue = document.getElementById("overlayContinue");
+    const endBanner = document.getElementById("endBanner");
+    const inventoryButton = document.getElementById("inventoryButton");
+    const useCloverButton = document.getElementById("useCloverButton");
 
-    let ratesByDate = {};
-    let defaultNightlyRate = 400;
-    let cleaningFee = 250;
-    let taxRate = 0.1275;
-    let minimumNights = 3;
+    let gameStarted = false;
+    let gameOver = false;
+    let gamePaused = true;
+    let gameWon = false;
+    let frame = 0;
+    let score = 0;
+    let lives = 3;
+    let awardedLifeThreshold = 0;
+    let hitFlashTimer = 0;
+    let bonusFlashTimer = 0;
+    let bonusFlashText = "";
+    let speedModeActivated = false;
 
-    const guestState = {
-      adults: 1,
-      children: 0,
-      infants: 0
+    let checkpoint18000Shown = false;
+    let checkpoint10000Shown = false;
+    let checkpoint22000Shown = false;
+    let freedomSequenceActive = false;
+    let heartsCelebrationActive = false;
+    let finalOverlayShown = false;
+    let exitingMortality = false;
+    let mortalityChoiceTimeout = null;
+    let mortalityChoiceQueued = false;
+    let heartExplosionCount = 0;
+    const MAX_HEART_EXPLOSIONS = 3;
+
+    let cowbellModeActive = false;
+    let canvasFlashPhase = 0;
+
+    let mooPulseActive = false;
+    let mooPulseTimer = 0;
+    let mooCooldownTimer = 0;
+    let lastTapTime = 0;
+    let mooFlashTimer = 0;
+
+    let activeDialogue = null;
+    let dialogueTimeout = null;
+    let overlayTapHandler = null;
+    let introDialoguePlayed = false;
+
+    let cheatCodeBuffer = "";
+    let mooMooSkipUsed = false;
+
+    let cloverUnlocked = false;
+    let cloverInventoryOpen = false;
+    let cloverBoostTimer = 0;
+    let cloverSpeechText = "";
+    let cloverSpeechTypedLength = 0;
+    let cloverSpeechTypeFrame = 0;
+    let cloverSpeechTimer = 0;
+    const CLOVER_SPEECH_FRAMES = 300; // about 5 seconds at 60fps
+    const CLOVER_BOOST_FRAMES = 360; // about 6 seconds at 60fps
+    const CLOVER_SPEED_MULTIPLIER = 1.2;
+    const cloverMessages = [
+      "It is okay to mess up.",
+      "Take care of yourself. LOVE yourself. Give yourself brilliant, intelligent light Clover.",
+      "They know not what they do.",
+      "Listen to your heart.",
+      "Learn all you can, smartypants.",
+      "Be yourself. You're the one I like most.",
+      "I like the way you moo.",
+      "I treasure your friendship.",
+      "You have an amazing voice.  Moog synthesizer",
+      "I like your mind. And your moo00000",
+      "If you listen carefully, you can hear my plant heartbeat.",
+      "Love is the key. I have faith in you",
+      "Everyone could use a friend.  That's why I like you",
+      "Sometimes I watch you when you walk and like the way you hoof around.",
+      "Shhhh. The other clovers may get jealous!",
+      "I like to watch you chomp those other blades of grass. You wouldn't ever eat me would you?",
+      "I am lucky to have you around, mooing at the wind..",
+      "Can I always be in your pocket? It is warm in here.. ooh thats just the milk",
+      "Do you ever miss the farm life? Do you miss the factory?",
+      "I could spend lifetimes in your thoughts, listening to you moo",
+      "I look at the clouds and think of your cute little horns.",
+      "Listen do you hear that? That's the sound of thoughts passing us by, wait a second, or is that just the Mississippi?",
+      "I have to admit you're charming.",
+      "You are SO lucky to have me as a friend!",
+      "I am honored you carry me around.",
+      "Can I hear your heartbeat? Oh. It really is just MOO MOO MOO MOO.",
+      "I love to learn, and I learn so much from you.",
+      "They say I am a rare mutation, just like you.",
+      "You have such a unique timbre, the soft sweet way you moo.",
+      "Let's have some fun shall we! Tag you're it.",
+      "I love the sweet tender way you moo at the moon.",
+      "So cows are good at fractions?",
+      "Yes I have two clover brothers and sisters but we have a tense relationship.",
+      "Cows really used to eat clovers?",
+      "Sometimes I worry about you, but I trust you’ll find your way.",
+      "You don’t have to pretend with me.  I am here to moo with you.",
+      "I notice when you’re not okay, even if you don’t moo your little heart out.",
+      "You’ve been through things you don’t moo about, haven’t you?",
+      "I’m still here, especially when the going gets rough..",
+      "You don’t have to carry everything by yourself. Let me moo a little with you",
+      "I like who you are, even when you don’t see it.",
+      "You’re allowed to change. I’ll learn you again.",
+      "Even when you feel lost, you’re not gone... I'm right here with you",
+      "Not all who wander are lost... but I sure am, and I'm glad I wandered into you!"
+    ];
+
+    let difficultyMultiplier = 1.0;
+    let selectedDifficulty = "normal";
+
+    const BASE_WIDTH = 400;
+    const BASE_HEIGHT = 600;
+
+    const player = {
+      x: 180,
+      y: 500,
+      width: 72,
+      height: 72,
+      speed: 11,
+      invulnerableTimer: 0
     };
 
-    const calendarMonths = document.getElementById('calendarMonths');
-    const availabilityStatus = document.getElementById('availabilityStatus');
-    const availabilityMessage = document.getElementById('availabilityMessage');
-    const quoteSummary = document.getElementById('quoteSummary');
+    let keys = {};
+    let fallingObjects = [];
+    let heartBursts = [];
 
-    const checkInInput = document.getElementById('checkIn');
-    const checkOutInput = document.getElementById('checkOut');
-    const checkInMirror = document.getElementById('checkInMirror');
-    const checkOutMirror = document.getElementById('checkOutMirror');
-    const guestCountInput = document.getElementById('guestCount');
+    let touchActive = false;
+    let touchTargetX = null;
+    let touchTargetY = null;
 
-    const guestButton = document.getElementById('guestButton');
-    const guestButtonText = document.getElementById('guestButtonText');
-    const guestFieldWrap = document.getElementById('guestFieldWrap');
-    const guestPopover = document.getElementById('guestPopover');
+    let playerFacingLeft = false;
 
-    const bookingForm = document.getElementById('bookingForm');
-    const quickRequestButton = document.getElementById('quickRequestButton');
+    const playerSpriteSheet = new Image();
+    playerSpriteSheet.src = "cow2-walk-v1.png";
 
-    document.getElementById('prevMonth').addEventListener('click', () => {
-      currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
-      renderCalendar();
+    const PLAYER_SPRITE_COLS = 5;
+    const PLAYER_SPRITE_ROWS = 5;
+    const PLAYER_TOTAL_FRAMES = 25;
+    const PLAYER_FRAME_DURATION = 6;
+    let playerAnimationFrame = 0;
+
+    const badImageFiles = ["falling1.png", "falling2.png", "falling3.png"];
+    const badImages = badImageFiles.map(file => {
+      const img = new Image();
+      img.src = file;
+      return img;
     });
 
-    document.getElementById('nextMonth').addEventListener('click', () => {
-      currentMonthDate.setMonth(currentMonthDate.getMonth() + 1);
-      renderCalendar();
-    });
+    const butcherSpriteSheet = new Image();
+    butcherSpriteSheet.src = "butcher-walk.png";
 
-    guestButton.addEventListener('click', () => {
-      guestFieldWrap.classList.toggle('open');
-    });
+    const BUTCHER_SPRITE_COLS = 5;
+    const BUTCHER_SPRITE_ROWS = 5;
+    const BUTCHER_TOTAL_FRAMES = 25;
+    const BUTCHER_FRAME_DURATION = 6;
 
-    document.addEventListener('click', event => {
-      if (!guestFieldWrap.contains(event.target)) {
-        guestFieldWrap.classList.remove('open');
+    const stalkerButcherSpriteSheet = new Image();
+    stalkerButcherSpriteSheet.src = "Pitchfork Butcher-walk.png";
+
+    const STALKER_BUTCHER_SPRITE_COLS = 5;
+    const STALKER_BUTCHER_SPRITE_ROWS = 5;
+    const STALKER_BUTCHER_TOTAL_FRAMES = 25;
+    const STALKER_BUTCHER_FRAME_DURATION = 8;
+
+    const stalkerButcher = {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      speed: 0,
+      active: true,
+      hitCooldown: 0,
+      animationOffset: 0
+    };
+
+
+    const cowgirlIdleSpriteSheet = new Image();
+    cowgirlIdleSpriteSheet.src = "Crazed Cowgirl w. pitchfork_)-idle-v1.png";
+
+    const cowgirlAttackSpriteSheet = new Image();
+    cowgirlAttackSpriteSheet.src = "Crazed Cowgirl w. pitchfork_)-attack-v1.png";
+
+    const cowgirlJumpSpriteSheet = new Image();
+    cowgirlJumpSpriteSheet.src = "Crazed Cowgirl w. pitchfork_)-jump-v1.png";
+
+    const cowgirlRunSpriteSheet = new Image();
+    cowgirlRunSpriteSheet.src = "Crazed Cowgirl w. pitchfork_)-run-v1.png";
+
+    const cowgirlWalkSpriteSheet = new Image();
+    cowgirlWalkSpriteSheet.src = "Crazed Cowgirl w. pitchfork_)-walk-v1.png";
+
+    const COWGIRL_SPRITE_COLS = 5;
+    const COWGIRL_SPRITE_ROWS = 5;
+    const COWGIRL_TOTAL_FRAMES = 25;
+    const COWGIRL_IDLE_FRAME_DURATION = 4;
+    const COWGIRL_RUN_FRAME_DURATION = 5;
+    const COWGIRL_ATTACK_FRAME_DURATION = 4;
+    const COWGIRL_JUMP_FRAME_DURATION = 4;
+    const COWGIRL_WALK_FRAME_DURATION = 7;
+
+    const COWGIRL_MOVE_INTERVAL = 200;   // 10 seconds at about 60fps
+    const COWGIRL_SWIPE_DURATION = 26;
+    const COWGIRL_RESPAWN_TIME = 200;    // 10 seconds
+    const COWGIRL_TRIGGER_SCORE = 4400;
+
+    const cowgirl = {
+      unlocked: false,
+      visible: false,
+      state: "hidden", // hidden, entering, idle, running, fleeing // hidden, idle, running, swiping, fleeing
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      speed: 0,
+      facingLeft: false,
+      currentCorner: 0,
+      targetCorner: 1,
+      moveTimer: COWGIRL_MOVE_INTERVAL,
+      swipeTimer: 0,
+      respawnTimer: 0,
+      damageCooldown: 0,
+      fleeVX: 0,
+      fleeVY: 0,
+      animationOffset: 0
+    };
+
+    const bonus200Img = new Image();
+    bonus200Img.src = "falling4.png";
+
+    const bonus1000Img = new Image();
+    bonus1000Img.src = "falling5.png";
+
+    const pastureImage = new Image();
+    pastureImage.src = "pasture.png";
+
+    const purpleCowIdleSpriteSheet = new Image();
+    purpleCowIdleSpriteSheet.src = "purple cow _3-idle.png";
+
+    const purpleCowWalkSpriteSheet = new Image();
+    purpleCowWalkSpriteSheet.src = "purple cow _3-walk.png";
+
+    const PURPLE_COW_SPRITE_COLS = 5;
+    const PURPLE_COW_SPRITE_ROWS = 5;
+    const PURPLE_COW_TOTAL_FRAMES = 25;
+    const PURPLE_COW_IDLE_FRAME_DURATION = 7;
+    const PURPLE_COW_WALK_FRAME_DURATION = 6;
+
+    const purpleCow = {
+      active: false,
+      triggered: false,
+      entering: false,
+      walkingAway: false,
+      x: 0,
+      y: 0,
+      targetY: 0,
+      width: 0,
+      height: 0,
+      facingLeft: true,
+      animationOffset: 0
+    };
+
+    const MOO_COOLDOWN_FRAMES = 420; // 5 seconds at about 60fps
+    const MOO_BOSS_COOLDOWN_FRAMES = 0;
+    const MOO_PULSE_RADIUS = 140;
+
+    let greenerPasturesActive = false;
+    let greenerPasturesFade = 0;
+    let greenerPasturesTextShown = false;
+
+    let bossFightActive = false;
+    let bossDefeatedPastureActive = false;
+    let bossPoofs = [];
+    let bossGrass = [];
+    let bossPitchforks = [];
+    let bossGrassSpawnTimer = 0;
+    let bossPatternTimer = 0;
+    let bossPatternPhase = "corner"; // corner, throw, fleeing
+    let bossTargetCorner = 0;
+
+    const pitchforkImage = new Image();
+    pitchforkImage.src = "pitchfork.png";
+
+    const cowgirlBoss = {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      speed: 0,
+      health: 4,
+      maxHealth: 4,
+      state: "hidden",
+      facingLeft: false,
+      attackTimer: 0,
+      attackCooldown: 0,
+      damageCooldown: 0,
+      flashTimer: 0,
+      throwCooldown: 0,
+      animationOffset: 0
+    };
+
+    const music = new Audio("music.mp3");
+    music.loop = true;
+    music.volume = 0.5;
+    music.preload = "auto";
+
+    const cowgirlMusic = new Audio("cowgirl.mp3");
+    cowgirlMusic.loop = true;
+    cowgirlMusic.volume = 0.55;
+    cowgirlMusic.preload = "auto";
+
+    const hitSound = new Audio("hit.mp3");
+    hitSound.volume = 0.8;
+    hitSound.preload = "auto";
+
+    const bonusSound = new Audio("bonus.mp3");
+    bonusSound.volume = 1.0;
+    bonusSound.preload = "auto";
+
+    const mooSound = new Audio("moo.m4a");
+    mooSound.volume = 0.9;
+    mooSound.preload = "auto";
+
+    const cosmicCowMusic = new Audio("Cosmic Cow.mp3");
+    cosmicCowMusic.loop = true;
+    cosmicCowMusic.volume = 0.42;
+    cosmicCowMusic.preload = "auto";
+
+    const cloverMusic = new Audio("Clover Clash.mp3");
+    cloverMusic.loop = false;
+    cloverMusic.volume = 0.9;
+    cloverMusic.preload = "auto";
+
+    function stopCloverMusic() {
+      try {
+        cloverMusic.pause();
+        cloverMusic.currentTime = 0;
+      } catch (err) {}
+    }
+
+
+    let isMuted = false;
+    let soundsUnlocked = false;
+
+    let dialogueAudioContext = null;
+
+    function getDialogueAudioContext() {
+      if (!dialogueAudioContext) {
+        dialogueAudioContext = new (window.AudioContext || window.webkitAudioContext)();
       }
-    });
 
-    guestPopover.querySelectorAll('.counter-btn').forEach(button => {
-      button.addEventListener('click', () => {
-        const type = button.dataset.type;
-        const delta = Number(button.dataset.delta);
-        updateGuestCount(type, delta);
-      });
-    });
-
-    quickRequestButton.addEventListener('click', () => {
-      const result = getDateRangeStatus(checkInInput.value, checkOutInput.value);
-
-      if (!result.ok) {
-        setAvailabilityMessage(result.message, 'bad');
-        availabilityMessage.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        });
-        return;
+      if (dialogueAudioContext.state === "suspended") {
+        dialogueAudioContext.resume().catch(() => {});
       }
 
-      bookingForm.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      });
+      return dialogueAudioContext;
+    }
 
-      setTimeout(() => {
-        document.getElementById('guestName').focus({ preventScroll: true });
-      }, 450);
-    });
-
-    checkInInput.addEventListener('change', () => {
-      if (checkInInput.value) {
-        checkOutInput.min = addDaysToKey(checkInInput.value, 1);
-      }
-
-      if (checkOutInput.value && checkOutInput.value <= checkInInput.value) {
-        checkOutInput.value = '';
-      }
-
-      syncMirrors();
-      updateAvailabilityMessageAndQuote();
-      renderCalendar();
-    });
-
-    checkOutInput.addEventListener('change', () => {
-      syncMirrors();
-      updateAvailabilityMessageAndQuote();
-      renderCalendar();
-    });
-
-    bookingForm.addEventListener('submit', async event => {
-      event.preventDefault();
-
-      const result = getDateRangeStatus(checkInInput.value, checkOutInput.value);
-
-      if (!result.ok) {
-        setAvailabilityMessage(result.message, 'bad');
-        return;
-      }
-
-      const submitButton = bookingForm.querySelector('button[type="submit"]');
-      const originalButtonText = submitButton.textContent;
-
-      submitButton.disabled = true;
-      submitButton.textContent = 'Holding dates...';
+    function playDialogueBlip(char) {
+      if (isMuted) return;
+      if (!char || char === " " || char === "\n" || char === "\t") return;
 
       try {
-        const data = await callAvailabilityApi({
-          action: 'book',
-          name: document.getElementById('guestName').value.trim(),
-          email: document.getElementById('guestEmail').value.trim(),
-          phone: document.getElementById('guestPhone').value.trim(),
-          checkIn: checkInInput.value,
-          checkOut: checkOutInput.value,
-          guests: guestCountInput.value,
-          notes: document.getElementById('guestMessage').value.trim()
-        });
+        const audioCtx = getDialogueAudioContext();
+        const now = audioCtx.currentTime;
 
-        if (!data || !data.ok) {
-          throw new Error(data && data.error ? data.error : 'Could not save booking hold.');
-        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
 
-        bookingForm.reset();
+        // Tiny Undertale-style voice blip. No sound file needed, so it will not freeze.
+        osc.type = "square";
+        osc.frequency.setValueAtTime(520 + Math.random() * 120, now);
 
-        guestState.adults = 1;
-        guestState.children = 0;
-        guestState.infants = 0;
-        syncGuestUI();
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(0.045, now + 0.004);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
 
-        checkInInput.value = '';
-        checkOutInput.value = '';
-        syncMirrors();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
 
-        const refreshedAvailability = await loadAvailability();
-        applyAvailabilityData(refreshedAvailability);
+        osc.start(now);
+        osc.stop(now + 0.04);
+      } catch (err) {}
+    }
 
-        setAvailabilityMessage(
-          data.message || 'Your dates have been received and temporarily held. We will confirm manually.',
-          'good'
+    function scaleX(value) {
+      return value * (canvas.width / BASE_WIDTH);
+    }
+
+    function scaleY(value) {
+      return value * (canvas.height / BASE_HEIGHT);
+    }
+
+    function resizeCanvasToDisplaySize() {
+      const displayWidth = Math.round(canvas.clientWidth);
+      const displayHeight = Math.round(canvas.clientHeight);
+
+      if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+        const oldWidth = canvas.width || BASE_WIDTH;
+        const oldHeight = canvas.height || BASE_HEIGHT;
+
+        const playerXRatio = player.x / oldWidth;
+        const playerYRatio = player.y / oldHeight;
+
+        canvas.width = displayWidth;
+        canvas.height = displayHeight;
+
+        player.x = playerXRatio * canvas.width;
+        player.y = playerYRatio * canvas.height;
+      }
+    }
+
+    function drawSpriteFrame(img, frameIndex, cols, rows, dx, dy, dWidth, dHeight) {
+      if (!img.complete || img.naturalWidth === 0) return;
+
+      const frameWidth = img.width / cols;
+      const frameHeight = img.height / rows;
+
+      const col = frameIndex % cols;
+      const row = Math.floor(frameIndex / cols);
+
+      const sx = col * frameWidth;
+      const sy = row * frameHeight;
+
+      ctx.drawImage(
+        img,
+        sx, sy, frameWidth, frameHeight,
+        dx, dy, dWidth, dHeight
+      );
+    }
+
+    function getHitbox(obj, insetPercent = 0.18) {
+      const insetX = obj.width * insetPercent;
+      const insetY = obj.height * insetPercent;
+
+      return {
+        x: obj.x + insetX,
+        y: obj.y + insetY,
+        width: obj.width - insetX * 2,
+        height: obj.height - insetY * 2
+      };
+    }
+
+    function getHomingStrength() {
+      const base = score >= 10000 ? 0.015 : 0.010;
+      const extra = score >= 10000 ? 0.015 : 0.012;
+      return base + Math.min(score / 60000, extra);
+    }
+
+    function getStalkerButcherSpeed() {
+      return Math.max(scaleX(0.38), 0.22) * difficultyMultiplier*difficultyMultiplier;
+    }
+
+    function resetStalkerButcherPosition() {
+      stalkerButcher.width = scaleX(70 * 1.2);
+      stalkerButcher.height = scaleY(70 * 1.2);
+      stalkerButcher.speed = getStalkerButcherSpeed();
+      stalkerButcher.x = scaleX(12);
+      stalkerButcher.y = scaleY(16);
+      stalkerButcher.active = true;
+      stalkerButcher.hitCooldown = 0;
+      stalkerButcher.animationOffset = Math.floor(Math.random() * 1000);
+    }
+
+
+    function getCowgirlCorners() {
+      const padX = scaleX(18);
+      const padY = scaleY(18);
+      const usableWidth = canvas.width - cowgirl.width - padX;
+      const usableHeight = canvas.height - cowgirl.height - padY;
+
+      return [
+        { x: padX, y: padY },
+        { x: usableWidth, y: padY },
+        { x: usableWidth, y: usableHeight },
+        { x: padX, y: usableHeight }
+      ];
+    }
+
+    function placeCowgirlAtCorner(cornerIndex) {
+      const corners = getCowgirlCorners();
+      const corner = corners[cornerIndex];
+      cowgirl.x = corner.x;
+      cowgirl.y = corner.y;
+      cowgirl.currentCorner = cornerIndex;
+      cowgirl.facingLeft = cornerIndex === 1 || cornerIndex === 2;
+    }
+
+    function spawnCowgirl() {
+      cowgirl.unlocked = true;
+      cowgirl.visible = true;
+      cowgirl.width = scaleX(76 * 1.2);
+      cowgirl.height = scaleY(76 * 1.2);
+      cowgirl.speed = Math.max(scaleX(3.4), 2.2);
+      cowgirl.moveTimer = COWGIRL_MOVE_INTERVAL;
+      cowgirl.swipeTimer = 0;
+      cowgirl.respawnTimer = 0;
+      cowgirl.damageCooldown = 0;
+      cowgirl.animationOffset = Math.floor(Math.random() * 1000);
+
+      const entryCorner = Math.floor(Math.random() * 4);
+      cowgirl.currentCorner = entryCorner;
+      cowgirl.targetCorner = entryCorner;
+
+      const corners = getCowgirlCorners();
+      const target = corners[entryCorner];
+      const offY = scaleY(140);
+
+      // She now drops in from just outside the chosen corner instead of popping into place.
+      cowgirl.x = target.x;
+      cowgirl.y = entryCorner === 0 || entryCorner === 1
+        ? -cowgirl.height - offY
+        : canvas.height + offY;
+
+      cowgirl.state = "entering";
+      cowgirl.facingLeft = entryCorner === 1 || entryCorner === 2;
+    }
+
+    function awardCowgirlPointsAndFlee() {
+      if (!cowgirl.visible || cowgirl.state === "fleeing") return;
+
+      score += 400;
+      maybeAwardExtraLife();
+      bonusFlashTimer = 36;
+      bonusFlashText = "+400";
+      playSound(bonusSound);
+      sendCowgirlOffscreen();
+    }
+
+    function sendCowgirlOffscreen() {
+      if (!cowgirl.visible) return;
+
+      cowgirl.state = "fleeing";
+      cowgirl.swipeTimer = 0;
+      cowgirl.moveTimer = 0;
+
+      const centerX = cowgirl.x + cowgirl.width / 2;
+      const centerY = cowgirl.y + cowgirl.height / 2;
+
+      const dirX = centerX < canvas.width / 2 ? -1 : 1;
+      const dirY = centerY < canvas.height / 2 ? -1 : 1;
+
+      cowgirl.fleeVX = dirX * Math.max(scaleX(6.5), 4.2);
+      cowgirl.fleeVY = dirY * Math.max(scaleY(5.8), 3.8);
+      cowgirl.facingLeft = cowgirl.fleeVX < 0;
+    }
+
+    function hideCowgirlAndStartRespawn() {
+      cowgirl.visible = false;
+      cowgirl.state = "hidden";
+      cowgirl.respawnTimer = COWGIRL_RESPAWN_TIME;
+      cowgirl.swipeTimer = 0;
+      cowgirl.moveTimer = 0;
+      cowgirl.damageCooldown = 0;
+    }
+
+    function startCowgirlRunToNextCorner() {
+      cowgirl.state = "running";
+      cowgirl.targetCorner = (cowgirl.currentCorner + 1) % 4;
+    }
+
+    function settleCowgirlInCorner() {
+      cowgirl.state = "idle";
+      cowgirl.moveTimer = COWGIRL_MOVE_INTERVAL;
+      cowgirl.facingLeft = cowgirl.currentCorner === 1 || cowgirl.currentCorner === 2;
+    }
+
+    function getCowgirlTouchHitbox() {
+      return getHitbox(cowgirl, 0.18);
+    }
+
+    function isCowgirlNearPlayer() {
+      if (!cowgirl.visible || cowgirl.state === "fleeing") return false;
+
+      const cowgirlCenterX = cowgirl.x + cowgirl.width / 2;
+      const cowgirlCenterY = cowgirl.y + cowgirl.height / 2;
+      const playerCenterX = player.x + player.width / 2;
+      const playerCenterY = player.y + player.height / 2;
+      const distance = Math.hypot(playerCenterX - cowgirlCenterX, playerCenterY - cowgirlCenterY);
+
+      return distance <= scaleX(135);
+    }
+
+    function damagePlayerFromCowgirl() {
+      if (player.invulnerableTimer > 0 || cowgirl.damageCooldown > 0) return;
+
+      lives--;
+      player.invulnerableTimer = 60;
+      cowgirl.damageCooldown = 45;
+      hitFlashTimer = 20;
+      playSound(hitSound);
+
+      if (lives <= 0) {
+        gameOver = true;
+        gamePaused = true;
+        music.pause();
+
+        showOverlay(
+          `You became a steak.\n\nFinal Score: ${score}`,
+          [
+            {
+              label: "Again",
+              onClick: () => {
+                restartGame();
+              }
+            }
+          ],
+          {
+            speed: 28,
+            requireContinueBeforeButtons: true
+          }
         );
-
-        renderQuotePlaceholder();
-
-      } catch (error) {
-        setAvailabilityMessage(String(error && error.message ? error.message : error), 'bad');
-      } finally {
-        submitButton.disabled = false;
-        submitButton.textContent = originalButtonText;
       }
-    });
-
-    function callAvailabilityApi(params = {}) {
-      return new Promise((resolve, reject) => {
-        const callbackName =
-          'grahamGemAvailability_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
-
-        let script;
-
-        window[callbackName] = function(data) {
-          delete window[callbackName];
-          if (script) script.remove();
-          resolve(data);
-        };
-
-        script = document.createElement('script');
-
-        const query = new URLSearchParams({
-          ...params,
-          callback: callbackName
-        });
-
-        script.src = AVAILABILITY_API + '?' + query.toString();
-
-        script.onerror = () => {
-          delete window[callbackName];
-          if (script) script.remove();
-          reject(new Error('Could not reach availability service.'));
-        };
-
-        document.body.appendChild(script);
-      });
     }
 
-    function loadAvailability() {
-      return callAvailabilityApi();
-    }
+    function updateCowgirl() {
+      cowgirl.width = scaleX(76 * 1.2);
+      cowgirl.height = scaleY(76 * 1.2);
+      cowgirl.speed = Math.max(scaleX(3.4), 2.2);
 
-    function applyAvailabilityData(data) {
-      if (!data || !data.ok) {
-        throw new Error(data && data.error ? data.error : 'Availability failed to load.');
+      if (!cowgirl.unlocked && score >= COWGIRL_TRIGGER_SCORE) {
+        spawnCowgirl();
       }
 
-      blockedDateSet = new Set(data.blockedDates || []);
-      ratesByDate = data.ratesByDate || {};
-      defaultNightlyRate = Number(data.defaultNightlyRate || 400);
-      cleaningFee = Number(data.cleaningFee || 250);
-      taxRate = Number(data.taxRate || 0.1275);
-      minimumNights = Number(data.minimumNights || 3);
+      if (!cowgirl.unlocked) return;
 
-      availabilityStatus.textContent =
-        `Updated ${new Date(data.updatedAt).toLocaleString()}. ` +
-        `${data.blockedDateCount || blockedDateSet.size} unavailable nights currently shown.`;
-
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const todayKey = dateToKey(today);
-
-      checkInInput.min = todayKey;
-      checkOutInput.min = todayKey;
-
-      renderCalendar();
-      updateAvailabilityMessageAndQuote();
-    }
-
-    function renderCalendar() {
-      calendarMonths.innerHTML = '';
-
-      const monthOne = new Date(currentMonthDate.getFullYear(), currentMonthDate.getMonth(), 1);
-      const monthTwo = new Date(currentMonthDate.getFullYear(), currentMonthDate.getMonth() + 1, 1);
-
-      [monthOne, monthTwo].forEach(monthDate => {
-        calendarMonths.appendChild(buildMonthCalendar(monthDate));
-      });
-    }
-
-    function buildMonthCalendar(monthDate) {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'calendar-month';
-
-      const title = document.createElement('div');
-      title.className = 'calendar-title';
-      title.textContent = monthDate.toLocaleDateString(undefined, {
-        month: 'long',
-        year: 'numeric'
-      });
-      wrapper.appendChild(title);
-
-      const weekdays = document.createElement('div');
-      weekdays.className = 'month-weekdays';
-
-      ['S', 'M', 'T', 'W', 'T', 'F', 'S'].forEach(day => {
-        const weekday = document.createElement('div');
-        weekday.className = 'weekday';
-        weekday.textContent = day;
-        weekdays.appendChild(weekday);
-      });
-
-      wrapper.appendChild(weekdays);
-
-      const daysGrid = document.createElement('div');
-      daysGrid.className = 'month-days';
-
-      const year = monthDate.getFullYear();
-      const month = monthDate.getMonth();
-
-      const firstDay = new Date(year, month, 1);
-      const startDay = firstDay.getDay();
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-      for (let i = 0; i < startDay; i++) {
-        const empty = document.createElement('div');
-        empty.className = 'day empty';
-        daysGrid.appendChild(empty);
-      }
-
-      for (let day = 1; day <= daysInMonth; day++) {
-        const date = new Date(year, month, day);
-        const dateKey = dateToKey(date);
-
-        const cell = document.createElement('div');
-        cell.className = 'day';
-        cell.textContent = day;
-        cell.dataset.date = dateKey;
-
-        const isPast = isDateKeyPast(dateKey);
-        const isBooked = blockedDateSet.has(dateKey);
-        const isSelected =
-          dateKey === checkInInput.value ||
-          dateKey === checkOutInput.value;
-
-        const isInRange =
-          checkInInput.value &&
-          checkOutInput.value &&
-          dateKey > checkInInput.value &&
-          dateKey < checkOutInput.value;
-
-        const canBeCheckoutForCurrentSelection =
-          checkInInput.value &&
-          dateKey > checkInInput.value &&
-          getBlockedNightsInRange(checkInInput.value, dateKey).length === 0;
-
-        const looksCheckoutOnly =
-          isBooked &&
-          !checkInInput.value &&
-          isGlobalCheckoutOnlyDate(dateKey);
-
-        const shouldShowCheckoutOnly =
-          isBooked &&
-          (
-            canBeCheckoutForCurrentSelection ||
-            looksCheckoutOnly
-          );
-
-        if (isPast) {
-          cell.classList.add('past');
-          cell.title = 'Past date';
-        } else if (shouldShowCheckoutOnly) {
-          cell.classList.add('checkout-only');
-          cell.title = 'Checkout only';
-          cell.addEventListener('click', () => {
-            handleCalendarDateClick(dateKey);
-          });
-        } else if (isBooked) {
-          cell.classList.add('booked');
-          cell.title = 'Unavailable';
+      if (!cowgirl.visible) {
+        if (cowgirl.respawnTimer > 0) {
+          cowgirl.respawnTimer--;
         } else {
-          cell.classList.add('available');
-          cell.title = 'Available';
-          cell.addEventListener('click', () => {
-            handleCalendarDateClick(dateKey);
-          });
+          spawnCowgirl();
         }
-
-        if (isInRange) cell.classList.add('in-range');
-        if (isSelected) cell.classList.add('selected');
-
-        daysGrid.appendChild(cell);
-      }
-
-      wrapper.appendChild(daysGrid);
-      return wrapper;
-    }
-
-    function handleCalendarDateClick(dateKey) {
-      const isBooked = blockedDateSet.has(dateKey);
-
-      if (!checkInInput.value) {
-        if (isBooked) {
-          setAvailabilityMessage(
-            isGlobalCheckoutOnlyDate(dateKey)
-              ? 'That date is checkout only. Please choose an available check-in date first.'
-              : 'That date is unavailable for check-in.',
-            'bad'
-          );
-          return;
-        }
-
-        checkInInput.value = dateKey;
-        checkOutInput.value = '';
-        checkOutInput.min = addDaysToKey(dateKey, 1);
-        setAvailabilityMessage('Now choose a check-out date.', '');
-      } else if (dateKey > checkInInput.value) {
-        const blockedNights = getBlockedNightsInRange(checkInInput.value, dateKey);
-
-        if (blockedNights.length > 0) {
-          setAvailabilityMessage(
-            `Those dates are not available. Blocked night: ${blockedNights[0]}`,
-            'bad'
-          );
-          return;
-        }
-
-        checkOutInput.value = dateKey;
-      } else {
-        if (isBooked) {
-          setAvailabilityMessage('That date is unavailable for check-in.', 'bad');
-          return;
-        }
-
-        checkInInput.value = dateKey;
-        checkOutInput.value = '';
-        checkOutInput.min = addDaysToKey(dateKey, 1);
-        setAvailabilityMessage('Now choose a check-out date.', '');
-      }
-
-      syncMirrors();
-      updateAvailabilityMessageAndQuote();
-      renderCalendar();
-    }
-
-    function updateAvailabilityMessageAndQuote() {
-      const result = getDateRangeStatus(checkInInput.value, checkOutInput.value);
-
-      if (!checkInInput.value && !checkOutInput.value) {
-        setAvailabilityMessage('Select your dates below or click available dates on the calendar.', '');
-        renderQuotePlaceholder();
         return;
       }
 
-      if (checkInInput.value && !checkOutInput.value) {
-        setAvailabilityMessage('Now choose a check-out date.', '');
-        renderQuotePlaceholder();
-        return;
+      if (cowgirl.damageCooldown > 0) {
+        cowgirl.damageCooldown--;
       }
 
-      if (!result.ok) {
-        setAvailabilityMessage(result.message, 'bad');
-        renderQuotePlaceholder();
-        return;
-      }
+      if (cowgirl.state === "idle") {
+        cowgirl.moveTimer--;
 
-      const quote = buildQuote(checkInInput.value, checkOutInput.value);
-      const savingsText = getSavingsText(quote);
-
-      setAvailabilityMessage(result.message, 'good', savingsText);
-      renderQuote(quote);
-    }
-
-    function getDateRangeStatus(checkIn, checkOut) {
-      if (!checkIn) {
-        return { ok: false, message: 'Please select a check-in date.' };
-      }
-
-      if (!checkOut) {
-        return { ok: false, message: 'Please select a check-out date.' };
-      }
-
-      if (checkOut <= checkIn) {
-        return { ok: false, message: 'Check-out must be after check-in.' };
-      }
-
-      if (isDateKeyPast(checkIn)) {
-        return { ok: false, message: 'Please choose a future check-in date.' };
-      }
-
-      const blockedNights = getBlockedNightsInRange(checkIn, checkOut);
-
-      if (blockedNights.length > 0) {
-        return {
-          ok: false,
-          message: `Those dates are not available. Blocked night: ${blockedNights[0]}`
-        };
-      }
-
-      const nights = countNights(checkIn, checkOut);
-
-      if (nights < minimumNights) {
-        return {
-          ok: false,
-          message: `Please choose at least ${minimumNights} nights.`
-        };
-      }
-
-      return {
-        ok: true,
-        message: `Great news — those ${nights} night${nights === 1 ? '' : 's'} appear available.`
-      };
-    }
-
-    function buildQuote(checkIn, checkOut) {
-      const nights = countNights(checkIn, checkOut);
-
-      let nightlySubtotal = 0;
-      let current = keyToDate(checkIn);
-      const end = keyToDate(checkOut);
-
-      while (current < end) {
-        const key = dateToKey(current);
-        nightlySubtotal += Number(ratesByDate[key] || defaultNightlyRate);
-        current.setDate(current.getDate() + 1);
-      }
-
-      nightlySubtotal = roundCurrency(nightlySubtotal);
-
-      const staySubtotal = roundCurrency(nightlySubtotal + cleaningFee);
-      const taxAmount = roundCurrency(staySubtotal * taxRate);
-      const totalWithTax = roundCurrency(staySubtotal + taxAmount);
-      const averageNightlyRate = roundCurrency(staySubtotal / nights);
-
-      return {
-        nights,
-        averageNightlyRate,
-        nightlySubtotal,
-        cleaningFee,
-        staySubtotal,
-        preTaxTotal: staySubtotal,
-        taxAmount,
-        totalWithTax
-      };
-    }
-
-    function getSavingsText(quote) {
-      if (!quote || !quote.preTaxTotal) return '';
-
-      const savedAmount = roundCurrency(quote.preTaxTotal * 0.10);
-
-      return `You will save ${formatMoney(savedAmount)} by booking directly with us!*`;
-    }
-
-    function renderQuote(quote) {
-      quoteSummary.innerHTML = `
-        <div class="quote-row">
-          <span>${quote.nights} night${quote.nights === 1 ? '' : 's'} × ${formatMoney(quote.averageNightlyRate)}</span>
-          <strong>${formatMoney(quote.staySubtotal)}</strong>
-        </div>
-        <div class="quote-row">
-          <span>Taxes</span>
-          <strong>${formatMoney(quote.taxAmount)}</strong>
-        </div>
-        <div class="quote-total">
-          <span>Total</span>
-          <strong>${formatMoney(quote.totalWithTax)}</strong>
-        </div>
-        <div class="quote-footnote">
-          *Compared with booking sites like Airbnb.
-        </div>
-      `;
-    }
-
-    function renderQuotePlaceholder() {
-      quoteSummary.innerHTML = `
-        <div class="quote-placeholder">
-          Select valid dates to see an estimated total.
-        </div>
-      `;
-    }
-
-    function getBlockedNightsInRange(checkIn, checkOut) {
-      const blocked = [];
-      let current = keyToDate(checkIn);
-      const end = keyToDate(checkOut);
-
-      while (current < end) {
-        const key = dateToKey(current);
-
-        if (blockedDateSet.has(key)) {
-          blocked.push(key);
+        if (cowgirl.moveTimer <= 0) {
+          startCowgirlRunToNextCorner();
         }
+      } else if (cowgirl.state === "entering" || cowgirl.state === "running") {
+        const corners = getCowgirlCorners();
+        const target = corners[cowgirl.targetCorner];
 
-        current.setDate(current.getDate() + 1);
+        const dx = target.x - cowgirl.x;
+        const dy = target.y - cowgirl.y;
+        const distance = Math.hypot(dx, dy) || 1;
+
+        cowgirl.facingLeft = dx < 0 || cowgirl.currentCorner === 1 || cowgirl.currentCorner === 2;
+
+        if (distance <= cowgirl.speed + 1) {
+          cowgirl.x = target.x;
+          cowgirl.y = target.y;
+          cowgirl.currentCorner = cowgirl.targetCorner;
+          settleCowgirlInCorner();
+        } else {
+          cowgirl.x += (dx / distance) * cowgirl.speed;
+          cowgirl.y += (dy / distance) * cowgirl.speed;
+        }
+      } else if (cowgirl.state === "fleeing") {
+        cowgirl.x += cowgirl.fleeVX;
+        cowgirl.y += cowgirl.fleeVY;
+
+        if (
+          cowgirl.x + cowgirl.width < -scaleX(80) ||
+          cowgirl.x > canvas.width + scaleX(80) ||
+          cowgirl.y + cowgirl.height < -scaleY(80) ||
+          cowgirl.y > canvas.height + scaleY(80)
+        ) {
+          hideCowgirlAndStartRespawn();
+        }
       }
 
-      return blocked;
+      if (!freedomSequenceActive && !heartsCelebrationActive && cowgirl.visible) {
+        const playerHitbox = getHitbox(player, 0.12);
+        const cowgirlHitbox = getCowgirlTouchHitbox();
+
+        if (rectsIntersect(playerHitbox, cowgirlHitbox)) {
+          if (cowgirl.state === "running" || cowgirl.state === "entering") {
+            damagePlayerFromCowgirl();
+          } else if (cowgirl.state === "idle") {
+            awardCowgirlPointsAndFlee();
+          }
+        }
+      }
     }
 
-    function isGlobalCheckoutOnlyDate(dateKey) {
-      if (!blockedDateSet.has(dateKey)) return false;
+    function unlockSounds() {
+      if (soundsUnlocked) return;
+      soundsUnlocked = true;
 
-      const previousDateKey = addDaysToKey(dateKey, -1);
+      const sounds = [hitSound, bonusSound, mooSound, cowgirlMusic, cosmicCowMusic, cloverMusic];
 
-      return !blockedDateSet.has(previousDateKey);
-    }
+      sounds.forEach((sound) => {
+        try {
+          sound.load();
+          const playAttempt = sound.play();
 
-    function updateGuestCount(type, delta) {
-      const currentValue = guestState[type];
-      const nextValue = currentValue + delta;
-
-      if (type === 'adults' && nextValue < 1) return;
-      if (type !== 'adults' && nextValue < 0) return;
-
-      const totalGuestsNow = guestState.adults + guestState.children;
-      const totalGuestsNext =
-        totalGuestsNow +
-        (type === 'infants' ? 0 : delta);
-
-      if (type !== 'infants' && totalGuestsNext > 16) return;
-
-      guestState[type] = nextValue;
-      syncGuestUI();
-    }
-
-    function syncGuestUI() {
-      document.getElementById('adultsCount').textContent = guestState.adults;
-      document.getElementById('childrenCount').textContent = guestState.children;
-      document.getElementById('infantsCount').textContent = guestState.infants;
-
-      const totalGuests = guestState.adults + guestState.children;
-      const guestLabel = `${totalGuests} guest${totalGuests === 1 ? '' : 's'}`;
-      const infantLabel =
-        guestState.infants > 0
-          ? `, ${guestState.infants} infant${guestState.infants === 1 ? '' : 's'}`
-          : '';
-
-      guestButtonText.textContent = guestLabel + infantLabel;
-      guestCountInput.value = guestLabel + infantLabel;
-
-      guestPopover.querySelectorAll('.counter-btn').forEach(button => {
-        const type = button.dataset.type;
-        const delta = Number(button.dataset.delta);
-        const value = guestState[type];
-
-        if (type === 'adults' && delta === -1) {
-          button.disabled = value <= 1;
-          return;
-        }
-
-        if (type !== 'adults' && delta === -1) {
-          button.disabled = value <= 0;
-          return;
-        }
-
-        if (delta === 1 && type !== 'infants') {
-          const totalGuests = guestState.adults + guestState.children;
-          button.disabled = totalGuests >= 16;
-          return;
-        }
-
-        button.disabled = false;
+          if (playAttempt && typeof playAttempt.then === "function") {
+            playAttempt
+              .then(() => {
+                sound.pause();
+                sound.currentTime = 0;
+              })
+              .catch(() => {});
+          } else {
+            sound.pause();
+            sound.currentTime = 0;
+          }
+        } catch (err) {}
       });
     }
 
-    function syncMirrors() {
-      checkInMirror.value = checkInInput.value || '';
-      checkOutMirror.value = checkOutInput.value || '';
+    function getMooPulseRadius() {
+      return scaleX(MOO_PULSE_RADIUS);
     }
 
-    function setAvailabilityMessage(message, type, savingsText = '') {
-      availabilityMessage.className = 'availability-message';
+    function destroyHostileObjectsInMooPulse() {
+      const pulseCenterX = player.x + player.width / 2;
+      const pulseCenterY = player.y + player.height / 2;
+      const pulseRadius = getMooPulseRadius();
+      let destroyedCount = 0;
 
-      if (type === 'good') availabilityMessage.classList.add('good');
-      if (type === 'bad') availabilityMessage.classList.add('bad');
+      for (let i = fallingObjects.length - 1; i >= 0; i--) {
+        const obj = fallingObjects[i];
+        const isHostile = obj.type === "bad" || obj.type === "butcher";
+        if (!isHostile) continue;
 
-      if (message && savingsText) {
-        availabilityMessage.classList.add('inline');
-        availabilityMessage.innerHTML = `
-          <span class="message-main">${message}</span>
-          <span class="message-savings">${savingsText}</span>
+        const objCenterX = obj.x + obj.width / 2;
+        const objCenterY = obj.y + obj.height / 2;
+        const distance = Math.hypot(objCenterX - pulseCenterX, objCenterY - pulseCenterY);
+
+        if (distance <= pulseRadius + obj.width / 2) {
+          fallingObjects.splice(i, 1);
+          destroyedCount++;
+        }
+      }
+
+      if (destroyedCount > 0) {
+        const mooPoints = destroyedCount * destroyedCount * 100;
+        score += mooPoints;
+        maybeShowSpeedModeBanner();
+        maybeAwardExtraLife();
+        bonusFlashTimer = 44;
+        bonusFlashText = `MOO! +${mooPoints}`;
+        playSound(bonusSound);
+      }
+    }
+
+    function activateMooPulse() {
+      if (!gameStarted || gamePaused || gameOver) return;
+      if (freedomSequenceActive || heartsCelebrationActive) return;
+      if (mooCooldownTimer > 0 && !bossFightActive) return;
+
+      unlockSounds();
+
+      mooPulseActive = true;
+      mooPulseTimer = 120;
+      mooCooldownTimer = bossFightActive ? MOO_BOSS_COOLDOWN_FRAMES : MOO_COOLDOWN_FRAMES;
+      mooFlashTimer = 18;
+      bonusFlashTimer = 40;
+      bonusFlashText = "MOO!";
+
+      if (bossFightActive) {
+        hitCowgirlBossWithMoo();
+      } else {
+        destroyHostileObjectsInMooPulse();
+      }
+
+      playSound(mooSound);
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+    }
+
+    function renderDialogueText(text, typedLength, done = false) {
+      const visible = escapeHtml(text.slice(0, typedLength)).replace(/\n/g, "<br>");
+      const typedText = visible + (done ? "" : `<span class="dialogue-cursor">|</span>`);
+
+      if (activeDialogue && activeDialogue.imageSrc) {
+        overlayBox.classList.add("picture-overlay-box");
+        overlayText.innerHTML = `
+          <img class="dialogue-picture" src="${activeDialogue.imageSrc}" alt="Purple cow close-up">
+          <div class="picture-dialogue-box">${typedText}</div>
         `;
       } else {
-        availabilityMessage.textContent = message;
+        overlayBox.classList.remove("picture-overlay-box");
+        overlayText.innerHTML = typedText;
       }
     }
 
-    function countNights(checkIn, checkOut) {
-      const start = keyToDate(checkIn);
-      const end = keyToDate(checkOut);
-      return Math.round((end - start) / 86400000);
+    function clearDialogueHandlers() {
+      if (dialogueTimeout) {
+        clearTimeout(dialogueTimeout);
+        dialogueTimeout = null;
+      }
+
+      if (overlayTapHandler) {
+        overlay.removeEventListener("click", overlayTapHandler);
+        overlayTapHandler = null;
+      }
+
+      overlayBox.classList.remove("picture-overlay-box");
+      activeDialogue = null;
     }
 
-    function dateToKey(date) {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
+    function finalizeDialogue() {
+      if (!activeDialogue) return;
+
+      activeDialogue.index = activeDialogue.text.length;
+      renderDialogueText(activeDialogue.text, activeDialogue.index, true);
+
+      if (activeDialogue.requireContinueBeforeButtons && activeDialogue.buttons.length > 0) {
+        overlayContinue.classList.remove("hidden");
+
+        overlayTapHandler = (e) => {
+          if (e.target.closest("button")) return;
+          overlay.removeEventListener("click", overlayTapHandler);
+          overlayTapHandler = null;
+          overlayContinue.classList.add("hidden");
+          showDialogueButtons(activeDialogue.buttons);
+        };
+
+        overlay.addEventListener("click", overlayTapHandler);
+      } else {
+        showDialogueButtons(activeDialogue.buttons);
+      }
     }
 
-    function keyToDate(key) {
-      const [year, month, day] = key.split('-').map(Number);
-      return new Date(year, month - 1, day);
+    function typeNextCharacter() {
+      if (!activeDialogue) return;
+
+      if (activeDialogue.index >= activeDialogue.text.length) {
+        finalizeDialogue();
+        return;
+      }
+
+      activeDialogue.index++;
+
+      const currentChar = activeDialogue.text[activeDialogue.index - 1];
+      playDialogueBlip(currentChar);
+      renderDialogueText(activeDialogue.text, activeDialogue.index, false);
+
+      let delay = activeDialogue.speed;
+
+      if (currentChar === "." || currentChar === "?" || currentChar === "!") {
+        delay += 120;
+      } else if (currentChar === ",") {
+        delay += 70;
+      } else if (currentChar === "\n") {
+        delay += 120;
+      } else if (currentChar === " ") {
+        delay -= 5;
+      }
+
+      dialogueTimeout = setTimeout(typeNextCharacter, Math.max(15, delay));
     }
 
-    function addDaysToKey(key, days) {
-      const date = keyToDate(key);
-      date.setDate(date.getDate() + days);
-      return dateToKey(date);
-    }
+    function showDialogueButtons(buttons = []) {
+      overlayButtons.innerHTML = "";
 
-    function isDateKeyPast(key) {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      return keyToDate(key) < today;
-    }
-
-    function roundCurrency(value) {
-      return Math.round(Number(value || 0) * 100) / 100;
-    }
-
-    function formatMoney(value) {
-      return '$' + Number(value || 0).toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
+      buttons.forEach((btn) => {
+        const button = document.createElement("button");
+        button.className = `overlay-btn${btn.secondary ? " secondary" : ""}`;
+        button.textContent = btn.label;
+        button.addEventListener("click", btn.onClick);
+        overlayButtons.appendChild(button);
       });
     }
 
-    syncGuestUI();
-    syncMirrors();
+    function showOverlay(text, buttons = [], options = {}) {
+      clearDialogueHandlers();
 
-    loadAvailability()
-      .then(data => {
-        applyAvailabilityData(data);
-      })
-      .catch(error => {
-        availabilityStatus.textContent =
-          'Availability could not be loaded right now. Please contact us and we will confirm manually.';
+      gamePaused = true;
+      overlay.classList.remove("hidden");
+      overlayButtons.innerHTML = "";
+      overlayContinue.classList.add("hidden");
 
-        console.error('Availability error:', error);
-        renderCalendar();
-        renderQuotePlaceholder();
+      const speed = options.speed ?? 28;
+      const requireContinueBeforeButtons = options.requireContinueBeforeButtons ?? false;
+
+      activeDialogue = {
+        text,
+        buttons,
+        index: 0,
+        speed,
+        requireContinueBeforeButtons,
+        imageSrc: options.imageSrc || null
+      };
+
+      renderDialogueText(text, 0, false);
+
+      overlayTapHandler = (e) => {
+        if (e.target.closest("button")) return;
+        if (!activeDialogue) return;
+
+        if (activeDialogue.index < activeDialogue.text.length) {
+          finalizeDialogue();
+        }
+      };
+
+      overlay.addEventListener("click", overlayTapHandler);
+      typeNextCharacter();
+    }
+
+    function hideOverlay() {
+      clearDialogueHandlers();
+      overlay.classList.add("hidden");
+      overlayContinue.classList.add("hidden");
+
+      if (!gameOver && !gameWon && !exitingMortality) {
+        gamePaused = false;
+      }
+    }
+
+    function showCowDialogueOverlay() {
+      showOverlay(
+        `Moo.\n\nMoo mooo mooo moo.\n\nUnderstood?`,
+        [
+          {
+            label: "Moo.",
+            onClick: async () => {
+              gameStarted = true;
+              hideOverlay();
+
+              if (!isMuted && !gameOver) {
+                try {
+                  music.currentTime = 0;
+                  await music.play();
+                } catch (err) {
+                  console.log("Music could not start yet:", err);
+                }
+              }
+            }
+          }
+        ],
+        {
+          speed: 34,
+          requireContinueBeforeButtons: true
+        }
+      );
+    }
+
+    function showStartOverlay() {
+      clearDialogueHandlers();
+      gamePaused = true;
+      overlay.classList.remove("hidden");
+      overlayContinue.classList.add("hidden");
+      overlayButtons.innerHTML = "";
+      overlayBox.classList.remove("picture-overlay-box");
+
+      overlayText.innerHTML = `
+        <div class="difficulty-menu">
+          <div class="difficulty-title">Choose Difficulty</div>
+          <div class="difficulty-subtitle">
+            WASD to move<br>
+            SPACE or double-tap to MOOOOOOO
+          </div>
+          <div class="difficulty-options">
+            <button class="difficulty-card" type="button" data-difficulty="easy">New</button>
+            <button class="difficulty-card" type="button" data-difficulty="normal">Experienced</button>
+            <button class="difficulty-card cowgirl" type="button" data-difficulty="cowgirl">Cowgirl</button>
+          </div>
+        </div>
+      `;
+
+      overlayText.querySelectorAll(".difficulty-card").forEach((button) => {
+        button.addEventListener("click", () => {
+          const difficulty = button.dataset.difficulty;
+
+          if (difficulty === "easy") {
+            startGameWithDifficulty("easy", 0.7);
+          } else if (difficulty === "cowgirl") {
+            startGameWithDifficulty("cowgirl", 1.3);
+          } else {
+            startGameWithDifficulty("normal", 1.0);
+          }
+        });
+      });
+    }
+
+    function startGameWithDifficulty(name, multiplier) {
+      selectedDifficulty = name;
+      difficultyMultiplier = multiplier;
+
+      unlockSounds();
+
+      if (!introDialoguePlayed) {
+        introDialoguePlayed = true;
+        playDialogueSound();
+      }
+
+      showCowDialogueOverlay();
+    }
+
+    function showCheckpoint18000() {
+      if (checkpoint18000Shown) return;
+      checkpoint18000Shown = true;
+
+      showOverlay(
+        `UH OH MAD COW DISEASE\n\nUH OH SOMEONE CALLED FOR MORE COWBELL`,
+        [
+          {
+            label: "Mooooo",
+            onClick: () => {
+              cowbellModeActive = true;
+              bonusFlashTimer = 90;
+              bonusFlashText = "UH OH MAD COW DISEASE UH OH SOMEONE CALLED FOR MORE COWBELL";
+              hideOverlay();
+            }
+          }
+        ],
+        {
+          speed: 26,
+          requireContinueBeforeButtons: true
+        }
+      );
+    }
+
+    function showCheckpoint10000() {
+      if (checkpoint10000Shown) return;
+      checkpoint10000Shown = true;
+
+      showOverlay(
+        `The people want grass fed beef, and your stomachs are full of grass.\n\n Do you go on ?`,
+        [
+          {
+            label: "Mooooo",
+            onClick: () => {
+              hideOverlay();
+            }
+          },
+          {
+            label: "Noooo",
+            secondary: true,
+            onClick: () => {
+              gameOver = true;
+              gamePaused = true;
+              music.pause();
+
+              showOverlay(
+                `Clover lowers her head.\n\nShe will not go on.`,
+                [
+                  {
+                    label: "Again",
+                    onClick: () => {
+                      restartGame();
+                    }
+                  }
+                ],
+                {
+                  speed: 28,
+                  requireContinueBeforeButtons: true
+                }
+              );
+            }
+          }
+        ],
+        {
+          speed: 28,
+          requireContinueBeforeButtons: true
+        }
+      );
+    }
+
+    function showCheckpoint22000() {
+      if (checkpoint22000Shown) return;
+      checkpoint22000Shown = true;
+      gameWon = true;
+      gamePaused = true;
+      music.pause();
+
+      showOverlay(
+        `Whew.
+
+That was close.
+
+Will there ever be...greener pastures?`,
+        [
+          {
+            label: "Mooooo",
+            onClick: () => {
+              startGreenerPasturesSequence();
+            }
+          }
+        ],
+        {
+          speed: 30,
+          requireContinueBeforeButtons: true
+        }
+      );
+    }
+
+    function startGreenerPasturesSequence() {
+      clearDialogueHandlers();
+      overlay.classList.add("hidden");
+      overlayContinue.classList.add("hidden");
+      overlayButtons.innerHTML = "";
+
+      greenerPasturesActive = true;
+      greenerPasturesFade = 0;
+      greenerPasturesTextShown = false;
+      bossFightActive = false;
+      bossDefeatedPastureActive = false;
+      bossPoofs = [];
+      gamePaused = false;
+
+      fallingObjects = [];
+      cowgirl.visible = false;
+      cowgirl.unlocked = true;
+      stalkerButcher.active = false;
+
+      player.invulnerableTimer = 999999;
+      player.width = scaleX(72 * 1.5);
+      player.height = scaleY(72 * 1.5);
+      player.x = scaleX(40);
+      player.y = canvas.height - player.height - scaleY(32);
+      playerFacingLeft = false;
+    }
+
+    function updateGreenerPasturesSequence() {
+      frame++;
+
+      if (greenerPasturesFade < 1) {
+        greenerPasturesFade = Math.min(1, greenerPasturesFade + 0.012);
+      }
+
+      const paceSpeed = scaleX(1.4);
+      player.x += playerFacingLeft ? -paceSpeed : paceSpeed;
+
+      if (player.x < scaleX(28)) {
+        playerFacingLeft = false;
+      }
+      if (player.x + player.width > canvas.width - scaleX(28)) {
+        playerFacingLeft = true;
+      }
+
+      playerAnimationFrame = Math.floor(frame / PLAYER_FRAME_DURATION) % PLAYER_TOTAL_FRAMES;
+
+      if (greenerPasturesFade >= 1 && !greenerPasturesTextShown) {
+        greenerPasturesTextShown = true;
+        gamePaused = true;
+
+        showOverlay(
+          `What is this place?...`,
+          [
+            {
+              label: "Continue",
+              onClick: () => {
+                showPastureSuspiciousMoo();
+              }
+            }
+          ],
+          { speed: 30, requireContinueBeforeButtons: true }
+        );
+      }
+    }
+
+    function showPastureSuspiciousMoo() {
+      playSound(mooSound);
+
+      showOverlay(
+        `You moo suspiciously....
+
+Is this free range?`,
+        [
+          {
+            label: "Continue",
+            onClick: () => {
+              showCowgirlBossIntro();
+            }
+          }
+        ],
+        { speed: 30, requireContinueBeforeButtons: true }
+      );
+    }
+
+    function triggerBossAngerEffect() {
+      gameWrap.classList.remove("boss-shake");
+      overlay.classList.remove("boss-red-flash");
+
+      // Force the browser to restart the animations even if they just played.
+      void gameWrap.offsetWidth;
+
+      gameWrap.classList.add("boss-shake");
+      overlay.classList.add("boss-red-flash");
+
+      setTimeout(() => {
+        gameWrap.classList.remove("boss-shake");
+        overlay.classList.remove("boss-red-flash");
+      }, 650);
+    }
+
+    function showCowgirlBossIntro() {
+      music.pause();
+
+      if (!isMuted) {
+        try {
+          cowgirlMusic.currentTime = 0;
+          cowgirlMusic.play().catch(() => {});
+        } catch (err) {}
+      }
+
+      triggerBossAngerEffect();
+
+      showOverlay(
+        `NO MORE MOOING.
+
+STOP THAT $#&@ING SOUND.`,
+        [
+          {
+            label: "...",
+            onClick: () => {
+              try {
+                mooSound.pause();
+                mooSound.currentTime = 0;
+              } catch (err) {}
+
+              showCornbreadDialogue();
+            }
+          }
+        ],
+        { speed: 28, requireContinueBeforeButtons: true }
+      );
+    }
+
+    function showCornbreadDialogue() {
+      showOverlay(
+        `You leave me no choice.
+
+Cowtow... or I'll turn you into cornbread.`,
+        [
+          {
+            label: "MOOOO",
+            onClick: () => {
+              startCowgirlBossFight();
+            }
+          }
+        ],
+        { speed: 30, requireContinueBeforeButtons: true }
+      );
+    }
+
+    function startCowgirlBossFight() {
+      clearDialogueHandlers();
+      overlay.classList.add("hidden");
+      overlayContinue.classList.add("hidden");
+      overlayButtons.innerHTML = "";
+
+      greenerPasturesActive = false;
+      bossFightActive = true;
+      bossDefeatedPastureActive = false;
+      bossPoofs = [];
+      gamePaused = false;
+      gameWon = false;
+
+      lives = 4;
+      player.invulnerableTimer = 90;
+      mooPulseActive = false;
+      mooPulseTimer = 0;
+      mooCooldownTimer = 0;
+      hitFlashTimer = 0;
+      bonusFlashTimer = 80;
+      bonusFlashText = "CLOVER MOO MOO CLOVER MOO YOUR LITTLE HEART OUT";
+
+      player.x = canvas.width / 2 - player.width / 2;
+      player.y = canvas.height - player.height - scaleY(34);
+      playerFacingLeft = false;
+
+      music.pause();
+
+      cowgirlBoss.width = scaleX(112 * 1.5);
+      cowgirlBoss.height = scaleY(112 * 1.5);
+      cowgirlBoss.x = canvas.width / 2 - cowgirlBoss.width / 2;
+      cowgirlBoss.y = scaleY(34);
+      cowgirlBoss.speed = Math.max(scaleX(4.8), 3.2) * difficultyMultiplier;
+      cowgirlBoss.health = 60;
+      cowgirlBoss.maxHealth = 60;
+      cowgirlBoss.state = "running";
+      cowgirlBoss.facingLeft = false;
+      cowgirlBoss.attackTimer = 0;
+      cowgirlBoss.attackCooldown = 0;
+      cowgirlBoss.damageCooldown = 0;
+      cowgirlBoss.flashTimer = 0;
+      cowgirlBoss.throwCooldown = 55;
+      cowgirlBoss.animationOffset = Math.floor(Math.random() * 1000);
+
+      bossPatternTimer = 0;
+      bossPatternPhase = "corner";
+      bossTargetCorner = 0;
+
+      bossGrass = [];
+      bossPitchforks = [];
+      bossGrassSpawnTimer = 0;
+      spawnBossGrass();
+    }
+
+    function getBossCorners() {
+      const pad = scaleX(18);
+      const topPad = scaleY(54);
+      const bottomPad = scaleY(18);
+      return [
+        { x: pad, y: topPad },
+        { x: canvas.width - cowgirlBoss.width - pad, y: topPad },
+        { x: canvas.width - cowgirlBoss.width - pad, y: canvas.height - cowgirlBoss.height - bottomPad },
+        { x: pad, y: canvas.height - cowgirlBoss.height - bottomPad }
+      ];
+    }
+
+    function pickDifferentBossCorner() {
+      let next = Math.floor(Math.random() * 4);
+      if (next === bossTargetCorner) next = (next + 1 + Math.floor(Math.random() * 3)) % 4;
+      bossTargetCorner = next;
+      bossPatternTimer = 0;
+      bossPatternPhase = "corner";
+      cowgirlBoss.state = "running";
+    }
+
+    function spawnBossGrass() {
+      const size = scaleX(78);
+      const minY = canvas.height / 2;
+      const maxY = canvas.height - size;
+
+      bossGrass.push({
+        x: Math.random() * Math.max(1, canvas.width - size),
+        y: minY + Math.random() * Math.max(1, maxY - minY),
+        width: size,
+        height: size,
+        pulse: Math.floor(Math.random() * 1000)
+      });
+    }
+
+    function throwBossPitchfork() {
+      const bossCenterX = cowgirlBoss.x + cowgirlBoss.width / 2;
+      const bossCenterY = cowgirlBoss.y + cowgirlBoss.height / 2;
+      const playerCenterX = player.x + player.width / 2;
+      const playerCenterY = player.y + player.height / 2;
+
+      const dx = playerCenterX - bossCenterX;
+      const dy = playerCenterY - bossCenterY;
+      const distance = Math.hypot(dx, dy) || 1;
+      const speed = Math.max(scaleX(7.2), 4.6) * difficultyMultiplier;
+
+      bossPitchforks.push({
+        x: bossCenterX,
+        y: bossCenterY,
+        vx: (dx / distance) * speed,
+        vy: (dy / distance) * speed,
+        width: scaleX(92),
+        height: scaleY(24),
+
+        // This angle points the pitchfork toward Clover, whether she is
+        // left, right, above, below, or diagonal from the cowgirl.
+        angle: Math.atan2(dy, dx),
+
+        life: 150
       });
 
-    renderCalendar();
-    renderQuotePlaceholder();
+      bonusFlashTimer = 48;
+      bonusFlashText = "Bullseye";
+    }
+
+    function getRotatedPitchforkHitbox(pitchfork) {
+      // The drawn image is rotated toward Clover. This places the damage box
+      // out near the front/spiky side instead of the wooden handle side.
+      const contraction = 0.07;
+      const tipOffset = pitchfork.width * 0.50;
+
+      const hitboxWidth = pitchfork.width * 0.44 * (1 - contraction);
+      const hitboxHeight = pitchfork.height * 1.1 * (1 - contraction);
+
+      return {
+        x: pitchfork.x + Math.cos(pitchfork.angle) * tipOffset - hitboxWidth / 2,
+        y: pitchfork.y + Math.sin(pitchfork.angle) * tipOffset - hitboxHeight / 2,
+        width: hitboxWidth,
+        height: hitboxHeight
+      };
+    }
+
+    function damagePlayerInBossFight() {
+      if (player.invulnerableTimer > 0) return false;
+      lives--;
+      player.invulnerableTimer = 80;
+      hitFlashTimer = 22;
+      playSound(hitSound);
+
+      if (lives <= 0) {
+        gameOver = true;
+        gamePaused = true;
+        bossFightActive = false;
+        cowgirlMusic.pause();
+        showOverlay(
+          `Clover became cornbread.
+
+Final Score: ${score}`,
+          [
+            {
+              label: "Again",
+              onClick: () => { restartGame(); }
+            }
+          ],
+          { speed: 28, requireContinueBeforeButtons: true }
+        );
+        return true;
+      }
+      return false;
+    }
+
+    function updateBossPlayerControls() {
+      let isMoving = false;
+      player.width = scaleX(72 * 1.5);
+      player.height = scaleY(72 * 1.5);
+      player.speed = Math.max(scaleX(11), 4) * getPlayerSpeedBoostMultiplier();
+
+      if (keys["ArrowLeft"] || keys["a"] || keys["A"]) {
+        player.x -= player.speed;
+        playerFacingLeft = true;
+        isMoving = true;
+      }
+      if (keys["ArrowRight"] || keys["d"] || keys["D"]) {
+        player.x += player.speed;
+        playerFacingLeft = false;
+        isMoving = true;
+      }
+      if (keys["ArrowUp"] || keys["w"] || keys["W"]) {
+        player.y -= player.speed;
+        isMoving = true;
+      }
+      if (keys["ArrowDown"] || keys["s"] || keys["S"]) {
+        player.y += player.speed;
+        isMoving = true;
+      }
+
+      if (touchActive && touchTargetX !== null && touchTargetY !== null) {
+        const dx = touchTargetX - player.x;
+        const dy = touchTargetY - player.y;
+
+        if (Math.abs(dx) > player.speed) {
+          player.x += Math.sign(dx) * player.speed;
+          playerFacingLeft = dx < 0;
+          isMoving = true;
+        } else if (Math.abs(dx) > 1) {
+          player.x = touchTargetX;
+          playerFacingLeft = dx < 0;
+          isMoving = true;
+        }
+
+        if (Math.abs(dy) > player.speed) {
+          player.y += Math.sign(dy) * player.speed;
+          isMoving = true;
+        } else if (Math.abs(dy) > 1) {
+          player.y = touchTargetY;
+          isMoving = true;
+        }
+      }
+
+      if (player.x < 0) player.x = 0;
+      if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+      const bossPlayerTopLimit = canvas.height / 2;
+      if (player.y < bossPlayerTopLimit) player.y = bossPlayerTopLimit;
+      if (player.y + player.height > canvas.height) player.y = canvas.height - player.height;
+
+      playerAnimationFrame = isMoving
+        ? Math.floor(frame / PLAYER_FRAME_DURATION) % PLAYER_TOTAL_FRAMES
+        : 0;
+    }
+
+    function updateBossFight() {
+      frame++;
+      if (cloverBoostTimer > 0) cloverBoostTimer--;
+      updateCloverSpeech();
+      updateBossPlayerControls();
+
+      if (player.invulnerableTimer > 0) player.invulnerableTimer--;
+      if (hitFlashTimer > 0) hitFlashTimer--;
+      if (bonusFlashTimer > 0) bonusFlashTimer--;
+      if (mooFlashTimer > 0) mooFlashTimer--;
+
+      if (mooPulseTimer > 0) {
+        mooPulseTimer--;
+      } else {
+        mooPulseActive = false;
+      }
+
+      if (mooCooldownTimer > 0) {
+        mooCooldownTimer--;
+      }
+
+      if (cowgirlBoss.damageCooldown > 0) cowgirlBoss.damageCooldown--;
+      if (cowgirlBoss.flashTimer > 0) cowgirlBoss.flashTimer--;
+      if (cowgirlBoss.throwCooldown > 0) cowgirlBoss.throwCooldown--;
+
+      bossGrassSpawnTimer++;
+      if (bossGrassSpawnTimer >= 60) {
+        bossGrassSpawnTimer = 0;
+        if (bossGrass.length < 2) {
+          spawnBossGrass();
+        }
+      }
+
+      const playerHitbox = getHitbox(player, 0.14);
+      const corners = getBossCorners();
+      const target = corners[bossTargetCorner];
+      const dx = target.x - cowgirlBoss.x;
+      const dy = target.y - cowgirlBoss.y;
+      const distance = Math.hypot(dx, dy) || 1;
+
+      bossPatternTimer++;
+      cowgirlBoss.facingLeft = dx < 0;
+
+      if (bossPatternPhase === "corner") {
+        cowgirlBoss.state = "running";
+        cowgirlBoss.x += (dx / distance) * cowgirlBoss.speed;
+        cowgirlBoss.y += (dy / distance) * cowgirlBoss.speed;
+
+        if (distance <= cowgirlBoss.speed + 2) {
+          cowgirlBoss.x = target.x;
+          cowgirlBoss.y = target.y;
+          bossPatternPhase = "throw";
+          bossPatternTimer = 0;
+          cowgirlBoss.throwCooldown = 20;
+        }
+      } else if (bossPatternPhase === "throw") {
+        cowgirlBoss.state = "attacking";
+        cowgirlBoss.facingLeft = (player.x + player.width / 2) < (cowgirlBoss.x + cowgirlBoss.width / 2);
+
+        if (cowgirlBoss.throwCooldown <= 0) {
+          throwBossPitchfork();
+          cowgirlBoss.throwCooldown = 55;
+        }
+
+        if (bossPatternTimer >= 95) {
+          pickDifferentBossCorner();
+        }
+      }
+
+      if (cowgirlBoss.x < 0) cowgirlBoss.x = 0;
+      if (cowgirlBoss.x + cowgirlBoss.width > canvas.width) cowgirlBoss.x = canvas.width - cowgirlBoss.width;
+      if (cowgirlBoss.y < 0) cowgirlBoss.y = 0;
+      if (cowgirlBoss.y + cowgirlBoss.height > canvas.height) cowgirlBoss.y = canvas.height - cowgirlBoss.height;
+
+      const bossHitbox = getHitbox(cowgirlBoss, 0.24);
+      if (rectsIntersect(playerHitbox, bossHitbox) && cowgirlBoss.damageCooldown <= 0) {
+        cowgirlBoss.damageCooldown = 45;
+        pickDifferentBossCorner();
+      }
+
+      for (let i = bossPitchforks.length - 1; i >= 0; i--) {
+        const pitchfork = bossPitchforks[i];
+        pitchfork.x += pitchfork.vx;
+        pitchfork.y += pitchfork.vy;
+        pitchfork.life--;
+
+        const pitchforkHitbox = getRotatedPitchforkHitbox(pitchfork);
+        if (rectsIntersect(playerHitbox, pitchforkHitbox)) {
+          bossPitchforks.splice(i, 1);
+          if (damagePlayerInBossFight()) return;
+          continue;
+        }
+
+        if (
+          pitchfork.life <= 0 ||
+          pitchfork.x < -pitchfork.width ||
+          pitchfork.x > canvas.width + pitchfork.width ||
+          pitchfork.y < -pitchfork.width ||
+          pitchfork.y > canvas.height + pitchfork.width
+        ) {
+          bossPitchforks.splice(i, 1);
+        }
+      }
+
+      for (let i = bossGrass.length - 1; i >= 0; i--) {
+        const grass = bossGrass[i];
+        if (rectsIntersect(playerHitbox, getHitbox(grass, 0.08))) {
+          score += 200;
+          maybeAwardExtraLife();
+          bonusFlashTimer = 28;
+          bonusFlashText = "+200 grass";
+          playSound(bonusSound);
+          bossGrass.splice(i, 1);
+        }
+      }
+    }
+
+    function hitCowgirlBossWithMoo() {
+  if (!bossFightActive || cowgirlBoss.health <= 0) return;
+
+  // centers
+  const pulseCenterX = player.x + player.width / 2;
+  const pulseCenterY = player.y + player.height / 2;
+
+  const bossCenterX = cowgirlBoss.x + cowgirlBoss.width / 2;
+  const bossCenterY = cowgirlBoss.y + cowgirlBoss.height / 2;
+
+  // distance check
+  const distance = Math.hypot(
+    bossCenterX - pulseCenterX,
+    bossCenterY - pulseCenterY
+  );
+
+  const pulseRadius = getMooPulseRadius();
+
+  // ❌ outside radius → do nothing
+  if (distance > pulseRadius + cowgirlBoss.width / 2) {
+    return;
+  }
+
+  // ✅ inside radius → hit
+  cowgirlBoss.health--;
+  cowgirlBoss.flashTimer = 12;
+
+  // knockback (away from player)
+  const pushDir = bossCenterX < pulseCenterX ? -1 : 1;
+  cowgirlBoss.x += pushDir * scaleX(22);
+
+  // keep her on screen
+  if (cowgirlBoss.x < 0) cowgirlBoss.x = 0;
+  if (cowgirlBoss.x + cowgirlBoss.width > canvas.width) {
+    cowgirlBoss.x = canvas.width - cowgirlBoss.width;
+  }
+
+  // defeat check
+  if (cowgirlBoss.health <= 0) {
+    defeatCowgirlBoss();
+  }
+}
+
+    function createBossPoof() {
+      bossPoofs = [];
+
+      const cx = cowgirlBoss.x + cowgirlBoss.width / 2;
+      const cy = cowgirlBoss.y + cowgirlBoss.height / 2;
+
+      for (let i = 0; i < 42; i++) {
+        bossPoofs.push({
+          x: cx,
+          y: cy,
+          vx: (Math.random() - 0.5) * scaleX(5.6),
+          vy: (Math.random() - 0.5) * scaleY(5.6) - scaleY(0.4),
+          size: Math.random() * scaleX(18) + scaleX(12),
+          life: Math.random() * 48 + 48,
+          maxLife: 96
+        });
+      }
+    }
+
+    function updateBossPoofs() {
+      for (let i = bossPoofs.length - 1; i >= 0; i--) {
+        const poof = bossPoofs[i];
+
+        poof.x += poof.vx;
+        poof.y += poof.vy;
+        poof.vx *= 0.97;
+        poof.vy *= 0.97;
+        poof.size *= 1.008;
+        poof.life--;
+
+        if (poof.life <= 0) {
+          bossPoofs.splice(i, 1);
+        }
+      }
+    }
+
+    function drawBossPoofs() {
+      ctx.save();
+
+      for (const poof of bossPoofs) {
+        const alpha = Math.max(0, poof.life / poof.maxLife);
+
+        ctx.globalAlpha = alpha * 0.85;
+        ctx.fillStyle = "rgba(225, 225, 225, 0.75)";
+        ctx.beginPath();
+        ctx.arc(poof.x, poof.y, poof.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.globalAlpha = alpha * 0.35;
+        ctx.fillStyle = "rgba(120, 120, 120, 0.65)";
+        ctx.beginPath();
+        ctx.arc(poof.x - poof.size * 0.2, poof.y + poof.size * 0.15, poof.size * 0.7, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    function defeatCowgirlBoss() {
+      bossFightActive = false;
+      bossDefeatedPastureActive = true;
+      cowgirlMusic.pause();
+
+      gameWon = true;
+      gamePaused = true;
+
+      bossPitchforks = [];
+      bossGrass = [];
+      createBossPoof();
+
+      score += 1000;
+      bonusFlashTimer = 80;
+      bonusFlashText = "+1000";
+      playSound(bonusSound);
+
+      showOverlay(
+        `Clover you did it!
+
+The cowgirl went to go nurse her migraine.
+
+Thank you Clover...`,
+        [
+          {
+            label: "Mooo",
+            onClick: () => {
+              showOverlay(
+                `Clover, you've been through a lot...
+
+Would you like to be milked?..`,
+                [
+                  {
+                    label: "Mooooo",
+                    onClick: () => { startWarmAndFuzzyEnding(); }
+                  },
+                  {
+                    label: "Noooooo",
+                    secondary: true,
+                    onClick: () => { startFreedomEnding(); }
+                  }
+                ],
+                { speed: 34, requireContinueBeforeButtons: true }
+              );
+            }
+          }
+        ],
+        { speed: 30, requireContinueBeforeButtons: true }
+      );
+    }
+
+    function startFreedomEnding() {
+      hideOverlay();
+      bossFightActive = false;
+      bossDefeatedPastureActive = true;
+      freedomSequenceActive = true;
+      gamePaused = false;
+      playerFacingLeft = false;
+      player.invulnerableTimer = 999999;
+      endBanner.classList.add("hidden");
+    }
+
+    function startWarmAndFuzzyEnding() {
+      bossFightActive = false;
+      bossDefeatedPastureActive = true;
+      heartsCelebrationActive = true;
+      finalOverlayShown = false;
+      heartExplosionCount = 0;
+      hideOverlay();
+      makeHeartsExplode();
+      heartExplosionCount++;
+    }
+
+    function makeHeartsExplode() {
+      heartBursts = [];
+
+      for (let i = 0; i < 44; i++) {
+        heartBursts.push({
+          x: player.x + player.width / 2,
+          y: player.y + player.height / 2,
+          vx: (Math.random() - 0.5) * scaleX(5.5),
+          vy: (Math.random() - 0.5) * scaleY(5.5) - scaleY(1.5),
+          size: Math.random() * scaleX(14) + scaleX(14),
+          life: Math.random() * 80 + 90
+        });
+      }
+    }
+
+    function showFinalWarmOverlay() {
+      if (finalOverlayShown) return;
+      finalOverlayShown = true;
+      gamePaused = true;
+
+      showOverlay(
+        `You feel warm and fuzzy inside.\n\nCLOVER YOU ESCAPED!!!  CONGRATULATIONS!!!\n\nWait... who's that off in the distance?`,
+        [
+          {
+            label: "...",
+            onClick: () => {
+              startPurpleCowEncounter();
+            }
+          }
+        ],
+        {
+          speed: 26,
+          requireContinueBeforeButtons: true
+        }
+      );
+    }
+
+    function startPurpleCowEncounter() {
+      gameWon = false;
+      heartsCelebrationActive = false;
+      bossDefeatedPastureActive = true;
+      freedomSequenceActive = false;
+      gameStarted = true;
+      gameOver = false;
+      heartBursts = [];
+
+      purpleCow.active = true;
+      purpleCow.triggered = false;
+      purpleCow.entering = true;
+      purpleCow.walkingAway = false;
+      purpleCow.width = scaleX(92);
+      purpleCow.height = scaleY(92);
+      purpleCow.x = canvas.width / 2 - purpleCow.width / 2;
+
+      // Start offscreen, then walk toward Clover instead of popping in.
+      purpleCow.y = -purpleCow.height - scaleY(20);
+      purpleCow.targetY = scaleY(58);
+
+      purpleCow.facingLeft = true;
+      purpleCow.animationOffset = Math.floor(Math.random() * 1000);
+
+      player.invulnerableTimer = 999999;
+      player.width = scaleX(72 * 1.5);
+      player.height = scaleY(72 * 1.5);
+      player.x = canvas.width / 2 - player.width / 2;
+      player.y = canvas.height - player.height - scaleY(32);
+      playerFacingLeft = false;
+
+      try {
+        cowgirlMusic.pause();
+        music.pause();
+        if (!isMuted) {
+          cosmicCowMusic.currentTime = 0;
+          cosmicCowMusic.play().catch(() => {});
+        }
+      } catch (err) {}
+
+      hideOverlay();
+      gamePaused = false;
+    }
+
+    function updatePurpleCowEncounter() {
+      if (!purpleCow.active) return;
+
+      purpleCow.width = scaleX(92);
+      purpleCow.height = scaleY(92);
+
+      if (purpleCow.entering) {
+        purpleCow.y += scaleY(0.75);
+        purpleCow.x += Math.sin(frame * 0.03) * scaleX(0.18);
+
+        if (purpleCow.y >= purpleCow.targetY) {
+          purpleCow.y = purpleCow.targetY;
+          purpleCow.entering = false;
+        }
+
+        return;
+      }
+
+      if (purpleCow.walkingAway) {
+        purpleCow.y -= scaleY(0.55);
+        purpleCow.x += Math.sin(frame * 0.03) * scaleX(0.25);
+        if (purpleCow.y + purpleCow.height < -scaleY(20)) {
+          purpleCow.active = false;
+          purpleCow.walkingAway = false;
+        }
+        return;
+      }
+
+      if (purpleCow.triggered) return;
+
+      const playerCenterX = player.x + player.width / 2;
+      const playerCenterY = player.y + player.height / 2;
+      const cowCenterX = purpleCow.x + purpleCow.width / 2;
+      const cowCenterY = purpleCow.y + purpleCow.height / 2;
+      const distance = Math.hypot(playerCenterX - cowCenterX, playerCenterY - cowCenterY);
+
+      if (distance <= scaleX(135)) {
+        purpleCow.triggered = true;
+        triggerPurpleCowDialogue();
+      }
+    }
+
+    function triggerPurpleCowDialogue() {
+      gamePaused = true;
+
+      // First dialogue: original purple cow image.
+      showOverlay(
+        `I've been waiting a long time for you,
+Longer than I can remember...
+
+Moo.`,
+        [
+          {
+            label: "...",
+            onClick: () => {
+
+              // Second dialogue: two-cow eyelash image.
+              showOverlay(
+                `You have a beautiful eyelash,
+Hoof there it is...
+And now its gone...
+Gone with the wind...`,
+                [
+                  {
+                    label: "...",
+                    onClick: () => {
+
+                      // Third dialogue, part one: back to the original purple cow image.
+                      showOverlay(
+                        `No matter, you are wonderful Clover
+
+You know a four leaf clover?
+You are more special than that.
+
+All clover's have made this journey
+Clover's after you will make this journey... but you are one of a kind`,
+                        [
+                          {
+                            label: "...",
+                            onClick: () => {
+
+                              // Clover gift dialogue.
+                              showOverlay(
+                                `Here let me give you something...
+
+What is it?
+
+You remind me of this clover,
+it reminds me of you.`,
+                                [
+                                  {
+                                    label: "...",
+                                    onClick: () => {
+
+                                      // 44 leaf clover received screen.
+                                      if (!isMuted) {
+                                        try {
+                                          music.pause();
+                                          cowgirlMusic.pause();
+                                          cosmicCowMusic.pause();
+                                          cloverMusic.currentTime = 0;
+                                          cloverMusic.play().catch(() => {});
+                                        } catch (err) {}
+                                      }
+
+                                      awardFortyFourLeafClover();
+
+                                      showOverlay(
+                                        `You just received a 44 leaf clover!!!`,
+                                        [
+                                          {
+                                            label: "...",
+                                            onClick: () => {
+                                              stopCloverMusic();
+
+                                              // Inventory tutorial. Mortality choice is intentionally not shown yet.
+                                              showOverlay(
+                                                `Inventory unlocked.
+
+Press I to open your inventory.
+Press X to talk to the 44 Leaf Clover.
+
+Or use these buttons:)`,
+                                                [
+                                                  {
+                                                    label: "Let me try it",
+                                                    onClick: () => {
+                                                      hideOverlay();
+                                                      bonusFlashTimer = 180;
+                                                      bonusFlashText = "Inventory: press I, then X";
+                                                      queueFinalMortalityChoice();
+                                                    }
+                                                  },
+                                                  {
+                                                    label: "One more thing...",
+                                                    secondary: true,
+                                                    onClick: () => {
+                                                      showOverlay(
+                                                        `Escapin isn't as easy as it looks, but
+It is living that is the real hard part...`,
+                                                        [
+                                                          {
+                                                            label: "Not yet...",
+                                                            onClick: () => {
+                                                              purpleCow.walkingAway = true;
+                                                              hideOverlay();
+                                                              bonusFlashTimer = 180;
+                                                              bonusFlashText = "Talk to your Lucky Clover";
+                                                              queueFinalMortalityChoice();
+                                                            }
+                                                          }
+                                                        ],
+                                                        {
+                                                          speed: 34,
+                                                          requireContinueBeforeButtons: true,
+                                                          imageSrc: "purple-cow-closeup.png"
+                                                        }
+                                                      );
+                                                    }
+                                                  }
+                                                ],
+                                                {
+                                                  speed: 34,
+                                                  requireContinueBeforeButtons: true,
+                                                  imageSrc: "forty-four-leaf-clover.png"
+                                                }
+                                              );
+
+                                            }
+                                          }
+                                        ],
+                                        {
+                                          speed: 34,
+                                          requireContinueBeforeButtons: true,
+                                          imageSrc: "forty-four-leaf-clover.png"
+                                        }
+                                      );
+
+                                    }
+                                  }
+                                ],
+                                {
+                                  speed: 34,
+                                  requireContinueBeforeButtons: true,
+                                  imageSrc: "purple-cow-clover-gift.png"
+                                }
+                              );
+
+                            }
+                          }
+                        ],
+                        {
+                          speed: 34,
+                          requireContinueBeforeButtons: true,
+                          imageSrc: "purple-cow-closeup.png"
+                        }
+                      );
+
+                    }
+                  }
+                ],
+                {
+                  speed: 34,
+                  requireContinueBeforeButtons: true,
+                  imageSrc: "purple-cow-eyelash.png"
+                }
+              );
+
+            }
+          }
+        ],
+        {
+          speed: 34,
+          requireContinueBeforeButtons: true,
+          imageSrc: "purple-cow-closeup.png"
+        }
+      );
+    }
+
+    function clearFinalMortalityChoiceTimer() {
+      if (mortalityChoiceTimeout) {
+        clearTimeout(mortalityChoiceTimeout);
+        mortalityChoiceTimeout = null;
+      }
+      mortalityChoiceQueued = false;
+    }
+
+    function queueFinalMortalityChoice() {
+      if (mortalityChoiceQueued || exitingMortality || gameOver) return;
+
+      mortalityChoiceQueued = true;
+      mortalityChoiceTimeout = setTimeout(() => {
+        mortalityChoiceTimeout = null;
+
+        if (exitingMortality || gameOver || activeDialogue) return;
+        showFinalMortalityChoice();
+      }, 20000);
+    }
+
+    function showFinalMortalityChoice() {
+      clearFinalMortalityChoiceTimer();
+
+      try {
+        cosmicCowMusic.pause();
+      } catch (err) {}
+
+      showOverlay(
+        `Do you wish to enter mortality?`,
+        [
+          {
+            label: "Mooooo Again.",
+            onClick: () => {
+              exitToMortality();
+            }
+          },
+          {
+            label: "Noooooo.",
+            secondary: true,
+            onClick: () => {
+              triggerCosmicCowEnding();
+            }
+          }
+        ],
+        {
+          speed: 26,
+          requireContinueBeforeButtons: true
+        }
+      );
+    }
+
+    function triggerCosmicCowEnding() {
+      gamePaused = true;
+      try { cosmicCowMusic.pause(); } catch (err) {}
+      clearDialogueHandlers();
+      overlay.classList.add("hidden");
+      overlayContinue.classList.add("hidden");
+      overlayButtons.innerHTML = "";
+
+      const cosmicOverlay = document.createElement("div");
+      cosmicOverlay.style.position = "fixed";
+      cosmicOverlay.style.inset = "0";
+      cosmicOverlay.style.display = "flex";
+      cosmicOverlay.style.alignItems = "center";
+      cosmicOverlay.style.justifyContent = "center";
+      cosmicOverlay.style.background = "rgba(0, 0, 0, 1)";
+      cosmicOverlay.style.color = "white";
+      cosmicOverlay.style.fontFamily = "Arial, sans-serif";
+      cosmicOverlay.style.fontSize = "clamp(28px, 4vw, 42px)";
+      cosmicOverlay.style.textAlign = "center";
+      cosmicOverlay.style.padding = "32px";
+      cosmicOverlay.style.opacity = "0";
+      cosmicOverlay.style.transition = "opacity 3s ease";
+      cosmicOverlay.style.zIndex = "9999";
+
+      const cosmicText = document.createElement("div");
+      cosmicText.style.whiteSpace = "pre-line";
+      cosmicText.style.textShadow = "0 0 14px rgba(255,255,255,0.22)";
+      cosmicText.textContent = "Clover hesitates...";
+      cosmicOverlay.appendChild(cosmicText);
+      document.body.appendChild(cosmicOverlay);
+
+      requestAnimationFrame(() => {
+        cosmicOverlay.style.opacity = "1";
+      });
+
+      try {
+        if (!isMuted) {
+          const ghostMoo = mooSound.cloneNode();
+          ghostMoo.volume = 0.25;
+          setTimeout(() => {
+            ghostMoo.play().catch(() => {});
+          }, 9600);
+        }
+      } catch (err) {}
+
+      setTimeout(() => {
+        cosmicText.textContent = "The warmth lingers.";
+      }, 2500);
+
+      setTimeout(() => {
+        cosmicText.textContent = "The world fades.";
+      }, 5000);
+
+      setTimeout(() => {
+        cosmicText.textContent = "But Clover remains.";
+      }, 7500);
+
+      setTimeout(() => {
+        cosmicText.textContent = "Moooo...";
+      }, 10000);
+
+      setTimeout(() => {
+        cosmicOverlay.style.transition = "opacity 5s ease";
+        cosmicOverlay.style.opacity = "0";
+
+        setTimeout(() => {
+          document.body.innerHTML = "";
+          document.body.style.background = "black";
+        }, 5000);
+      }, 13000);
+    }
+
+    function exitToMortality() {
+      exitingMortality = true;
+      try { cosmicCowMusic.pause(); } catch (err) {}
+      clearDialogueHandlers();
+      overlayText.innerHTML = `Entering mortality<span class="dialogue-cursor">|</span>`;
+      overlayButtons.innerHTML = "";
+      overlayContinue.classList.add("hidden");
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 900);
+    }
+
+    function restartGame() {
+      resetGameState();
+      gameStarted = true;
+      hideOverlay();
+      showStartOverlay();
+    }
+
+    function playSound(sound) {
+      if (isMuted) return;
+
+      try {
+        const s = sound.cloneNode();
+        s.volume = sound.volume;
+        s.play().catch(() => {});
+      } catch (err) {
+        try {
+          sound.currentTime = 0;
+          sound.play().catch(() => {});
+        } catch (err2) {}
+      }
+    }
+
+    function playDialogueSound() {
+      if (isMuted) return;
+
+      try {
+        getDialogueAudioContext();
+      } catch (err) {
+        console.log("Dialogue sound error:", err);
+      }
+    }
+
+    function getPlayerSpeedBoostMultiplier() {
+      return cloverBoostTimer > 0 ? CLOVER_SPEED_MULTIPLIER : 1;
+    }
+
+    function getRandomCloverMessage() {
+      return cloverMessages[Math.floor(Math.random() * cloverMessages.length)];
+    }
+
+    function updateCloverSpeech() {
+      if (cloverSpeechTimer <= 0) {
+        cloverSpeechText = "";
+        cloverSpeechTypedLength = 0;
+        cloverSpeechTypeFrame = 0;
+        return;
+      }
+
+      cloverSpeechTimer--;
+
+      if (cloverSpeechTypedLength < cloverSpeechText.length) {
+        cloverSpeechTypeFrame++;
+
+        // Type the 44 Clover messages out visually, but do NOT play writing sounds.
+        if (cloverSpeechTypeFrame >= 2) {
+          cloverSpeechTypeFrame = 0;
+          cloverSpeechTypedLength++;
+        }
+      }
+    }
+
+    function showInventory() {
+      if (!cloverUnlocked) {
+        bonusFlashTimer = 70;
+        bonusFlashText = "Inventory empty";
+        return;
+      }
+
+      cloverInventoryOpen = !cloverInventoryOpen;
+      bonusFlashTimer = 90;
+      bonusFlashText = cloverInventoryOpen
+        ? "Inventory: 44 Leaf Clover — press X"
+        : "Inventory closed";
+    }
+
+    function useFortyFourLeafClover() {
+      if (!cloverUnlocked) {
+        bonusFlashTimer = 70;
+        bonusFlashText = "No 44 Leaf Clover yet";
+        return;
+      }
+
+      if (!cloverInventoryOpen) {
+        showInventory();
+        return;
+      }
+
+      unlockSounds();
+      cloverBoostTimer = CLOVER_BOOST_FRAMES;
+      cloverSpeechText = getRandomCloverMessage();
+      cloverSpeechTypedLength = 0;
+      cloverSpeechTypeFrame = 0;
+      cloverSpeechTimer = CLOVER_SPEECH_FRAMES;
+      bonusFlashTimer = 80;
+      bonusFlashText = "Lucky Clover speed +20%";
+      playSound(bonusSound);
+    }
+
+    function awardFortyFourLeafClover() {
+      cloverUnlocked = true;
+      cloverInventoryOpen = true;
+      bonusFlashTimer = 120;
+      bonusFlashText = "44 Leaf Clover added to inventory";
+    }
+
+
+    window.addEventListener("resize", resizeCanvasToDisplaySize);
+
+    function skipToAfterFirstBossFight() {
+      if (mooMooSkipUsed || exitingMortality) return;
+      mooMooSkipUsed = true;
+      clearFinalMortalityChoiceTimer();
+
+      unlockSounds();
+      clearDialogueHandlers();
+      overlay.classList.add("hidden");
+      overlayContinue.classList.add("hidden");
+      overlayButtons.innerHTML = "";
+
+      gameStarted = true;
+      gameOver = false;
+      gamePaused = false;
+      greenerPasturesActive = false;
+      bossFightActive = true;
+      bossDefeatedPastureActive = false;
+      freedomSequenceActive = false;
+      heartsCelebrationActive = false;
+      finalOverlayShown = false;
+      purpleCow.active = false;
+      purpleCow.triggered = false;
+      purpleCow.entering = false;
+      purpleCow.walkingAway = false;
+
+      music.pause();
+      cowgirlMusic.pause();
+      fallingObjects = [];
+      bossGrass = [];
+      bossPitchforks = [];
+
+      player.width = scaleX(72 * 1.5);
+      player.height = scaleY(72 * 1.5);
+      player.x = canvas.width / 2 - player.width / 2;
+      player.y = canvas.height - player.height - scaleY(34);
+      player.invulnerableTimer = 999999;
+      playerFacingLeft = false;
+
+      cowgirl.visible = false;
+      cowgirl.unlocked = true;
+      stalkerButcher.active = false;
+
+      cowgirlBoss.width = scaleX(112 * 1.5);
+      cowgirlBoss.height = scaleY(112 * 1.5);
+      cowgirlBoss.x = canvas.width / 2 - cowgirlBoss.width / 2;
+      cowgirlBoss.y = scaleY(76);
+      cowgirlBoss.health = 1;
+      cowgirlBoss.maxHealth = 60;
+      cowgirlBoss.state = "running";
+      cowgirlBoss.facingLeft = false;
+      cowgirlBoss.flashTimer = 0;
+
+      bonusFlashTimer = 80;
+      bonusFlashText = "MOO MOO SKIP";
+
+      defeatCowgirlBoss();
+    }
+
+    function updateCheatCodeBuffer(e) {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.key.length !== 1) return;
+
+      cheatCodeBuffer = (cheatCodeBuffer + e.key.toLowerCase()).slice(-6);
+
+      if (cheatCodeBuffer === "moomoo") {
+        cheatCodeBuffer = "";
+        skipToAfterFirstBossFight();
+      }
+    }
+
+    document.addEventListener("keydown", (e) => {
+      updateCheatCodeBuffer(e);
+
+      if (e.code === "Space") {
+        e.preventDefault();
+        if (!keys[e.code]) {
+          activateMooPulse();
+        }
+      }
+
+      if (e.key === "i" || e.key === "I") {
+        showInventory();
+      }
+
+      if (e.key === "x" || e.key === "X") {
+        useFortyFourLeafClover();
+      }
+
+      keys[e.key] = true;
+      keys[e.code] = true;
+    });
+
+    document.addEventListener("keyup", (e) => {
+      keys[e.key] = false;
+      keys[e.code] = false;
+    });
+
+    inventoryButton.addEventListener("click", () => {
+      unlockSounds();
+      showInventory();
+    });
+
+    useCloverButton.addEventListener("click", () => {
+      unlockSounds();
+      useFortyFourLeafClover();
+    });
+
+    function getTouchPosition(e) {
+      const rect = canvas.getBoundingClientRect();
+      const touch = e.touches[0];
+
+      return {
+        x: touch.clientX - rect.left,
+        y: touch.clientY - rect.top
+      };
+    }
+
+    canvas.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      unlockSounds();
+
+      const now = Date.now();
+      if (now - lastTapTime < 300) {
+        activateMooPulse();
+      }
+      lastTapTime = now;
+
+      if (!gameStarted || gamePaused || gameOver) return;
+
+      const pos = getTouchPosition(e);
+      touchActive = true;
+      touchTargetX = pos.x - player.width / 2;
+      touchTargetY = pos.y - player.height / 2;
+    }, { passive: false });
+
+    canvas.addEventListener("touchmove", (e) => {
+      if (!gameStarted || gamePaused || gameOver) return;
+      e.preventDefault();
+
+      const pos = getTouchPosition(e);
+      touchTargetX = pos.x - player.width / 2;
+      touchTargetY = pos.y - player.height / 2;
+    }, { passive: false });
+
+    canvas.addEventListener("touchend", (e) => {
+      if (!gameStarted) return;
+      e.preventDefault();
+
+      touchActive = false;
+      touchTargetX = null;
+      touchTargetY = null;
+    }, { passive: false });
+
+    function resetGameState() {
+      resizeCanvasToDisplaySize();
+      cowgirlMusic.pause();
+      cowgirlMusic.currentTime = 0;
+      cosmicCowMusic.pause();
+      cosmicCowMusic.currentTime = 0;
+
+      player.width = scaleX(72 * 1.5);
+      player.height = scaleY(72 * 1.5);
+      player.speed = Math.max(scaleX(11), 4) * getPlayerSpeedBoostMultiplier();
+      player.x = scaleX(164);
+      player.y = canvas.height - player.height - scaleY(28);
+      player.invulnerableTimer = 0;
+      playerAnimationFrame = 0;
+      playerFacingLeft = false;
+      difficultyMultiplier = 1.0;
+      selectedDifficulty = "normal";
+
+      fallingObjects = [];
+      heartBursts = [];
+      gameOver = false;
+      gamePaused = true;
+      gameWon = false;
+      frame = 0;
+      score = 0;
+      lives = 3;
+      awardedLifeThreshold = 0;
+      hitFlashTimer = 0;
+      bonusFlashTimer = 0;
+      bonusFlashText = "";
+      speedModeActivated = false;
+
+      checkpoint18000Shown = false;
+      checkpoint10000Shown = false;
+      checkpoint22000Shown = false;
+      freedomSequenceActive = false;
+      heartsCelebrationActive = false;
+      finalOverlayShown = false;
+      exitingMortality = false;
+      clearFinalMortalityChoiceTimer();
+      heartExplosionCount = 0;
+
+      cowbellModeActive = false;
+      canvasFlashPhase = 0;
+
+      mooPulseActive = false;
+      mooPulseTimer = 0;
+      mooCooldownTimer = 0;
+      lastTapTime = 0;
+      mooFlashTimer = 0;
+      cheatCodeBuffer = "";
+      mooMooSkipUsed = false;
+      cloverUnlocked = false;
+      cloverInventoryOpen = false;
+      cloverBoostTimer = 0;
+
+      purpleCow.active = false;
+      purpleCow.triggered = false;
+      purpleCow.entering = false;
+      purpleCow.walkingAway = false;
+      purpleCow.x = 0;
+      purpleCow.y = 0;
+      purpleCow.targetY = 0;
+      purpleCow.width = 0;
+      purpleCow.height = 0;
+      purpleCow.facingLeft = true;
+      purpleCow.animationOffset = 0;
+
+      touchActive = false;
+      touchTargetX = null;
+      touchTargetY = null;
+
+      resetStalkerButcherPosition();
+
+      cowgirl.unlocked = false;
+      cowgirl.visible = false;
+      cowgirl.state = "hidden";
+      cowgirl.x = 0;
+      cowgirl.y = 0;
+      cowgirl.width = scaleX(76 * 1.2);
+      cowgirl.height = scaleY(76 * 1.2);
+      cowgirl.speed = Math.max(scaleX(3.8), 2.4);
+      cowgirl.facingLeft = false;
+      cowgirl.currentCorner = 0;
+      cowgirl.targetCorner = 1;
+      cowgirl.moveTimer = COWGIRL_MOVE_INTERVAL;
+      cowgirl.swipeTimer = 0;
+      cowgirl.respawnTimer = 0;
+      cowgirl.damageCooldown = 0;
+      cowgirl.fleeVX = 0;
+      cowgirl.fleeVY = 0;
+      cowgirl.animationOffset = 0;
+
+      greenerPasturesActive = false;
+      greenerPasturesFade = 0;
+      greenerPasturesTextShown = false;
+      bossFightActive = false;
+      bossDefeatedPastureActive = false;
+      bossPoofs = [];
+      bossGrass = [];
+      bossPitchforks = [];
+      bossGrassSpawnTimer = 0;
+      cowgirlBoss.health = 60;
+      cowgirlBoss.maxHealth = 60;
+      cowgirlBoss.state = "hidden";
+      cowgirlBoss.attackTimer = 0;
+      cowgirlBoss.attackCooldown = 0;
+      cowgirlBoss.damageCooldown = 0;
+      cowgirlBoss.flashTimer = 0;
+      bossPatternTimer = 0;
+      bossPatternPhase = "chase";
+
+      clearDialogueHandlers();
+      endBanner.classList.add("hidden");
+    }
+
+    function getSpeedMultiplier() {
+      const base = score >= 180000 ? 1.3 * 1.5 : 1.3;
+      return base * difficultyMultiplier;
+    }
+
+    function getBonusMultiplier() {
+      return 1;
+    }
+
+    function maybeShowSpeedModeBanner() {
+      if (score >= 180000 && !speedModeActivated) {
+        speedModeActivated = true;
+        bonusFlashTimer = 90;
+        bonusFlashText = "UH OH MAD COW DISEASE SOMEONE CALLED FOR MORE COWBELL";
+      }
+    }
+
+    function maybeAwardExtraLife() {
+      const currentThreshold = Math.floor(score / 2000);
+      if (currentThreshold > awardedLifeThreshold) {
+        const gainedLives = currentThreshold - awardedLifeThreshold;
+        lives += gainedLives;
+        awardedLifeThreshold = currentThreshold;
+        bonusFlashTimer = 45;
+        bonusFlashText = `+${gainedLives} Life${gainedLives > 1 ? "s" : ""}!`;
+      }
+    }
+
+    function spawnObject() {
+      const postCowbell = score >= 10000;
+
+      let type = "bad";
+      let image = badImages[Math.floor(Math.random() * badImages.length)];
+      let basePoints = 0;
+      let speedMultiplier = 1;
+      let usesSpriteSheet = false;
+      let spriteCols = 1;
+      let spriteRows = 1;
+      let totalFrames = 1;
+      let frameDuration = 1;
+      let canHome = false;
+
+      const roll = Math.random();
+
+      if (postCowbell) {
+        if (roll < 0.4) {
+          type = "butcher";
+          image = butcherSpriteSheet;
+          usesSpriteSheet = true;
+          spriteCols = BUTCHER_SPRITE_COLS;
+          spriteRows = BUTCHER_SPRITE_ROWS;
+          totalFrames = BUTCHER_TOTAL_FRAMES;
+          frameDuration = BUTCHER_FRAME_DURATION;
+          canHome = true;
+          speedMultiplier = cowbellModeActive ? .8 : 1.2;
+        } else if (roll < 0.50) {
+          type = "bonus1000";
+          image = bonus1000Img;
+          basePoints = 1000;
+          speedMultiplier = 2.2;
+        } else if (roll < 0.75) {
+          type = "bonus200";
+          image = bonus200Img;
+          basePoints = 200;
+          speedMultiplier = 1.0;
+        } else {
+          type = "bad";
+          image = badImages[Math.floor(Math.random() * badImages.length)];
+        }
+      } else {
+        if (roll < 0.15) {
+          type = "bonus1000";
+          image = bonus1000Img;
+          basePoints = 1000;
+          speedMultiplier = 1.9;
+        } else if (roll < 0.40) {
+          type = "bonus200";
+          image = bonus200Img;
+          basePoints = 200;
+          speedMultiplier = 0.9;
+        } else {
+          type = "bad";
+          image = badImages[Math.floor(Math.random() * badImages.length)];
+        }
+      }
+
+      const size =
+        type === "bonus1000"
+          ? scaleX(Math.random() * 20 + 35) * 1.25
+          : type === "butcher"
+          ? scaleX(Math.random() * 28 + 52) * 1.15
+          : scaleX(Math.random() * 25 + 40) * 1.25;
+
+      const x = Math.random() * (canvas.width - size);
+      const scoreSpeedRamp = Math.min(score * 0.001, 2.2);
+      const baseSpeed = scaleY(Math.random() * 2.0 + 2 + scoreSpeedRamp);
+      const speed = baseSpeed * speedMultiplier * getSpeedMultiplier();
+
+      fallingObjects.push({
+        x,
+        y: -size,
+        width: size,
+        height: size,
+        speed,
+        image,
+        type,
+        basePoints,
+        usesSpriteSheet,
+        spriteCols,
+        spriteRows,
+        totalFrames,
+        frameDuration,
+        canHome,
+        animationOffset: Math.floor(Math.random() * 1000)
+      });
+    }
+
+    function rectsIntersect(a, b) {
+      return (
+        a.x < b.x + b.width &&
+        a.x + a.width > b.x &&
+        a.y < b.y + b.height &&
+        a.y + a.height > b.y
+      );
+    }
+
+    function updateHearts() {
+      for (let i = heartBursts.length - 1; i >= 0; i--) {
+        const heart = heartBursts[i];
+        heart.x += heart.vx;
+        heart.y += heart.vy;
+        heart.vy += scaleY(0.04);
+        heart.life--;
+
+        if (heart.life <= 0) {
+          heartBursts.splice(i, 1);
+        }
+      }
+
+      if (heartsCelebrationActive && heartBursts.length === 0) {
+        if (heartExplosionCount < MAX_HEART_EXPLOSIONS) {
+          makeHeartsExplode();
+          heartExplosionCount++;
+        } else if (!finalOverlayShown) {
+          heartsCelebrationActive = false;
+          showFinalWarmOverlay();
+        }
+      }
+    }
+
+    function update() {
+      updateHearts();
+
+      if (bossDefeatedPastureActive) {
+        updateBossPoofs();
+      }
+
+      if (greenerPasturesActive && !gamePaused) {
+        updateGreenerPasturesSequence();
+        return;
+      }
+
+      if (bossFightActive && !gamePaused) {
+        updateBossFight();
+        return;
+      }
+
+      if (!gameStarted || gameOver || gamePaused) return;
+
+      frame++;
+
+      if (cloverBoostTimer > 0) cloverBoostTimer--;
+      updateCloverSpeech();
+
+      if (!freedomSequenceActive && !heartsCelebrationActive) {
+        score++;
+      }
+
+      if (cowbellModeActive) {
+        canvasFlashPhase++;
+      }
+
+      player.width = scaleX(72 * 1.5);
+      player.height = scaleY(72 * 1.5);
+      player.speed = Math.max(scaleX(11), 4) * getPlayerSpeedBoostMultiplier();
+
+      stalkerButcher.width = scaleX(70 * 1.2);
+      stalkerButcher.height = scaleY(70 * 1.2);
+      stalkerButcher.speed = getStalkerButcherSpeed();
+
+      let isMoving = false;
+
+      if (heartsCelebrationActive) {
+        playerAnimationFrame = 0;
+      } else if (freedomSequenceActive) {
+        player.x += scaleX(2.6);
+        playerFacingLeft = false;
+
+        if (player.x > canvas.width + player.width) {
+          gamePaused = true;
+          freedomSequenceActive = false;
+          endBanner.classList.remove("hidden");
+
+          showOverlay(
+            `FREEDOM`,
+            [
+              {
+                label: "Mooooo.",
+                onClick: () => {
+                  exitToMortality();
+                }
+              }
+            ],
+            {
+              speed: 44,
+              requireContinueBeforeButtons: true
+            }
+          );
+        }
+      } else {
+        if (keys["ArrowLeft"] || keys["a"] || keys["A"]) {
+          player.x -= player.speed;
+          playerFacingLeft = true;
+          isMoving = true;
+        }
+        if (keys["ArrowRight"] || keys["d"] || keys["D"]) {
+          player.x += player.speed;
+          playerFacingLeft = false;
+          isMoving = true;
+        }
+        if (keys["ArrowUp"] || keys["w"] || keys["W"]) {
+          player.y -= player.speed;
+          isMoving = true;
+        }
+        if (keys["ArrowDown"] || keys["s"] || keys["S"]) {
+          player.y += player.speed;
+          isMoving = true;
+        }
+
+        if (touchActive && touchTargetX !== null && touchTargetY !== null) {
+          const dx = touchTargetX - player.x;
+          const dy = touchTargetY - player.y;
+
+          if (Math.abs(dx) > player.speed) {
+            player.x += Math.sign(dx) * player.speed;
+            playerFacingLeft = dx < 0;
+            isMoving = true;
+          } else if (Math.abs(dx) > 1) {
+            player.x = touchTargetX;
+            playerFacingLeft = dx < 0;
+            isMoving = true;
+          }
+
+          if (Math.abs(dy) > player.speed) {
+            player.y += Math.sign(dy) * player.speed;
+            isMoving = true;
+          } else if (Math.abs(dy) > 1) {
+            player.y = touchTargetY;
+            isMoving = true;
+          }
+        }
+      }
+
+      if (isMoving || freedomSequenceActive) {
+        playerAnimationFrame = Math.floor(frame / PLAYER_FRAME_DURATION) % PLAYER_TOTAL_FRAMES;
+      } else {
+        playerAnimationFrame = 0;
+      }
+
+      if (player.x < 0) player.x = 0;
+      if (!freedomSequenceActive && player.x + player.width > canvas.width) {
+        player.x = canvas.width - player.width;
+      }
+      if (player.y < 0) player.y = 0;
+      if (player.y + player.height > canvas.height) {
+        player.y = canvas.height - player.height;
+      }
+
+      if (purpleCow.active) {
+        updatePurpleCowEncounter();
+      }
+
+      if (stalkerButcher.active && !freedomSequenceActive && !heartsCelebrationActive && !purpleCow.active) {
+        const stalkerCenterX = stalkerButcher.x + stalkerButcher.width / 2;
+        const stalkerCenterY = stalkerButcher.y + stalkerButcher.height / 2;
+        const playerCenterX = player.x + player.width / 2;
+        const playerCenterY = player.y + player.height / 2;
+        const dx = playerCenterX - stalkerCenterX;
+        const dy = playerCenterY - stalkerCenterY;
+        const distance = Math.hypot(dx, dy) || 1;
+
+        if (mooPulseActive) {
+          stalkerButcher.x -= (dx / distance) * scaleX(0.9);
+          stalkerButcher.y -= (dy / distance) * scaleY(0.9);
+        } else {
+          stalkerButcher.x += (dx / distance) * stalkerButcher.speed;
+          stalkerButcher.y += (dy / distance) * stalkerButcher.speed;
+        }
+
+        if (stalkerButcher.x < 0) stalkerButcher.x = 0;
+        if (stalkerButcher.x + stalkerButcher.width > canvas.width) {
+          stalkerButcher.x = canvas.width - stalkerButcher.width;
+        }
+        if (stalkerButcher.y < 0) stalkerButcher.y = 0;
+        if (stalkerButcher.y + stalkerButcher.height > canvas.height) {
+          stalkerButcher.y = canvas.height - stalkerButcher.height;
+        }
+      }
+
+      if (stalkerButcher.hitCooldown > 0) {
+        stalkerButcher.hitCooldown--;
+      }
+
+      updateCowgirl();
+
+      if (player.invulnerableTimer > 0) {
+        player.invulnerableTimer--;
+      }
+
+      if (hitFlashTimer > 0) hitFlashTimer--;
+      if (bonusFlashTimer > 0) bonusFlashTimer--;
+      if (mooFlashTimer > 0) mooFlashTimer--;
+
+      if (mooPulseTimer > 0) {
+        mooPulseTimer--;
+      } else {
+        mooPulseActive = false;
+      }
+
+      if (mooCooldownTimer > 0) {
+        mooCooldownTimer--;
+      }
+
+      if (!freedomSequenceActive && !heartsCelebrationActive) {
+        let spawnInterval = Math.max(16, 30 - Math.floor(score / 1800));
+
+        if (cowbellModeActive) {
+          spawnInterval = Math.max(4, Math.floor(spawnInterval / 3));
+        }
+
+        if (frame % spawnInterval === 0) {
+          spawnObject();
+        }
+      }
+
+      if (!freedomSequenceActive && stalkerButcher.active && stalkerButcher.hitCooldown <= 0 && player.invulnerableTimer <= 0) {
+        const playerHitbox = getHitbox(player, 0.12);
+        const stalkerHitbox = getHitbox(stalkerButcher, 0.28);
+
+        if (rectsIntersect(playerHitbox, stalkerHitbox)) {
+          lives -= 2;
+          player.invulnerableTimer = 90;
+          stalkerButcher.hitCooldown = 150;
+          hitFlashTimer = 28;
+          playSound(hitSound);
+          resetStalkerButcherPosition();
+          stalkerButcher.hitCooldown = 150;
+
+          if (lives <= 0) {
+            gameOver = true;
+            gamePaused = true;
+            music.pause();
+
+            showOverlay(
+              `You became a steak.
+
+Final Score: ${score}`,
+              [
+                {
+                  label: "Again",
+                  onClick: () => {
+                    restartGame();
+                  }
+                }
+              ],
+              {
+                speed: 28,
+                requireContinueBeforeButtons: true
+              }
+            );
+          }
+        }
+      }
+
+      for (let i = fallingObjects.length - 1; i >= 0; i--) {
+        const obj = fallingObjects[i];
+        obj.y += obj.speed;
+
+        if (obj.canHome && !freedomSequenceActive && !heartsCelebrationActive) {
+          const playerCenterX = player.x + player.width / 2;
+          const playerCenterY = player.y + player.height / 2;
+          const objCenterX = obj.x + obj.width / 2;
+          const objCenterY = obj.y + obj.height / 2;
+
+          const dx = playerCenterX - objCenterX;
+          const dy = playerCenterY - objCenterY;
+
+          const homingMultiplier = score >= 10000 ? 1.18 : 1.08;
+          const homing = dx * getHomingStrength() * homingMultiplier;
+          const maxSideSpeed = scaleX(score >= 10000 ? 1.5 : 1.35);
+
+          obj.x += Math.max(-maxSideSpeed, Math.min(maxSideSpeed, homing));
+        }
+
+        if (obj.x < -obj.width * 0.25) obj.x = -obj.width * 0.25;
+        if (obj.x + obj.width > canvas.width + obj.width * 0.25) {
+          obj.x = canvas.width - obj.width * 0.75;
+        }
+
+        const playerHitbox = getHitbox(player, 0.12);
+        const objectHitbox =
+          obj.type === "butcher"
+            ? getHitbox(obj, 0.38)
+            : obj.type === "bad"
+            ? getHitbox(obj, 0.31)
+            : getHitbox(obj, 0.25);
+
+        const hit = rectsIntersect(playerHitbox, objectHitbox);
+
+        if (hit) {
+          if (obj.type === "bonus200" || obj.type === "bonus1000") {
+            const pointsEarned = obj.basePoints * getBonusMultiplier();
+            score += pointsEarned;
+            maybeShowSpeedModeBanner();
+            maybeAwardExtraLife();
+
+            bonusFlashTimer = 30;
+            bonusFlashText = `+${pointsEarned}`;
+            playSound(bonusSound);
+
+            fallingObjects.splice(i, 1);
+            continue;
+          }
+
+          if (!freedomSequenceActive && (obj.type === "bad" || obj.type === "butcher") && player.invulnerableTimer <= 0) {
+            lives--;
+            player.invulnerableTimer = 90;
+            hitFlashTimer = 20;
+            fallingObjects.splice(i, 1);
+
+            playSound(hitSound);
+
+            if (lives <= 0) {
+              gameOver = true;
+              gamePaused = true;
+              music.pause();
+
+              showOverlay(
+                `You became a steak.\n\nFinal Score: ${score}`,
+                [
+                  {
+                    label: "Again",
+                    onClick: () => {
+                      restartGame();
+                    }
+                  }
+                ],
+                {
+                  speed: 28,
+                  requireContinueBeforeButtons: true
+                }
+              );
+            }
+
+            continue;
+          }
+        }
+
+        if (obj.y > canvas.height + scaleY(100)) {
+          fallingObjects.splice(i, 1);
+        }
+      }
+
+      if (!freedomSequenceActive && !heartsCelebrationActive) {
+        maybeShowSpeedModeBanner();
+        maybeAwardExtraLife();
+
+        if (score >= 18000) {
+          showCheckpoint18000();
+        }
+
+        if (score >= 10000) {
+          showCheckpoint10000();
+        }
+
+        if (score >= 22000) {
+          showCheckpoint22000();
+        }
+      }
+    }
+
+    function drawPlayer() {
+      const blinking =
+        player.invulnerableTimer > 0 &&
+        Math.floor(player.invulnerableTimer / 5) % 2 === 0;
+
+      if (blinking && !heartsCelebrationActive) return;
+
+      if (playerSpriteSheet.complete && playerSpriteSheet.naturalWidth > 0) {
+        ctx.save();
+
+        if (playerFacingLeft) {
+          ctx.translate(player.x + player.width, player.y);
+          ctx.scale(-1, 1);
+
+          drawSpriteFrame(
+            playerSpriteSheet,
+            playerAnimationFrame,
+            PLAYER_SPRITE_COLS,
+            PLAYER_SPRITE_ROWS,
+            0,
+            0,
+            player.width,
+            player.height
+          );
+        } else {
+          drawSpriteFrame(
+            playerSpriteSheet,
+            playerAnimationFrame,
+            PLAYER_SPRITE_COLS,
+            PLAYER_SPRITE_ROWS,
+            player.x,
+            player.y,
+            player.width,
+            player.height
+          );
+        }
+
+        ctx.restore();
+      } else {
+        ctx.fillStyle = "#4da6ff";
+        ctx.fillRect(player.x, player.y, player.width, player.height);
+      }
+    }
+
+    function drawMooFlash() {
+      if (mooFlashTimer > 0) {
+        ctx.save();
+        ctx.fillStyle = "rgba(255,255,255,0.10)";
+        ctx.beginPath();
+        ctx.arc(
+          player.x + player.width / 2,
+          player.y + player.height / 2,
+          getMooPulseRadius() * (1 - mooFlashTimer / 36),
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function drawStalkerButcher() {
+      if (!stalkerButcher.active) return;
+
+      if (stalkerButcherSpriteSheet.complete && stalkerButcherSpriteSheet.naturalWidth > 0) {
+        const animFrame =
+          Math.floor((frame + stalkerButcher.animationOffset) / STALKER_BUTCHER_FRAME_DURATION) % STALKER_BUTCHER_TOTAL_FRAMES;
+
+        drawSpriteFrame(
+          stalkerButcherSpriteSheet,
+          animFrame,
+          STALKER_BUTCHER_SPRITE_COLS,
+          STALKER_BUTCHER_SPRITE_ROWS,
+          stalkerButcher.x,
+          stalkerButcher.y,
+          stalkerButcher.width,
+          stalkerButcher.height
+        );
+      } else {
+        ctx.fillStyle = "#aa3333";
+        ctx.fillRect(stalkerButcher.x, stalkerButcher.y, stalkerButcher.width, stalkerButcher.height);
+      }
+    }
+
+
+
+    function drawCowgirl() {
+      if (!cowgirl.visible) return;
+
+      let sprite = cowgirlWalkSpriteSheet;
+      let animFrame = 0;
+
+      if (cowgirl.state === "running" || cowgirl.state === "entering") {
+        sprite = cowgirlRunSpriteSheet;
+        animFrame = Math.floor((frame + cowgirl.animationOffset) / COWGIRL_RUN_FRAME_DURATION) % COWGIRL_TOTAL_FRAMES;
+      } else if (cowgirl.state === "fleeing") {
+        sprite = cowgirlJumpSpriteSheet;
+        animFrame = Math.floor((frame + cowgirl.animationOffset) / COWGIRL_JUMP_FRAME_DURATION) % COWGIRL_TOTAL_FRAMES;
+      } else if (cowgirl.state === "idle") {
+        // Stand completely still in the corner; do not use the idle animation sprite.
+        sprite = cowgirlWalkSpriteSheet;
+        animFrame = 0;
+      }
+
+      if (sprite.complete && sprite.naturalWidth > 0) {
+        ctx.save();
+
+        if (cowgirl.facingLeft) {
+          ctx.translate(cowgirl.x + cowgirl.width, cowgirl.y);
+          ctx.scale(-1, 1);
+
+          drawSpriteFrame(
+            sprite,
+            animFrame,
+            COWGIRL_SPRITE_COLS,
+            COWGIRL_SPRITE_ROWS,
+            0,
+            0,
+            cowgirl.width,
+            cowgirl.height
+          );
+        } else {
+          drawSpriteFrame(
+            sprite,
+            animFrame,
+            COWGIRL_SPRITE_COLS,
+            COWGIRL_SPRITE_ROWS,
+            cowgirl.x,
+            cowgirl.y,
+            cowgirl.width,
+            cowgirl.height
+          );
+        }
+
+        ctx.restore();
+      } else {
+        ctx.fillStyle = "#d67b7b";
+        ctx.fillRect(cowgirl.x, cowgirl.y, cowgirl.width, cowgirl.height);
+      }
+    }
+
+    function drawFallingObjects() {
+      for (const obj of fallingObjects) {
+        if (obj.usesSpriteSheet && obj.image.complete && obj.image.naturalWidth > 0) {
+          const animFrame =
+            Math.floor((frame + obj.animationOffset) / obj.frameDuration) % obj.totalFrames;
+
+          drawSpriteFrame(
+            obj.image,
+            animFrame,
+            obj.spriteCols,
+            obj.spriteRows,
+            obj.x,
+            obj.y,
+            obj.width,
+            obj.height
+          );
+        } else if (obj.image && obj.image.complete && obj.image.naturalWidth > 0) {
+          ctx.drawImage(obj.image, obj.x, obj.y, obj.width, obj.height);
+        } else {
+          if (obj.type === "bonus200") ctx.fillStyle = "#66ff99";
+          else if (obj.type === "bonus1000") ctx.fillStyle = "#ffd700";
+          else ctx.fillStyle = "#ff4d4d";
+
+          ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
+        }
+      }
+    }
+
+    function drawHearts() {
+      ctx.save();
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      for (const heart of heartBursts) {
+        ctx.font = `${Math.max(heart.size, 12)}px Arial`;
+        ctx.fillText("💖", heart.x, heart.y);
+      }
+
+      ctx.restore();
+    }
+
+    function drawHUD() {
+      ctx.fillStyle = "white";
+      ctx.font = `${  Math.max(scaleY(20), 14)}px Arial`;
+      ctx.fillText(`  Score: ${score}`, scaleX(12), scaleY(30));
+      ctx.fillText(`  Lives: ${lives}`, scaleX(12), scaleY(58));
+      ctx.font = `${Math.max(scaleY(13), 10)}px Arial`;
+
+      const nextLifeAt = (Math.floor(score / 2000) + 1) * 2000;
+      const remaining = nextLifeAt - score;
+      ctx.font = `${Math.max(scaleY(16), 12)}px Arial`;
+      ctx.fillText(`  Next life in: ${remaining > 0 ? remaining : 0}`, scaleX(12), scaleY(100));
+
+      const mooReady = mooCooldownTimer <= 0;
+      const mooSeconds = (mooCooldownTimer / 60).toFixed(1);
+
+      ctx.fillStyle = mooReady ? "#9cffb0" : "#ffffff";
+      ctx.font = `${Math.max(scaleY(15), 11)}px Arial`;
+      ctx.fillText(
+        mooReady ? "  Moo ready: SPACE / double tap" : `  Moo cooldown: ${mooSeconds}s`,
+        scaleX(12),
+        scaleY(126)
+      );
+    }
+
+
+
+    function drawInventoryHUD() {
+      if (!cloverUnlocked) return;
+
+      ctx.save();
+      ctx.textAlign = "right";
+      ctx.fillStyle = cloverBoostTimer > 0 ? "#d8ff9c" : "white";
+      ctx.font = `${Math.max(scaleY(14), 10)}px Arial`;
+
+      const boostSeconds = Math.ceil(cloverBoostTimer / 60);
+      const status = cloverBoostTimer > 0 ? ` +20% speed ${boostSeconds}s` : " press I, then X";
+      const openText = cloverInventoryOpen ? "Inventory open" : "44 Clover";
+      ctx.fillText(`${openText}:${status}`, canvas.width - scaleX(10), scaleY(30));
+      ctx.restore();
+    }
+
+
+    function drawCloverSpeechBubble() {
+      if (cloverSpeechTimer <= 0 || !cloverSpeechText) return;
+
+      ctx.save();
+
+      const playerCenterX = player.x + player.width / 2;
+      const bubbleWidth = Math.min(canvas.width - scaleX(28), scaleX(270));
+      const paddingX = scaleX(12);
+      const paddingY = scaleY(9);
+      const lineHeight = Math.max(scaleY(15), 12);
+      const maxTextWidth = bubbleWidth - paddingX * 2;
+      const fontSize = Math.max(scaleY(13), 11);
+
+      ctx.font = `${fontSize}px Papyrus, fantasy`;
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+
+      const visibleCloverSpeechText = cloverSpeechText.slice(0, cloverSpeechTypedLength);
+      const words = visibleCloverSpeechText.split(" ");
+      const lines = [];
+      let line = "";
+
+      for (const word of words) {
+        const testLine = line ? `${line} ${word}` : word;
+        if (ctx.measureText(testLine).width > maxTextWidth && line) {
+          lines.push(line);
+          line = word;
+        } else {
+          line = testLine;
+        }
+      }
+      if (line) lines.push(line);
+
+      const bubbleHeight = paddingY * 2 + lines.length * lineHeight;
+      let x = playerCenterX - bubbleWidth / 2;
+      let y = player.y - bubbleHeight - scaleY(14);
+
+      x = Math.max(scaleX(8), Math.min(canvas.width - bubbleWidth - scaleX(8), x));
+      y = Math.max(scaleY(8), y);
+
+      const radius = scaleX(12);
+      const alpha = Math.min(1, cloverSpeechTimer / 20);
+      ctx.globalAlpha = alpha;
+
+      ctx.fillStyle = "rgba(7, 24, 11, 0.88)";
+      ctx.strokeStyle = "rgba(76, 255, 122, 0.95)";
+      ctx.lineWidth = Math.max(scaleX(2), 1);
+      ctx.shadowColor = "rgba(76, 255, 122, 0.45)";
+      ctx.shadowBlur = 8;
+
+      ctx.beginPath();
+      ctx.roundRect(x, y, bubbleWidth, bubbleHeight, radius);
+      ctx.fill();
+      ctx.stroke();
+
+      const tailX = Math.max(x + scaleX(22), Math.min(x + bubbleWidth - scaleX(22), playerCenterX));
+      const tailY = y + bubbleHeight;
+      ctx.beginPath();
+      ctx.moveTo(tailX - scaleX(8), tailY - 1);
+      ctx.lineTo(tailX + scaleX(8), tailY - 1);
+      ctx.lineTo(playerCenterX, player.y - scaleY(2));
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Keep the glow around the bubble, but make the text crisp and readable.
+      ctx.shadowColor = "rgba(76, 255, 122, 0.7)";
+      ctx.shadowBlur = 6;
+      ctx.fillStyle = "#4cff7a";
+      ctx.font = `${fontSize}px Papyrus, fantasy`;
+      lines.forEach((textLine, index) => {
+        ctx.fillText(textLine, x + paddingX, y + paddingY + index * lineHeight);
+      });
+
+      ctx.restore();
+    }
+
+    function drawHitFlash() {
+      if (hitFlashTimer > 0) {
+        ctx.fillStyle = "rgba(255, 0, 0, 0.18)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function drawBonusFlash() {
+      if (bonusFlashTimer > 0 && bonusFlashText) {
+        ctx.fillStyle = "white";
+        ctx.font = `${Math.max(scaleY(28), 18)}px Arial`;
+        ctx.textAlign = "center";
+        ctx.fillText(bonusFlashText, canvas.width / 2, scaleY(140));
+        ctx.textAlign = "left";
+      }
+    }
+
+    function drawCowbellFlash() {
+      if (!cowbellModeActive) return;
+
+      const alpha = 0.08 + ((Math.sin(canvasFlashPhase * 0.35) + 1) / 2) * 0.18;
+
+      ctx.save();
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
+    }
+
+    function drawPastureBackground() {
+      if (pastureImage.complete && pastureImage.naturalWidth > 0) {
+        ctx.drawImage(pastureImage, 0, 0, canvas.width, canvas.height);
+      } else {
+        const sky = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        sky.addColorStop(0, "#54b6ff");
+        sky.addColorStop(0.55, "#a7dcff");
+        sky.addColorStop(0.56, "#62a932");
+        sky.addColorStop(1, "#2e751f");
+        ctx.fillStyle = sky;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function drawGreenerPasturesSequence() {
+      ctx.save();
+      ctx.globalAlpha = greenerPasturesFade;
+      drawPastureBackground();
+      ctx.restore();
+
+      if (greenerPasturesFade < 1) {
+        ctx.save();
+        ctx.globalAlpha = 1 - greenerPasturesFade;
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.restore();
+      }
+
+      drawPlayer();
+    }
+
+    function drawBossGrass() {
+      for (const grass of bossGrass) {
+        const pulse = 1 + Math.sin((frame + grass.pulse) * 0.08) * 0.05;
+        const w = grass.width * pulse;
+        const h = grass.height * pulse;
+        const x = grass.x + (grass.width - w) / 2;
+        const y = grass.y + (grass.height - h) / 2;
+
+        if (bonus200Img.complete && bonus200Img.naturalWidth > 0) {
+          ctx.drawImage(bonus200Img, x, y, w, h);
+        } else {
+          ctx.fillStyle = "#61d957";
+          ctx.fillRect(x, y, w, h);
+        }
+      }
+    }
+
+    function drawCowgirlBoss() {
+      let sprite = cowgirlRunSpriteSheet;
+      let frameDuration = COWGIRL_RUN_FRAME_DURATION;
+
+      if (cowgirlBoss.state === "attacking") {
+        sprite = cowgirlAttackSpriteSheet;
+        frameDuration = COWGIRL_ATTACK_FRAME_DURATION;
+      } else if (cowgirlBoss.state === "jumping") {
+        sprite = cowgirlJumpSpriteSheet;
+        frameDuration = COWGIRL_JUMP_FRAME_DURATION;
+      }
+
+      const animFrame = Math.floor((frame + cowgirlBoss.animationOffset) / frameDuration) % COWGIRL_TOTAL_FRAMES;
+
+      if (sprite.complete && sprite.naturalWidth > 0) {
+        ctx.save();
+        if (cowgirlBoss.flashTimer > 0) {
+          ctx.filter = cowgirlBoss.flashTimer % 4 < 2 ? "brightness(3) saturate(0)" : "brightness(1.8)";
+        }
+
+        if (cowgirlBoss.facingLeft) {
+          ctx.translate(cowgirlBoss.x + cowgirlBoss.width, cowgirlBoss.y);
+          ctx.scale(-1, 1);
+          drawSpriteFrame(sprite, animFrame, COWGIRL_SPRITE_COLS, COWGIRL_SPRITE_ROWS, 0, 0, cowgirlBoss.width, cowgirlBoss.height);
+        } else {
+          drawSpriteFrame(sprite, animFrame, COWGIRL_SPRITE_COLS, COWGIRL_SPRITE_ROWS, cowgirlBoss.x, cowgirlBoss.y, cowgirlBoss.width, cowgirlBoss.height);
+        }
+
+        ctx.restore();
+      } else {
+        ctx.fillStyle = cowgirlBoss.flashTimer > 0 ? "#ffffff" : "#b74747";
+        ctx.fillRect(cowgirlBoss.x, cowgirlBoss.y, cowgirlBoss.width, cowgirlBoss.height);
+      }
+    }
+
+
+    function drawBossPitchforks() {
+      for (const pitchfork of bossPitchforks) {
+        ctx.save();
+        ctx.translate(pitchfork.x, pitchfork.y);
+
+        // Assumes pitchfork.png has the spikes pointing to the right.
+        // Math.atan2 above rotates that right-facing spike side toward Clover.
+        ctx.rotate(pitchfork.angle + Math.PI/4);;
+
+        if (pitchforkImage.complete && pitchforkImage.naturalWidth > 0) {
+          ctx.drawImage(
+            pitchforkImage,
+            -pitchfork.width / 2,
+            -pitchfork.height / 2,
+            pitchfork.width,
+            pitchfork.height
+          );
+        } else {
+          ctx.fillStyle = "#9a6a3a";
+          ctx.fillRect(-pitchfork.width / 2, -pitchfork.height * 0.18, pitchfork.width, pitchfork.height * 0.36);
+          ctx.fillStyle = "#bfc3c7";
+          ctx.fillRect(pitchfork.width * 0.15, -pitchfork.height / 2, pitchfork.width * 0.35, pitchfork.height);
+        }
+
+        ctx.restore();
+      }
+    }
+
+    function drawBossHUD() {
+      const barWidth = scaleX(250);
+      const barHeight = scaleY(16);
+      const x = canvas.width / 2 - barWidth / 2;
+      const y = scaleY(18);
+
+      ctx.save();
+      ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
+      ctx.fillRect(x - scaleX(4), y - scaleY(4), barWidth + scaleX(8), barHeight + scaleY(8));
+
+      ctx.fillStyle = "#3b1010";
+      ctx.fillRect(x, y, barWidth, barHeight);
+
+      ctx.fillStyle = "#ff4d4d";
+      ctx.fillRect(x, y, barWidth * Math.max(0, cowgirlBoss.health / cowgirlBoss.maxHealth), barHeight);
+
+      ctx.strokeStyle = "white";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x, y, barWidth, barHeight);
+
+      ctx.fillStyle = "white";
+      ctx.font = `${Math.max(scaleY(14), 11)}px Arial`;
+      ctx.textAlign = "center";
+      ctx.fillText(`Cowgirl Moos Left: ${Math.max(0, cowgirlBoss.health)}`, canvas.width / 2, y + scaleY(34));
+      ctx.font = `${Math.max(scaleY(11), 9)}px Arial`;
+      ctx.fillText("CLOVER MOO MOO CLOVER MOO YOUR LITTLE HEART OUT", canvas.width / 2, y + scaleY(50));
+      ctx.restore();
+    }
+
+    function drawBossFight() {
+      drawPastureBackground();
+      drawBossGrass();
+      drawPlayer();
+      drawCowgirlBoss();
+      drawBossPitchforks();
+      drawMooFlash();
+      drawHUD();
+      drawInventoryHUD();
+      drawCloverSpeechBubble();
+      drawBossHUD();
+      drawHitFlash();
+      drawBonusFlash();
+    }
+
+    function drawPurpleCow() {
+      if (!purpleCow.active) return;
+
+      const purpleCowIsWalking = purpleCow.entering || purpleCow.walkingAway;
+      const sprite = purpleCowIsWalking ? purpleCowWalkSpriteSheet : purpleCowIdleSpriteSheet;
+      const frameDuration = purpleCowIsWalking ? PURPLE_COW_WALK_FRAME_DURATION : PURPLE_COW_IDLE_FRAME_DURATION;
+      const animFrame = Math.floor((frame + purpleCow.animationOffset) / frameDuration) % PURPLE_COW_TOTAL_FRAMES;
+      const bob = Math.sin((frame + purpleCow.animationOffset) * 0.045) * scaleY(2.5);
+
+      ctx.save();
+      ctx.globalAlpha = purpleCow.triggered ? 1 : 0.72 + Math.sin(frame * 0.04) * 0.14;
+      ctx.shadowColor = "rgba(170, 90, 255, 0.75)";
+      ctx.shadowBlur = scaleX(16);
+
+      if (sprite.complete && sprite.naturalWidth > 0) {
+        if (purpleCow.facingLeft) {
+          ctx.translate(purpleCow.x + purpleCow.width, purpleCow.y + bob);
+          ctx.scale(-1, 1);
+          drawSpriteFrame(sprite, animFrame, PURPLE_COW_SPRITE_COLS, PURPLE_COW_SPRITE_ROWS, 0, 0, purpleCow.width, purpleCow.height);
+        } else {
+          drawSpriteFrame(sprite, animFrame, PURPLE_COW_SPRITE_COLS, PURPLE_COW_SPRITE_ROWS, purpleCow.x, purpleCow.y + bob, purpleCow.width, purpleCow.height);
+        }
+      } else {
+        ctx.fillStyle = "#8d50ff";
+        ctx.fillRect(purpleCow.x, purpleCow.y + bob, purpleCow.width, purpleCow.height);
+      }
+
+      ctx.restore();
+    }
+
+    function drawBossDefeatedPasture() {
+      drawPastureBackground();
+      drawPurpleCow();
+      drawPlayer();
+      drawBossPoofs();
+      drawMooFlash();
+      drawHearts();
+      drawHUD();
+      drawInventoryHUD();
+      drawCloverSpeechBubble();
+      drawHitFlash();
+      drawBonusFlash();
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (greenerPasturesActive) {
+        drawGreenerPasturesSequence();
+        return;
+      }
+
+      if (bossFightActive) {
+        drawBossFight();
+        return;
+      }
+
+      if (bossDefeatedPastureActive) {
+        drawBossDefeatedPasture();
+        return;
+      }
+
+      drawPlayer();
+      drawStalkerButcher();
+      drawCowgirl();
+      drawMooFlash();
+      drawFallingObjects();
+      drawHearts();
+      drawHUD();
+      drawInventoryHUD();
+      drawCloverSpeechBubble();
+      drawHitFlash();
+      drawBonusFlash();
+      drawCowbellFlash();
+    }
+
+    function loop() {
+      resizeCanvasToDisplaySize();
+      update();
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    resetGameState();
+    showStartOverlay();
+    loop();
   </script>
 </body>
 </html>

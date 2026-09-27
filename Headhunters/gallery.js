@@ -83,7 +83,7 @@ async function showCard(index) {
     if (request !== cardRequest) return;
     fullCard.src = source;
     download.href = source;
-    download.download = `Headhunters-${card.id}.avif`;
+    download.download = `DreamQuest-${card.id}.avif`;
     download.textContent = 'Download card';
   } catch {
     if (request !== cardRequest) return;

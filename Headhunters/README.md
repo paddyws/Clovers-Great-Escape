@@ -1,4 +1,4 @@
-# Headhunters
+# DreamQuest
 
 A fantasy card game designed by Patrick Wadsack-Stewart.
 
